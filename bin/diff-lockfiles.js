@@ -33,7 +33,7 @@ cli
     .description('diff all changed package-lock.json files in repo')
     .version(version)
     .arguments('<from> <to>')
-    .option('-f, --format <format>', 'changes the output format (table|json|text)', 'table')
+    .option('-f, --format <format>', 'changes the output format (table|json|markdown|text)', 'table')
     .option('-m, --max-buffer', 'maximum read buffer size', 1024 * 10000)
     .option('-c, --color', 'colorizes certain output formats', false)
     .option('-s, --shallow', 'only include direct dependencies of the project', false)

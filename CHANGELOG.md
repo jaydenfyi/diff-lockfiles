@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.2.0 - 2025-09-25
+
+- Added --format markdown
+
 ## 1.1.0 - 2024-06-28
 
 - Added --shallow to only handle direct dependencies (GH #31) (Jussi Kosunen)

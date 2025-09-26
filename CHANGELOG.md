@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.2.1 - 2025-09-25
+
+- Add markdown to --help output
+
+## 1.2.0 - 2025-09-25
+
+- Added markdown as a table format
+
 ## 1.1.0 - 2024-06-28
 
 - Added --shallow to only handle direct dependencies (GH #31) (Jussi Kosunen)

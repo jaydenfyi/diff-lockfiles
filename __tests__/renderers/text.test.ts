@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import { textRenderer } from '../../src/renderers/text.js';
+import { createColors } from '../../src/colors.js';
 import type { Changes } from '../../src/diff.js';
 import type { RenderOptions } from '../../src/renderers/types.js';
 
@@ -26,9 +26,18 @@ describe('textRenderer', () => {
   });
 
   it('colorizes when color=true (green for added / upgrade)', () => {
-    chalk.level = 1; // force color in the non-TTY test process
     const out = textRenderer.render({ lodash: [null, '1.0.0'] }, { color: true, title: '' });
-    // chalk.green() emits ANSI only when level > 0, so matching its output proves color engaged.
-    expect(out).toContain(chalk.green('added'));
+    // createColors(true).green emits the same ANSI chalk would; matching it proves
+    // colour engaged.
+    expect(out).toContain(createColors(true).green('added'));
+  });
+
+  it('emits no ANSI codes when color=false', () => {
+    const out = textRenderer.render(
+      { lodash: [null, '1.0.0'], express: ['4.18.0', null] },
+      noColor,
+    );
+    expect(out).toBe('lodash added\nexpress removed');
+    expect(out).not.toContain('\x1b');
   });
 });

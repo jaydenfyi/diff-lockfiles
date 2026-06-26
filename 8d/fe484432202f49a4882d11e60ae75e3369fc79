@@ -1,0 +1,19 @@
+src/cli.ts
+  s_e71af4bb4ca8d2::t_62ee82814844c4 7-9,14-23,25,27,35-46,52,59-69,75-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "8dfe484432202f49a4882d11e60ae75e3369fc79",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

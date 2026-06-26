@@ -1,0 +1,26 @@
+tsconfig.json
+  s_e71af4bb4ca8d2::t_554855e2c368e1 1-18
+package.json
+  s_e71af4bb4ca8d2::t_66ea5a1f49cabd 17-19,21
+  s_e71af4bb4ca8d2::t_da9b120569e33f 31-33,35-37
+jest.config.ts
+  s_e71af4bb4ca8d2::t_f33ca7db7855cb 1-12
+package-lock.json
+  s_e71af4bb4ca8d2::t_925e4860fee89c 22-24,26-28,1562-1572,1581-1583,1587,1590-1596,2195-2207,3100-3121,4341-4347,4385-4391,4455-4464,4504-4510,4900-4902,5233-5298,5342-5369,5371-5373,5491-5497
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "a8d9894a1325c153161bcb98c79a4287d7949663",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

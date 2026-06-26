@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import { Command } from 'commander';
 import { diffChangedLockfiles } from './pipeline.js';
 import { createGitSource } from './sources/git.js';
 import { renderers } from './renderers/registry.js';
 import type { Format } from './renderers/types.js';
 
-const version = '1.0.2';
+// Read the version from package.json at runtime so it stays in sync with the
+// release instead of being a hand-maintained literal that silently drifts.
+const { version } = createRequire(import.meta.url)('../package.json');
 
 const cli = new Command();
 cli

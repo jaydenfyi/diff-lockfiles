@@ -16,3 +16,11 @@ export interface LockfileAdapter {
   /** parse raw file content into the normalized shape */
   parse(filename: string, content: string): NormalizedLockfile;
 }
+
+/** The four npm dependency-map field names, shared by every lockfile format. */
+export const DEPENDENCY_FIELDS = [
+  'dependencies',
+  'devDependencies',
+  'optionalDependencies',
+  'peerDependencies',
+] as const;

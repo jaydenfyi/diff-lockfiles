@@ -53,7 +53,7 @@ cli
   .version(version)
   .arguments('<from> <to>')
   .option('-f, --format <format>', 'changes the output format (table|json|markdown|text)', 'table')
-  .option('-m, --max-buffer', 'maximum read buffer size', 1024 * 10000 as unknown as boolean)
+  .option('-m, --max-buffer <size>', 'maximum read buffer size (bytes)', (value: string) => Number(value), 1024 * 10000)
   .option('-c, --color', 'colorizes certain output formats', false)
   .option('-s, --shallow', 'only include direct dependencies of the project', false)
   .action(

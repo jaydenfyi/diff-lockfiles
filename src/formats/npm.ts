@@ -1,4 +1,5 @@
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import { DEPENDENCY_FIELDS } from './types.js';
 
 /**
  * package-lock.json v2/v3 uses a top-level `packages` map keyed by node_modules
@@ -20,7 +21,7 @@ export const parseNpmLockfile: LockfileAdapter = {
     if (selfPackage) {
       // `new Set([''])` (NOT `new Set('')`, which yields an empty set).
       const keys = new Set<string>(['']);
-      (['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'] as const).forEach(
+      DEPENDENCY_FIELDS.forEach(
         (kind) => {
           Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).forEach((name) =>
             keys.add(`node_modules/${name}`),

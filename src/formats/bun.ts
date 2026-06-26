@@ -1,5 +1,6 @@
 import { parseJsonc } from './jsonc.js';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import { DEPENDENCY_FIELDS } from './types.js';
 
 interface BunLockfile {
   lockfileVersion: number;
@@ -47,7 +48,7 @@ export const parseBunLockfile: LockfileAdapter = {
     let directDependencyKeys: string[] | undefined;
     if (root) {
       const depNames = new Set<string>();
-      (['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'] as const).forEach(
+      DEPENDENCY_FIELDS.forEach(
         (kind) => {
           Object.keys(root[kind] ?? {}).forEach((name) => depNames.add(name));
         },

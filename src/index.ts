@@ -5,8 +5,8 @@ import { table } from 'table';
 import { markdownTable } from 'markdown-table';
 import type { NormalizedLockfile } from './formats/types.js';
 
-/** A lockfile in the shape diff() consumes: a `packages` map keyed by package path. */
-export type LockfileLike = NormalizedLockfile;
+/** Re-export the canonical lockfile type for library consumers. */
+export type { NormalizedLockfile } from './formats/types.js';
 
 /** Map of package key -> [oldVersion, newVersion]. `null` means added/removed. */
 export type Changes = Record<string, [string | null, string | null]>;

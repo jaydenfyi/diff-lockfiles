@@ -29,6 +29,10 @@ export type Changes = Record<string, Change>;
 /**
  * Classify a version change into a {@link ChangeKind}.
  *
+ * Contract: assumes the two versions actually differ (as `diff` guarantees —
+ * it drops equal pairs via `isUnchanged` first). Equal versions fall through to
+ * `'changed'`; that is a defensive fallback, not a meaningful classification.
+ *
  * Never throws: semver's compare functions throw on non-semver values, so we
  * guard with `valid()` and treat any non-semver specifier as a plain `changed`.
  */

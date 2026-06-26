@@ -14,9 +14,11 @@
   "author": "Olaf Alders <olaf@wundersolutions.com> (https://olafalders.com/)",
   "license": "MIT",
   "scripts": {
-    "start": "./bin/diff-lockfiles.js",
+    "start": "node dist/cli.js",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "jest"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
     "chalk": "^5.3.0",
@@ -26,7 +28,12 @@
     "table": "^6.8.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.9.3",
+    "@types/semver": "^7.7.1",
     "eslint": "^9.0.0",
-    "jest": "^30.0.0"
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.11",
+    "typescript": "^6.0.3"
   }
 }

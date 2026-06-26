@@ -5,6 +5,8 @@ import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { diff, print } from './index.js';
 import type { LockfileAdapter, NormalizedLockfile } from './formats/types.js';
+import { renderers } from './renderers/registry.js';
+import type { Format } from './renderers/types.js';
 import { parseNpmLockfile } from './formats/npm.js';
 import { parseBunLockfile } from './formats/bun.js';
 
@@ -58,6 +60,9 @@ cli
   .option('-s, --shallow', 'only include direct dependencies of the project', false)
   .action(
     (from: string, to: string, options: { format: string; maxBuffer: number; color: boolean; shallow: boolean }) => {
+      // `Format` is the single source of truth; narrow commander's string here.
+      // Unknown formats fall back to 'text' (matching the original switch default).
+      const format: Format = options.format in renderers ? (options.format as Format) : 'text';
       void changedLockFiles(from, to).then(async (files) => {
         for (const filename of files) {
           if (!adapterFor(filename)) continue;
@@ -69,7 +74,7 @@ cli
           const changes = diff(oldLock, newLock, options.shallow);
           print(changes, {
             color: options.color,
-            format: options.format as 'json' | 'table' | 'markdown' | 'text',
+            format,
             title: filename,
           });
         }

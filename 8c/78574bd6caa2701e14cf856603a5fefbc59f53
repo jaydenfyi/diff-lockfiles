@@ -1,0 +1,22 @@
+package.json
+  s_296e11cb9998fe::t_c8f2fc6fbae942 28
+tsconfig.test.json
+  s_296e11cb9998fe::t_700d5c9c9344ab 10-11
+  s_296e11cb9998fe::t_7f555948322578 5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "8c78574bd6caa2701e14cf856603a5fefbc59f53",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

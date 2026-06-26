@@ -1,0 +1,46 @@
+src/index.ts
+  s_e71af4bb4ca8d2::t_6f231afac98919 2-14,17-23,25-30
+src/cli.ts
+  s_e71af4bb4ca8d2::t_ee1f19ea8d775d 8-9,63-65,77
+__tests__/renderers/json.test.ts
+  s_e71af4bb4ca8d2::t_4e7045f219e6ca 1-20
+src/renderers/types.ts
+  s_e71af4bb4ca8d2::t_16abcd43bcc280 1-28
+src/renderers/text.ts
+  s_e71af4bb4ca8d2::t_af916510d977ec 1-25
+src/renderers/json.ts
+  s_e71af4bb4ca8d2::t_42d939a2f715b8 1-8
+src/renderers/markdown.ts
+  s_e71af4bb4ca8d2::t_ca14b78294db24 1-38
+__tests__/renderers/text.test.ts
+  s_e71af4bb4ca8d2::t_1717057d08de04 1-30,32-34
+  s_e71af4bb4ca8d2::t_7a1ecd54126a1c 31
+src/diff.ts
+  s_e71af4bb4ca8d2::t_415e0aa2e69e0c 1-53
+__tests__/renderers/markdown.test.ts
+  s_e71af4bb4ca8d2::t_90d431812168bd 16-17
+  s_e71af4bb4ca8d2::t_3fed425dd89128 1-15,18-33
+__tests__/renderers/table.test.ts
+  s_e71af4bb4ca8d2::t_499d8d95c868a1 1-23,26-30,32-33
+  s_e71af4bb4ca8d2::t_f7cc3d329680be 24-25,31
+src/renderers/table.ts
+  s_e71af4bb4ca8d2::t_d5966f88b024f7 1-39
+src/renderers/registry.ts
+  s_e71af4bb4ca8d2::t_8fbbf8d6c6e133 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "ea35b16a11cbe098b23f883a3a72c994e29c4f62",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

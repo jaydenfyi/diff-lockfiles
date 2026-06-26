@@ -1,9 +1,22 @@
 # diff-lockfiles
 
 Note: this is a fork of <https://github.com/mxweaver/lock-diff>, but it
-operates on Git commit ranges rather than on files.
+operates on Git commit ranges rather than on files. It diffs both
+`package-lock.json` and `bun.lock` files.
 
 [![npm](https://img.shields.io/npm/v/diff-lockfiles)](https://www.npmjs.com/package/diff-lockfiles)
+
+## Supported lockfiles
+
+- **`package-lock.json`** (npm lockfile v2/v3). Keys are `node_modules/...`
+  paths.
+- **`bun.lock`** (Bun 1.2.0+ text lockfile, JSONC). Keys are bare package
+  names (e.g. `express`), which makes for more readable diffs than the
+  `node_modules/...` form.
+
+Both formats produce the same added/removed/changed output in all four
+renderers. The legacy binary `bun.lockb` and the old `package-lock.json` v1
+(`dependencies` map, no `packages`) are **not** supported.
 
 ## Example
 
@@ -27,7 +40,7 @@ diff-lockfiles --color HEAD~1 HEAD
 diff-lockfiles --help
 Usage:  diff-lockfiles [options] <from> <to>
 
-diff all changed package-lock.json files in repo
+diff all changed package-lock.json and bun.lock files in repo
 
 Options:
   -V, --version          output the version number

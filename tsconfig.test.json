@@ -2,8 +2,11 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "types": ["node", "vitest/globals"],
+    "rootDir": ".",
+    "declaration": false,
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "__tests__/**/*.ts"]
+  "include": ["src/**/*.ts", "__tests__/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

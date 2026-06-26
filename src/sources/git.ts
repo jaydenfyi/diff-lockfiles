@@ -4,8 +4,9 @@ import type { LockfileSource } from './types.js';
 
 const execFilePromise = promisify(execFile);
 
-/** Default read buffer (bytes) for `git show`. Matches the original CLI default. */
-const DEFAULT_MAX_BUFFER = 1024 * 10000;
+/** Default read buffer (bytes) for `git show`. Re-exported so the CLI's
+ * `--max-buffer` default and this fallback stay a single source of truth. */
+export const DEFAULT_MAX_BUFFER = 1024 * 10000;
 
 /**
  * git prints one of these messages (exit code 128) when a path is absent at a

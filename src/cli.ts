@@ -3,7 +3,7 @@
 import { createRequire } from 'node:module';
 import { Command } from 'commander';
 import { diffChangedLockfiles } from './pipeline.js';
-import { createGitSource } from './sources/git.js';
+import { createGitSource, DEFAULT_MAX_BUFFER } from './sources/git.js';
 import { renderers } from './renderers/registry.js';
 import type { Format } from './renderers/types.js';
 
@@ -18,7 +18,7 @@ cli
   .version(version)
   .arguments('<from> <to>')
   .option('-f, --format <format>', 'changes the output format (table|json|markdown|text)', 'table')
-  .option('-m, --max-buffer <size>', 'maximum read buffer size (bytes)', (value: string) => Number(value), 1024 * 10000)
+  .option('-m, --max-buffer <size>', 'maximum read buffer size (bytes)', (value: string) => Number(value), DEFAULT_MAX_BUFFER)
   .option('-c, --color', 'colorizes certain output formats', false)
   .option('-s, --shallow', 'only include direct dependencies of the project', false)
   .action(

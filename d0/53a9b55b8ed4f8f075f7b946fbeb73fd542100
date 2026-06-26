@@ -1,0 +1,22 @@
+.npmignore
+  s_e71af4bb4ca8d2::t_34126f8ebec31b 6
+package.json
+  s_e71af4bb4ca8d2::t_763396ce841574 17-18
+  s_e71af4bb4ca8d2::t_37795516deaa7b 15-16,19-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "d053a9b55b8ed4f8f075f7b946fbeb73fd542100",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -8,14 +8,16 @@
   },
   "type": "module",
   "bin": {
-    "diff-lockfiles": "bin/diff-lockfiles.js"
+    "diff-lockfiles": "dist/cli.js"
   },
-  "main": "lib/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Olaf Alders <olaf@wundersolutions.com> (https://olafalders.com/)",
   "license": "MIT",
   "scripts": {
     "start": "node dist/cli.js",
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
@@ -28,12 +30,15 @@
     "table": "^6.8.1"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.4",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.3",
     "@types/semver": "^7.7.1",
     "eslint": "^9.0.0",
+    "globals": "^17.6.0",
     "jest": "^30.0.0",
     "ts-jest": "^29.4.11",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
   }
 }

@@ -64,12 +64,10 @@ export function diff(
 }
 
 function printJSON(changes: Changes): void {
-  /* eslint-disable no-console */
   console.log(JSON.stringify(changes));
 }
 
 function printText(changes: Changes, options: PrintOptions): void {
-  /* eslint-disable no-console */
   Object.entries(changes).forEach(([name, [oldVersion, newVersion]]) => {
     if (!oldVersion) {
       if (options.color) {
@@ -92,11 +90,9 @@ function printText(changes: Changes, options: PrintOptions): void {
       }
     }
   });
-  /* eslint-enable no-console */
 }
 
 function printTable(changes: Changes, options: PrintOptions): void {
-  /* eslint-disable no-console */
   let data: (string | null)[][] = Object.entries(changes).map(
     ([name, [oldVersion, newVersion]]) => [name, oldVersion, newVersion],
   );
@@ -126,11 +122,9 @@ function printTable(changes: Changes, options: PrintOptions): void {
   }
 
   console.log(table(data));
-  /* eslint-disable no-console */
 }
 
 function printMarkdown(changes: Changes, options: PrintOptions): void {
-  /* eslint-disable no-console */
   function formatVersionChange(oldVersion: string | null, newVersion: string | null): string {
     if (!oldVersion) return `**${newVersion}** (added)`;
     if (!newVersion) return `~~${oldVersion}~~ (removed)`;
@@ -159,7 +153,6 @@ function printMarkdown(changes: Changes, options: PrintOptions): void {
   }
 
   console.log(markdownTable(tableData));
-  /* eslint-enable no-console */
 }
 
 export function print(changes: Changes, options: PrintOptions): void {

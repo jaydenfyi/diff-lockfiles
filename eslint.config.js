@@ -10,10 +10,6 @@ export default [
       sourceType: 'module',
       globals: { node: true, vitest: true },
     },
-    rules: {
-      'no-param-reassign': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
   },
   { ignores: ['dist/**', 'node_modules/**'] },
 ];

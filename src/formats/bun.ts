@@ -1,4 +1,4 @@
-import { parseJsonc } from './jsonc.js';
+import { parse as jsoncParse } from 'jsonc-parser';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
 import { DEPENDENCY_FIELDS } from './types.js';
 
@@ -33,7 +33,9 @@ export const parseBunLockfile: LockfileAdapter = {
   },
 
   parse(_filename: string, content: string): NormalizedLockfile {
-    const raw = parseJsonc(content) as BunLockfile;
+    // jsonc-parser is string-aware: `//` inside string values (registry URLs,
+    // integrity hashes) is not mistaken for a comment. Trailing commas tolerated.
+    const raw = jsoncParse(content) as BunLockfile;
 
     const packages: NormalizedLockfile['packages'] = raw.packages
       ? Object.fromEntries(

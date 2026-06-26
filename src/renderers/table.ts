@@ -6,32 +6,33 @@ import type { Renderer } from './types.js';
 /** Render changes as a boxed table (package | old version | new version). */
 export const tableRenderer: Renderer = {
   render(changes, options) {
-    let data: (string | null)[][] = Object.entries(changes).map(
-      ([name, [oldVersion, newVersion]]) => [name, oldVersion, newVersion],
-    );
-
-    if (options.color) {
-      data = data.map(([name, oldVersion, newVersion]) => {
-        if (oldVersion && newVersion && semver.valid(oldVersion) && semver.valid(newVersion)) {
-          if (semver.lt(oldVersion, newVersion)) {
-            return [name, chalk.red(oldVersion), chalk.green(newVersion)];
-          }
-          if (semver.gt(oldVersion, newVersion)) {
-            return [name, chalk.green(oldVersion), chalk.red(newVersion)];
-          }
+    const rows = Object.entries(changes).map(([name, [oldVersion, newVersion]]) => {
+      if (
+        options.color &&
+        oldVersion &&
+        newVersion &&
+        semver.valid(oldVersion) &&
+        semver.valid(newVersion)
+      ) {
+        if (semver.lt(oldVersion, newVersion)) {
+          return [name, chalk.red(oldVersion), chalk.green(newVersion)];
         }
-        return [name, oldVersion, newVersion];
-      });
-    }
+        if (semver.gt(oldVersion, newVersion)) {
+          return [name, chalk.green(oldVersion), chalk.red(newVersion)];
+        }
+      }
+      return [name, oldVersion, newVersion];
+    });
 
-    data.unshift(['package', 'old version', 'new version']);
-    if (options.title !== '') {
-      data.unshift([options.title, '', '']);
-    }
+    // Header row, then optionally a title row above it.
+    const header: (string | null)[] = ['package', 'old version', 'new version'];
+    const titleRow: (string | null)[] | null = options.title !== '' ? [options.title, '', ''] : null;
+    const titled = titleRow ? [titleRow, header, ...rows] : [header, ...rows];
 
-    if (options.color) {
-      data[0] = data[0].map((heading) => chalk.bold(heading));
-    }
+    // When colouring, bold the first (top) row only.
+    const data = options.color
+      ? [titled[0].map((cell) => chalk.bold(cell)), ...titled.slice(1)]
+      : titled;
 
     return table(data);
   },

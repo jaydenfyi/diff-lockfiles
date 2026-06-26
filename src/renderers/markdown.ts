@@ -29,11 +29,7 @@ export const markdownRenderer: Renderer = {
       ]),
     ];
 
-    let out = '';
-    if (options.title && options.title !== '') {
-      out += `## ${options.title}\n\n`;
-    }
-    out += markdownTable(tableData);
-    return out;
+    const heading = options.title && options.title !== '' ? `## ${options.title}\n\n` : '';
+    return `${heading}${markdownTable(tableData)}`;
   },
 };

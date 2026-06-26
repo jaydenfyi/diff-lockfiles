@@ -17,19 +17,19 @@ export const parseNpmLockfile: LockfileAdapter = {
     const packages = raw.packages ?? {};
     const selfPackage = packages[''];
 
-    let directDependencyKeys: string[] | undefined;
-    if (selfPackage) {
-      // `new Set([''])` (NOT `new Set('')`, which yields an empty set).
-      const keys = new Set<string>(['']);
-      DEPENDENCY_FIELDS.forEach(
-        (kind) => {
-          Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).forEach((name) =>
-            keys.add(`node_modules/${name}`),
-          );
-        },
-      );
-      directDependencyKeys = [...keys];
-    }
+    // Root entry key "" plus each direct dependency's node_modules path.
+    const directDependencyKeys = selfPackage
+      ? [
+          ...new Set([
+            '',
+            ...DEPENDENCY_FIELDS.flatMap((kind) =>
+              Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).map(
+                (name) => `node_modules/${name}`,
+              ),
+            ),
+          ]),
+        ]
+      : undefined;
 
     return { packages, directDependencyKeys };
   },

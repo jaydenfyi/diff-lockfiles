@@ -8,6 +8,19 @@ export type { NormalizedLockfile } from './formats/types.js';
 export type Changes = Record<string, [string | null, string | null]>;
 
 /**
+ * Reduce a lockfile's packages to a `key -> version` map, applying the shallow
+ * (direct-dependencies-only) filter when requested.
+ */
+function packageVersions(lock: NormalizedLockfile, shallow: boolean): Map<string, string> {
+  const allow = shallow && lock.directDependencyKeys ? new Set(lock.directDependencyKeys) : null;
+  return new Map(
+    Object.entries(lock.packages)
+      .filter(([name]) => allow === null || allow.has(name))
+      .map(([name, { version }]) => [name, version]),
+  );
+}
+
+/**
  * Compute the version changes between two normalized lockfiles.
  *
  * Returns a map of package key -> [oldVersion, newVersion]. A `null` oldVersion
@@ -22,35 +35,23 @@ export function diff(
   newLock: NormalizedLockfile,
   shallow: boolean,
 ): Changes {
-  const changes: Changes = {};
+  const oldVersions = packageVersions(oldLock, shallow);
+  const newVersions = packageVersions(newLock, shallow);
 
-  function filterPackages(lock: NormalizedLockfile): [string, { version: string }][] {
-    let entries = Object.entries(lock.packages);
-    if (shallow && lock.directDependencyKeys) {
-      const allow = new Set(lock.directDependencyKeys);
-      entries = entries.filter(([name]) => allow.has(name));
-    }
-    return entries;
-  }
+  // Union of keys, old-order first then newly-added (newLock order) — matches the
+  // historical output ordering.
+  const allKeys = new Set([...oldVersions.keys(), ...newVersions.keys()]);
 
-  filterPackages(oldLock).forEach(([name, { version }]) => {
-    changes[name] = [version, null];
-  });
+  const entries = [...allKeys]
+    .map((key): [string, [string | null, string | null]] => {
+      const oldVersion = oldVersions.get(key) ?? null;
+      const newVersion = newVersions.get(key) ?? null;
+      return [key, [oldVersion, newVersion]];
+    })
+    // Drop unchanged packages (present in both, same version).
+    .filter(([, [oldVersion, newVersion]]) => {
+      return !(oldVersion !== null && newVersion !== null && semver.eq(oldVersion, newVersion));
+    });
 
-  filterPackages(newLock).forEach(([name, { version }]) => {
-    const existing = changes[name];
-    // No prior entry (or prior entry had no old version): this package was added.
-    if (!existing || !existing[0]) {
-      changes[name] = [null, version];
-      return;
-    }
-    // existing[0] is now narrowed to string.
-    if (semver.eq(existing[0], version)) {
-      delete changes[name];
-      return;
-    }
-    changes[name] = [existing[0], version];
-  });
-
-  return changes;
+  return Object.fromEntries(entries);
 }

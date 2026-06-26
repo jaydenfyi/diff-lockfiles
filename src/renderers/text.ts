@@ -5,25 +5,23 @@ import type { Renderer } from './types.js';
 /** Render changes as one line per package: `name added | removed | old -> new`. */
 export const textRenderer: Renderer = {
   render(changes, options) {
-    const lines: string[] = [];
-    for (const [name, [oldVersion, newVersion]] of Object.entries(changes)) {
-      if (!oldVersion) {
-        lines.push(options.color ? `${name} ${chalk.green('added')}` : `${name} added`);
-        continue;
-      }
-      if (!newVersion) {
-        lines.push(options.color ? `${name} ${chalk.red('removed')}` : `${name} removed`);
-        continue;
-      }
-      if (!semver.eq(oldVersion, newVersion)) {
-        if (!options.color) {
-          lines.push(`${name} ${oldVersion} -> ${newVersion}`);
-          continue;
+    return Object.entries(changes)
+      .map(([name, [oldVersion, newVersion]]): string | null => {
+        if (!oldVersion) {
+          return options.color ? `${name} ${chalk.green('added')}` : `${name} added`;
         }
-        const color = semver.gt(oldVersion, newVersion) ? chalk.red : chalk.green;
-        lines.push(`${name} ${color(`${oldVersion} -> ${newVersion}`)}`);
-      }
-    }
-    return lines.join('\n');
+        if (!newVersion) {
+          return options.color ? `${name} ${chalk.red('removed')}` : `${name} removed`;
+        }
+        if (!semver.eq(oldVersion, newVersion)) {
+          if (!options.color) return `${name} ${oldVersion} -> ${newVersion}`;
+          const color = semver.gt(oldVersion, newVersion) ? chalk.red : chalk.green;
+          return `${name} ${color(`${oldVersion} -> ${newVersion}`)}`;
+        }
+        // Unchanged: emit nothing for this entry.
+        return null;
+      })
+      .filter((line): line is string => line !== null)
+      .join('\n');
   },
 };

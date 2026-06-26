@@ -34,28 +34,22 @@ export const parseBunLockfile: LockfileAdapter = {
 
   parse(_filename: string, content: string): NormalizedLockfile {
     const raw = parseJsonc(content) as BunLockfile;
-    const packages: NormalizedLockfile['packages'] = {};
 
-    if (raw.packages) {
-      for (const [key, value] of Object.entries(raw.packages)) {
-        const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
-        packages[key] = { version: extractVersion(specifier) };
-      }
-    }
+    const packages: NormalizedLockfile['packages'] = raw.packages
+      ? Object.fromEntries(
+          Object.entries(raw.packages).map(([key, value]) => {
+            const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
+            return [key, { version: extractVersion(specifier) }];
+          }),
+        )
+      : {};
 
     // Root dependency ranges live in workspaces[""] (the package-lock "packages['']" equivalent).
     const root = raw.workspaces?.[''];
-    let directDependencyKeys: string[] | undefined;
-    if (root) {
-      const depNames = new Set<string>();
-      DEPENDENCY_FIELDS.forEach(
-        (kind) => {
-          Object.keys(root[kind] ?? {}).forEach((name) => depNames.add(name));
-        },
-      );
-      // bun.lock hoisted-dep keys are the bare package names
-      directDependencyKeys = [...depNames];
-    }
+    // bun.lock hoisted-dep keys are the bare package names.
+    const directDependencyKeys = root
+      ? [...new Set(DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(root[kind] ?? {})))]
+      : undefined;
 
     return { packages, directDependencyKeys };
   },

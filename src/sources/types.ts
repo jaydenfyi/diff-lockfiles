@@ -16,6 +16,11 @@
 export interface LockfileSource {
   /** Paths that changed between `from` and `to` (any files, not just lockfiles). */
   listChanged(from: string, to: string): Promise<string[]>;
-  /** Full contents of `filename` as it exists at `ref`. */
-  read(ref: string, filename: string): Promise<string>;
+  /**
+   * Full contents of `filename` as it exists at `ref`, or `null` when the path
+   * is absent at that ref. `null` lets the pipeline diff a lockfile that was
+   * added or removed between the two refs (every package shows as added or
+   * removed) instead of crashing on the missing side.
+   */
+  read(ref: string, filename: string): Promise<string | null>;
 }

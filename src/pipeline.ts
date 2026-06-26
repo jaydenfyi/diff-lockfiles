@@ -1,12 +1,15 @@
 import { diff, print } from './index.js';
 import { parseNpmLockfile } from './formats/npm.js';
 import { parseBunLockfile } from './formats/bun.js';
-import type { LockfileAdapter } from './formats/types.js';
+import type { LockfileAdapter, NormalizedLockfile } from './formats/types.js';
 import type { Format } from './renderers/types.js';
 import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
 const adapters: LockfileAdapter[] = [parseNpmLockfile, parseBunLockfile];
+
+/** A lockfile with no packages — the shape used for a side that is absent. */
+const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };
 
 /** Find the adapter that handles `filename`, if any. */
 function adapterFor(filename: string): LockfileAdapter | undefined {
@@ -43,9 +46,11 @@ export async function diffChangedLockfiles(
       source.read(from, filename),
       source.read(to, filename),
     ]);
+    // A side that is `null` (the file was added or removed between refs) is
+    // diffed as an empty lockfile, so every package shows as added or removed.
     const changes = diff(
-      adapter.parse(filename, oldContent),
-      adapter.parse(filename, newContent),
+      oldContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, oldContent),
+      newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
       options.shallow,
     );
 

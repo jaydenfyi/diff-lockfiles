@@ -21,7 +21,9 @@ function fakeSource(
       return changed;
     },
     async read(ref, filename) {
-      return contentByRef[ref]?.[filename] ?? '';
+      // Missing ref/filename -> null (absent at that side), matching the git
+      // source's contract for a lockfile added or removed between refs.
+      return contentByRef[ref]?.[filename] ?? null;
     },
   };
 }
@@ -62,5 +64,37 @@ describe('diffChangedLockfiles', () => {
         diffChangedLockfiles(source, 'a', 'b', { format: 'text', color: false, shallow: false }),
       ),
     ).resolves.toEqual([]);
+  });
+
+  it('treats a newly-added lockfile as fully added (no crash)', async () => {
+    // The lockfile does not exist at FROM (added in TO). The source returns null
+    // for the missing side; every package on the present side shows as added.
+    const source = fakeSource(
+      { TO: { 'package-lock.json': newLock } },
+      ['package-lock.json'],
+    );
+
+    const printed = await captureLog(() =>
+      diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+    );
+
+    // The whole lockfile is new, so every entry — including the root "" project
+    // entry carried by the fixture — shows as added (no crash).
+    expect(printed).toEqual([' added\nnode_modules/lodash added']);
+  });
+
+  it('treats a removed lockfile as fully removed (no crash)', async () => {
+    // Symmetric: the lockfile exists only at FROM (removed in TO).
+    const source = fakeSource(
+      { FROM: { 'package-lock.json': oldLock } },
+      ['package-lock.json'],
+    );
+
+    const printed = await captureLog(() =>
+      diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+    );
+
+    // Symmetric to the added case: every entry (including root "") is removed.
+    expect(printed).toEqual([' removed\nnode_modules/lodash removed']);
   });
 });

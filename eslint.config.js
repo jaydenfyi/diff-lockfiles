@@ -8,7 +8,7 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
-      globals: { node: true, jest: true },
+      globals: { node: true, vitest: true },
     },
     rules: {
       'no-param-reassign': 'off',

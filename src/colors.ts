@@ -3,7 +3,7 @@
  * this project actually uses (`red`, `green`, `bold`).
  *
  * Unlike chalk, there is no automatic TTY / `FORCE_COLOR` detection: the `enabled`
- * flag passed to {@link createColors} is the single, explicit switch. When
+ * flag passed to {@link createColor} is the single, explicit switch. When
  * `enabled` is false every function is a noop that returns its input unchanged;
  * when true it wraps the input in the same ANSI escape sequences chalk emits
  * (verified byte-identical at chalk levels 1 and 3):
@@ -22,7 +22,7 @@ const ESC = '\x1b[';
  * noop returning its (string-coerced) input; when true it wraps the input with
  * ANSI open/close codes.
  */
-export function createColors(enabled: boolean) {
+export function createColor(enabled: boolean) {
   /** Wrap `text` in `open`/`close` ANSI codes, or pass it through when disabled. */
   const style = (open: string, close: string) => (text: string | null) =>
     enabled ? `${ESC}${open}m${text}${ESC}${close}m` : `${text}`;

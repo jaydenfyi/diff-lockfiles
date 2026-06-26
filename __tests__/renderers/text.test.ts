@@ -1,5 +1,5 @@
 import { textRenderer } from '../../src/renderers/text.js';
-import { createColors } from '../../src/colors.js';
+import { createColor } from '../../src/colors.js';
 import type { Changes } from '../../src/diff.js';
 import type { RenderOptions } from '../../src/renderers/types.js';
 
@@ -27,9 +27,9 @@ describe('textRenderer', () => {
 
   it('colorizes when color=true (green for added / upgrade)', () => {
     const out = textRenderer.render({ lodash: [null, '1.0.0'] }, { color: true, title: '' });
-    // createColors(true).green emits the same ANSI chalk would; matching it proves
+    // createColor(true).green emits the same ANSI chalk would; matching it proves
     // colour engaged.
-    expect(out).toContain(createColors(true).green('added'));
+    expect(out).toContain(createColor(true).green('added'));
   });
 
   it('emits no ANSI codes when color=false', () => {

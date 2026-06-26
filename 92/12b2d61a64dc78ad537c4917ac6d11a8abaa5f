@@ -1,0 +1,49 @@
+__tests__/renderers/markdown.test.ts
+  s_e71af4bb4ca8d2::t_484e012e2a792c 2,9-16,27,32
+__tests__/renderers/json.test.ts
+  s_e71af4bb4ca8d2::t_c87a8e24bae7b6 2,8-25,29
+__tests__/index.test.ts
+  s_e71af4bb4ca8d2::t_04fb4fea4d5b6e 2,11-34,53
+__tests__/renderers/text.test.ts
+  s_e71af4bb4ca8d2::t_996c7c115f73f4 3,9-16,18,22,25-29,32-38,43
+jest.config.ts
+  s_e71af4bb4ca8d2::t_7f5470b6d1bac4 7-9
+__tests__/changes.test.ts
+  s_e71af4bb4ca8d2::t_ba670295725227 1-50
+__tests__/helpers.ts
+  s_e71af4bb4ca8d2::t_a70c595095f413 1-20
+src/renderers/text.ts
+  s_e71af4bb4ca8d2::t_a3d8b71c8616ce 12-24
+src/changes.ts
+  s_e71af4bb4ca8d2::t_f2d0a5d45b441f 1-56
+src/renderers/table.ts
+  s_e71af4bb4ca8d2::t_3dc90852852624 12-15
+src/renderers/markdown.ts
+  s_e71af4bb4ca8d2::t_b1bdbfb987f034 2,8-14,16,18-19,25,27-29
+src/renderers/json.ts
+  s_e71af4bb4ca8d2::t_1af13f46c79cbc 6-15
+src/diff.ts
+  s_e71af4bb4ca8d2::t_be114a7c47b16d 2-3,24-27,29-30,45,48,51
+src/renderers/types.ts
+  s_e71af4bb4ca8d2::t_4943b9b35b21ff 1
+src/index.ts
+  s_e71af4bb4ca8d2::t_64c05448ce1b1f 2,9-10
+__tests__/renderers/table.test.ts
+  s_e71af4bb4ca8d2::t_ecb52cf7b5f751 2,9-12,25,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "9212b2d61a64dc78ad537c4917ac6d11a8abaa5f",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

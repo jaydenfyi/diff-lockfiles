@@ -1,0 +1,19 @@
+src/colors.ts
+  s_e71af4bb4ca8d2::t_62ee8234de4463 25,27-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "b8cffd65f78762d179c2cdd2f6ab975e0b1c6ce8",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

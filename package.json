@@ -12,6 +12,13 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "author": "Olaf Alders <olaf@wundersolutions.com> (https://olafalders.com/)",
   "license": "MIT",
   "scripts": {
@@ -35,7 +42,6 @@
     "@types/node": "^25.9.3",
     "@types/semver": "^7.7.1",
     "eslint": "^9.0.0",
-    "globals": "^17.6.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
     "vitest": "^4.1.9"

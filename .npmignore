@@ -3,3 +3,4 @@ data
 .github
 .semaphore
 __tests__
+.local

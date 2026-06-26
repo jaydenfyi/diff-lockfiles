@@ -11,7 +11,8 @@ export const markdownRenderer: Renderer = {
       if (semver.valid(oldVersion) && semver.valid(newVersion)) {
         if (semver.lt(oldVersion, newVersion)) {
           return `${oldVersion} → **${newVersion}**`;
-        } else if (semver.gt(oldVersion, newVersion)) {
+        }
+        if (semver.gt(oldVersion, newVersion)) {
           return `**${oldVersion}** → ${newVersion}`;
         }
       }

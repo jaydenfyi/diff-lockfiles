@@ -38,15 +38,18 @@ export function diff(
   });
 
   filterPackages(newLock).forEach(([name, { version }]) => {
-    if (changes[name] && changes[name][0]) {
-      if (semver.eq(changes[name][0] as string, version)) {
-        delete changes[name];
-      } else {
-        changes[name] = [changes[name][0], version];
-      }
-    } else {
+    const existing = changes[name];
+    // No prior entry (or prior entry had no old version): this package was added.
+    if (!existing || !existing[0]) {
       changes[name] = [null, version];
+      return;
     }
+    // existing[0] is now narrowed to string.
+    if (semver.eq(existing[0], version)) {
+      delete changes[name];
+      return;
+    }
+    changes[name] = [existing[0], version];
   });
 
   return changes;

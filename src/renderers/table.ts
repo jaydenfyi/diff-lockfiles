@@ -14,11 +14,10 @@ export const tableRenderer: Renderer = {
       data = data.map(([name, oldVersion, newVersion]) => {
         if (oldVersion && newVersion && semver.valid(oldVersion) && semver.valid(newVersion)) {
           if (semver.lt(oldVersion, newVersion)) {
-            oldVersion = chalk.red(oldVersion);
-            newVersion = chalk.green(newVersion);
-          } else if (semver.gt(oldVersion, newVersion)) {
-            oldVersion = chalk.green(oldVersion);
-            newVersion = chalk.red(newVersion);
+            return [name, chalk.red(oldVersion), chalk.green(newVersion)];
+          }
+          if (semver.gt(oldVersion, newVersion)) {
+            return [name, chalk.green(oldVersion), chalk.red(newVersion)];
           }
         }
         return [name, oldVersion, newVersion];

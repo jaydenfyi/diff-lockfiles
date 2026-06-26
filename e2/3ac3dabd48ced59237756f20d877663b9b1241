@@ -1,0 +1,33 @@
+src/diff.ts
+  s_e71af4bb4ca8d2::t_0b3bb5700ec3e5 11-22,38-39,41-43,45-54,56
+  s_e71af4bb4ca8d2::t_9f7f2beb218edd 10
+src/renderers/table.ts
+  s_e71af4bb4ca8d2::t_98eb0fb36f98c2 34
+  s_e71af4bb4ca8d2::t_b2fdf77c907041 9
+  s_e71af4bb4ca8d2::t_6e2c82b4320e1e 10-21,23-25,27-28,32-33,35
+  s_e71af4bb4ca8d2::t_3448f0da71c340 29-30
+src/formats/npm.ts
+  s_e71af4bb4ca8d2::t_42384b0f67fee5 20-32
+src/renderers/text.ts
+  s_e71af4bb4ca8d2::t_ebd29e8d2b827a 8-11,13-25
+src/renderers/markdown.ts
+  s_e71af4bb4ca8d2::t_25a5c80fa27152 32-33
+src/formats/bun.ts
+  s_e71af4bb4ca8d2::t_a56ae071259d7d 38-45,49-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "e23ac3dabd48ced59237756f20d877663b9b1241",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

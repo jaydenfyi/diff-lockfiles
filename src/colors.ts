@@ -15,13 +15,6 @@
  * Inputs are coerced to string (via interpolation), matching chalk (e.g. `null` -> `"null"`).
  */
 
-/** The subset of color/style functions the renderers use. */
-export interface Colors {
-  red: (text: string | null) => string;
-  green: (text: string | null) => string;
-  bold: (text: string | null) => string;
-}
-
 const ESC = '\x1b[';
 
 /**
@@ -29,12 +22,10 @@ const ESC = '\x1b[';
  * noop returning its (string-coerced) input; when true it wraps the input with
  * ANSI open/close codes.
  */
-export function createColors(enabled: boolean): Colors {
+export function createColors(enabled: boolean) {
   /** Wrap `text` in `open`/`close` ANSI codes, or pass it through when disabled. */
-  const style =
-    (open: string, close: string): ((text: string | null) => string) =>
-    (text) =>
-      enabled ? `${ESC}${open}m${text}${ESC}${close}m` : `${text}`;
+  const style = (open: string, close: string) => (text: string | null) =>
+    enabled ? `${ESC}${open}m${text}${ESC}${close}m` : `${text}`;
 
   return {
     red: style('31', '39'),

@@ -1,11 +1,9 @@
-import semver from 'semver';
 import type { NormalizedLockfile } from './formats/types.js';
+import { classify, isUnchanged } from './changes.js';
+import type { Change, Changes } from './changes.js';
 
 /** Re-export the canonical lockfile type for library consumers. */
 export type { NormalizedLockfile } from './formats/types.js';
-
-/** Map of package key -> [oldVersion, newVersion]. `null` means added/removed. */
-export type Changes = Record<string, [string | null, string | null]>;
 
 /**
  * Reduce a lockfile's packages to a `key -> version` map, applying the shallow
@@ -23,12 +21,13 @@ function packageVersions(lock: NormalizedLockfile, shallow: boolean): Map<string
 /**
  * Compute the version changes between two normalized lockfiles.
  *
- * Returns a map of package key -> [oldVersion, newVersion]. A `null` oldVersion
- * means the package was added; a `null` newVersion means it was removed.
- * Unchanged packages are omitted.
+ * Returns a map of package key -> {@link Change}, where each change is
+ * pre-classified (`added`/`removed`/`upgrade`/`downgrade`/`changed`). Unchanged
+ * packages are dropped. When `shallow` is true, only packages whose key appears
+ * in the lockfile's `directDependencyKeys` are considered.
  *
- * When `shallow` is true, only packages whose key appears in the lockfile's
- * `directDependencyKeys` are considered.
+ * All version reasoning (classification + the unchanged check) lives in
+ * `changes.ts`; this function is pure set arithmetic over the two lockfiles.
  */
 export function diff(
   oldLock: NormalizedLockfile,
@@ -43,15 +42,13 @@ export function diff(
   const allKeys = new Set([...oldVersions.keys(), ...newVersions.keys()]);
 
   const entries = [...allKeys]
-    .map((key): [string, [string | null, string | null]] => {
+    .map((key): [string, Change] => {
       const oldVersion = oldVersions.get(key) ?? null;
       const newVersion = newVersions.get(key) ?? null;
-      return [key, [oldVersion, newVersion]];
+      return [key, { kind: classify(oldVersion, newVersion), oldVersion, newVersion }];
     })
     // Drop unchanged packages (present in both, same version).
-    .filter(([, [oldVersion, newVersion]]) => {
-      return !(oldVersion !== null && newVersion !== null && semver.eq(oldVersion, newVersion));
-    });
+    .filter(([, change]) => !isUnchanged(change.oldVersion, change.newVersion));
 
   return Object.fromEntries(entries);
 }

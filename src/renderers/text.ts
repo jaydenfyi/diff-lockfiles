@@ -1,4 +1,3 @@
-import semver from 'semver';
 import { createColor } from '../colors.js';
 import type { Renderer } from './types.js';
 
@@ -10,21 +9,21 @@ export const textRenderer: Renderer = {
     const color = createColor(options.color);
 
     return Object.entries(changes)
-      .map(([name, [oldVersion, newVersion]]): string | null => {
-        if (!oldVersion) {
-          return `${name} ${color.green('added')}`;
+      .map(([name, { kind, oldVersion, newVersion }]) => {
+        switch (kind) {
+          case 'added':
+            return `${name} ${color.green('added')}`;
+          case 'removed':
+            return `${name} ${color.red('removed')}`;
+          case 'upgrade':
+            return `${name} ${color.green(`${oldVersion} -> ${newVersion}`)}`;
+          case 'downgrade':
+            return `${name} ${color.red(`${oldVersion} -> ${newVersion}`)}`;
+          case 'changed':
+            // Non-semver move (git/file specifier): render plainly, no colour.
+            return `${name} ${oldVersion} -> ${newVersion}`;
         }
-        if (!newVersion) {
-          return `${name} ${color.red('removed')}`;
-        }
-        if (!semver.eq(oldVersion, newVersion)) {
-          const paint = semver.gt(oldVersion, newVersion) ? color.red : color.green;
-          return `${name} ${paint(`${oldVersion} -> ${newVersion}`)}`;
-        }
-        // Unchanged: emit nothing for this entry.
-        return null;
       })
-      .filter((line): line is string => line !== null)
       .join('\n');
   },
 };

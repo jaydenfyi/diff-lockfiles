@@ -1,4 +1,4 @@
-import type { Changes } from '../diff.js';
+import type { Changes } from '../changes.js';
 
 /**
  * Output format identifiers. This is the single source of truth for the format

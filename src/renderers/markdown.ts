@@ -1,31 +1,32 @@
-import semver from 'semver';
 import { markdownTable } from 'markdown-table';
+import type { Change } from '../changes.js';
 import type { Renderer } from './types.js';
 
 /** Render changes as a GitHub-flavoured Markdown table. */
 export const markdownRenderer: Renderer = {
   render(changes, options) {
-    function formatVersionChange(oldVersion: string | null, newVersion: string | null): string {
-      if (!oldVersion) return `**${newVersion}** (added)`;
-      if (!newVersion) return `~~${oldVersion}~~ (removed)`;
-      if (semver.valid(oldVersion) && semver.valid(newVersion)) {
-        if (semver.lt(oldVersion, newVersion)) {
+    function formatVersionChange({ kind, oldVersion, newVersion }: Change): string {
+      switch (kind) {
+        case 'added':
+          return `**${newVersion}** (added)`;
+        case 'removed':
+          return `~~${oldVersion}~~ (removed)`;
+        case 'upgrade':
           return `${oldVersion} → **${newVersion}**`;
-        }
-        if (semver.gt(oldVersion, newVersion)) {
+        case 'downgrade':
           return `**${oldVersion}** → ${newVersion}`;
-        }
+        case 'changed':
+          return `${oldVersion} → ${newVersion}`;
       }
-      return `${oldVersion} → ${newVersion}`;
     }
 
     const tableData = [
       ['Package', 'Old Version', 'New Version', 'Change'],
-      ...Object.entries(changes).map(([name, [oldVersion, newVersion]]) => [
+      ...Object.entries(changes).map(([name, change]) => [
         name,
-        oldVersion || '—',
-        newVersion || '—',
-        formatVersionChange(oldVersion, newVersion),
+        change.oldVersion || '—',
+        change.newVersion || '—',
+        formatVersionChange(change),
       ]),
     ];
 

@@ -1,12 +1,13 @@
 // This is a fork of <https://github.com/mxweaver/lock-diff>
-import type { Changes } from './diff.js';
+import type { Changes } from './changes.js';
 import { renderers } from './renderers/registry.js';
 import type { Format, RenderOptions } from './renderers/types.js';
 
 /** Public API: the pure diff function. */
 export { diff } from './diff.js';
 /** Public API types. */
-export type { Changes, NormalizedLockfile } from './diff.js';
+export type { Changes } from './changes.js';
+export type { NormalizedLockfile } from './diff.js';
 export type { Format, RenderOptions, Renderer } from './renderers/types.js';
 
 /** Options for `print`. Extends `RenderOptions` with the format to select. */

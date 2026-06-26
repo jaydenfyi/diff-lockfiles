@@ -1,4 +1,3 @@
-import semver from 'semver';
 import { table } from 'table';
 import { createColor } from '../colors.js';
 import type { Renderer } from './types.js';
@@ -10,15 +9,10 @@ export const tableRenderer: Renderer = {
     // the output is identical whether or not colouring is engaged.
     const color = createColor(options.color);
 
-    const rows = Object.entries(changes).map(([name, [oldVersion, newVersion]]) => {
-      if (oldVersion && newVersion && semver.valid(oldVersion) && semver.valid(newVersion)) {
-        if (semver.lt(oldVersion, newVersion)) {
-          return [name, color.red(oldVersion), color.green(newVersion)];
-        }
-        if (semver.gt(oldVersion, newVersion)) {
-          return [name, color.green(oldVersion), color.red(newVersion)];
-        }
-      }
+    const rows = Object.entries(changes).map(([name, { kind, oldVersion, newVersion }]) => {
+      if (kind === 'upgrade') return [name, color.red(oldVersion), color.green(newVersion)];
+      if (kind === 'downgrade') return [name, color.green(oldVersion), color.red(newVersion)];
+      // added / removed / changed: render the raw values plainly.
       return [name, oldVersion, newVersion];
     });
 

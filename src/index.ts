@@ -3,11 +3,10 @@ import chalk from 'chalk';
 import semver from 'semver';
 import { table } from 'table';
 import { markdownTable } from 'markdown-table';
+import type { NormalizedLockfile } from './formats/types.js';
 
 /** A lockfile in the shape diff() consumes: a `packages` map keyed by package path. */
-export interface LockfileLike {
-  packages: Record<string, { version: string }>;
-}
+export type LockfileLike = NormalizedLockfile;
 
 /** Map of package key -> [oldVersion, newVersion]. `null` means added/removed. */
 export type Changes = Record<string, [string | null, string | null]>;
@@ -19,36 +18,26 @@ export interface PrintOptions {
 }
 
 export function diff(
-  oldLock: LockfileLike,
-  newLock: LockfileLike,
+  oldLock: NormalizedLockfile,
+  newLock: NormalizedLockfile,
   shallow: boolean,
 ): Changes {
   const changes: Changes = {};
 
-  function filterPackages(packages: LockfileLike['packages']): [string, { version: string }][] {
-    let entries = Object.entries(packages);
-    if (shallow) {
-      const selfPackage = packages[''];
-      const directDeps = new Set(
-        (['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies'] as const).flatMap(
-          (key) => {
-            const deps = (selfPackage as Record<string, unknown> | undefined)?.[key] as
-              | Record<string, string>
-              | undefined;
-            return Object.keys(deps ?? {});
-          },
-        ).map((pkg) => `node_modules/${pkg}`),
-      );
-      entries = entries.filter(([name]) => directDeps.has(name) || name === '');
+  function filterPackages(lock: NormalizedLockfile): [string, { version: string }][] {
+    let entries = Object.entries(lock.packages);
+    if (shallow && lock.directDependencyKeys) {
+      const allow = new Set(lock.directDependencyKeys);
+      entries = entries.filter(([name]) => allow.has(name));
     }
     return entries;
   }
 
-  filterPackages(oldLock.packages).forEach(([name, { version }]) => {
+  filterPackages(oldLock).forEach(([name, { version }]) => {
     changes[name] = [version, null];
   });
 
-  filterPackages(newLock.packages).forEach(([name, { version }]) => {
+  filterPackages(newLock).forEach(([name, { version }]) => {
     if (changes[name] && changes[name][0]) {
       if (semver.eq(changes[name][0] as string, version)) {
         delete changes[name];

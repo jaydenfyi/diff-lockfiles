@@ -1,0 +1,30 @@
+.gitignore
+  s_e71af4bb4ca8d2::t_1d4fc9313413fe 2
+eslint.config.js
+  s_e71af4bb4ca8d2::t_d1d6fc6c8e675c 1-19
+.github/workflows/node.yml
+  s_e71af4bb4ca8d2::t_b9574f779148cf 15,23
+.github/workflows/npmpublish.yml
+  s_e71af4bb4ca8d2::t_3b168264bfedbf 17,19,21-22,31
+package.json
+  s_e71af4bb4ca8d2::t_c129dfbf7fbbff 33,38,41-42
+  s_e71af4bb4ca8d2::t_d35d5a7a36a922 11,13-14,20
+package-lock.json
+  s_e71af4bb4ca8d2::t_7fbbd68efdf051 19,22,27,30-31,594-596,613-615,694-706,721-723,1637-1918,2713-2715,2922-2934,3392-3394,5524-5571,5592-5604,5728-5751
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.2",
+  "base_commit_sha": "489ee148b29039837a75d21a5b6348e6e9ce8ba8",
+  "prompts": {},
+  "sessions": {
+    "s_e71af4bb4ca8d2": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f027a-603e-7493-988c-14330d025deb",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

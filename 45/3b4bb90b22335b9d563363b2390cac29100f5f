@@ -1,0 +1,23 @@
+src/pipeline.ts
+  s_01b2ad8b88b56c::t_aed31d840804f0 4-6,12-18
+src/cli.ts
+  s_01b2ad8b88b56c::t_fe4b9dfaff7b45 17
+__tests__/pipeline.test.ts
+  s_01b2ad8b88b56c::t_68afa7778f1dab 106-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "453b4bb90b22335b9d563363b2390cac29100f5f",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+package.json
+  s_626c1a029b9f8f::t_83463316b048b3 30-31
+  s_626c1a029b9f8f::t_8f09c7c137dcb4 48
+.oxfmtrc.jsonc
+  s_626c1a029b9f8f::t_f71122b4adaecd 1-24
+package-lock.json
+  s_626c1a029b9f8f::t_d8288265b61e33 27,273-619,2386-2437,2780-2789
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3b08c2d5f0fe5cd417d1a8c402b654a83889516e",
+  "prompts": {},
+  "sessions": {
+    "s_626c1a029b9f8f": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0987-5f9d-7d6f-b59c-555f2e94fb5b",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

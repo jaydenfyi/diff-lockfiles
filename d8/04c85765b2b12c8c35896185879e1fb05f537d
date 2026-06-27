@@ -1,0 +1,21 @@
+package.json
+  s_01b2ad8b88b56c::t_6be94228e4b881 38-39
+package-lock.json
+  s_01b2ad8b88b56c::t_b9a674152bd673 16-17,2703-2717
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "d804c85765b2b12c8c35896185879e1fb05f537d",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+__tests__/pipeline.test.ts
+  s_296e11cb9998fe::t_ddcebe8557b61c 107-140
+README.md
+  s_296e11cb9998fe::t_ab5da4890e3d19 155,162
+  s_296e11cb9998fe::t_e788dd3fe4af64 70-78,81-85,91-95,99-117,119-131,140-142,145-147,156-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "49c21ed9b966936c1f3f8657cc4bac4fe9f6dd61",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,19 +1,10 @@
 import { parse as jsoncParse } from 'jsonc-parser';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { declaredDepNames, splitNameVersion } from './types.js';
+import { splitNameVersion } from './types.js';
 
 interface BunLockfile {
 	lockfileVersion: number;
-	workspaces?: Record<string, BunWorkspace>;
 	packages?: Record<string, unknown[]>;
-}
-
-interface BunWorkspace {
-	name?: string;
-	dependencies?: Record<string, string>;
-	devDependencies?: Record<string, string>;
-	optionalDependencies?: Record<string, string>;
-	peerDependencies?: Record<string, string>;
 }
 
 export const parseBunLockfile: LockfileAdapter = {
@@ -25,14 +16,6 @@ export const parseBunLockfile: LockfileAdapter = {
 		// jsonc-parser is string-aware: `//` inside string values (registry URLs,
 		// integrity hashes) is not mistaken for a comment. Trailing commas tolerated.
 		const raw = jsoncParse(content) as BunLockfile;
-
-		// Direct deps are declared in the manifest of the root OR any workspace
-		// package. bun.lock keys `workspaces` by path ("" = root,
-		// "packages/<ws>" = workspace); each carries its own dependency maps. A
-		// workspace is a real package with its own package.json, so its declared
-		// deps are first-party (direct), not transitive pulls.
-		const workspaces = raw.workspaces ?? {};
-		const directNames = declaredDepNames(Object.values(workspaces));
 
 		const packages: NormalizedLockfile['packages'] = {};
 		for (const [key, value] of Object.entries(raw.packages ?? {})) {
@@ -50,10 +33,9 @@ export const parseBunLockfile: LockfileAdapter = {
 				name: name || key,
 				version,
 				sourceKey: key,
-				direct: directNames.has(name || key),
 			};
 		}
 
-		return { packages, directDependencyInfoAvailable: Object.keys(workspaces).length > 0 };
+		return { packages };
 	},
 };

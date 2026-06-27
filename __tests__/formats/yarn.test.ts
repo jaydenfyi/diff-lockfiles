@@ -23,19 +23,16 @@ describe('parseYarnLockfile', () => {
 				name: 'is-odd',
 				version: '3.0.1',
 				sourceKey: 'is-odd@3.0.1',
-				direct: false,
 			});
 			expect(lock.packages['is-number@6.0.0']).toEqual({
 				name: 'is-number',
 				version: '6.0.0',
 				sourceKey: 'is-number@6.0.0',
-				direct: false,
 			});
 			expect(lock.packages['kind-of@6.0.3']).toEqual({
 				name: 'kind-of',
 				version: '6.0.3',
 				sourceKey: 'kind-of@6.0.3',
-				direct: false,
 			});
 		});
 
@@ -44,7 +41,6 @@ describe('parseYarnLockfile', () => {
 				name: '@sindresorhus/is',
 				version: '5.6.0',
 				sourceKey: '@sindresorhus/is@5.6.0',
-				direct: false,
 			});
 		});
 
@@ -61,13 +57,11 @@ describe('parseYarnLockfile', () => {
 				name: 'is-odd',
 				version: '3.0.1',
 				sourceKey: 'is-odd@3.0.1',
-				direct: false,
 			});
 			expect(lock.packages['@sindresorhus/is@5.6.0']).toEqual({
 				name: '@sindresorhus/is',
 				version: '5.6.0',
 				sourceKey: '@sindresorhus/is@5.6.0',
-				direct: false,
 			});
 		});
 
@@ -79,10 +73,5 @@ describe('parseYarnLockfile', () => {
 		it('parses every entry in the fixture', () => {
 			expect(Object.keys(lock.packages)).toHaveLength(4);
 		});
-	});
-
-	it('reports direct-dependency info as unavailable (yarn.lock has no manifest info)', () => {
-		const lock = parseYarnLockfile.parse('yarn.lock', v1);
-		expect(lock.directDependencyInfoAvailable).toBe(false);
 	});
 });

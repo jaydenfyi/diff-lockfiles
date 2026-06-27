@@ -75,10 +75,6 @@ function parseEntries(content: string): YarnEntry[] {
 /**
  * yarn.lock (v1 classic and berry v2+) share a custom line-oriented format.
  * Entries have comma-merged descriptors sharing one resolved `version`.
- *
- * NOTE: yarn.lock contains no root-manifest / direct-dependency info, so
- * `directDependencyInfoAvailable` is always `false`. `--shallow` mode therefore
- * degrades to "show everything, all classified transitive" for yarn.
  */
 export const parseYarnLockfile: LockfileAdapter = {
 	matches(filename: string): boolean {
@@ -96,9 +92,9 @@ export const parseYarnLockfile: LockfileAdapter = {
 			const sourceKey = `${name}@${version}`;
 			// Multiple descriptors share one entry; don't overwrite if seen.
 			if (!packages[sourceKey]) {
-				packages[sourceKey] = { name, version, sourceKey, direct: false };
+				packages[sourceKey] = { name, version, sourceKey };
 			}
 		}
-		return { packages, directDependencyInfoAvailable: false };
+		return { packages };
 	},
 };

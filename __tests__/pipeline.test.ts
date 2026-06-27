@@ -4,7 +4,7 @@ import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 
 // Minimal package-lock.json v2/v3 bodies. The root "" entry carries the
 // project version (same in both → unchanged → filtered out), matching real
-// package-lock.json structure; the one direct dep changes version.
+// package-lock.json structure; the one dependency changes version.
 const oldLock = JSON.stringify({
 	packages: { '': { version: '1.0.0' }, 'node_modules/lodash': { version: '4.17.20' } },
 });
@@ -51,7 +51,7 @@ describe('diffChangedLockfiles', () => {
 		);
 
 		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
 		);
 
 		expect(printed).toEqual(['── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch']);
@@ -61,9 +61,7 @@ describe('diffChangedLockfiles', () => {
 		const source = fakeSource({}, []);
 
 		await expect(
-			captureLog(() =>
-				diffChangedLockfiles(source, 'a', 'b', { format: 'text', color: false, shallow: false }),
-			),
+			captureLog(() => diffChangedLockfiles(source, 'a', 'b', { format: 'text', color: false })),
 		).resolves.toEqual([]);
 	});
 
@@ -73,7 +71,7 @@ describe('diffChangedLockfiles', () => {
 		const source = fakeSource({ TO: { 'package-lock.json': newLock } }, ['package-lock.json']);
 
 		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
 		);
 
 		// The whole lockfile is new, so every dependency entry shows as added (no
@@ -87,7 +85,7 @@ describe('diffChangedLockfiles', () => {
 		const source = fakeSource({ FROM: { 'package-lock.json': oldLock } }, ['package-lock.json']);
 
 		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
 		);
 
 		// Symmetric to the added case: every dependency entry is removed (the root
@@ -119,7 +117,6 @@ describe('diffChangedLockfiles', () => {
 				diffChangedLockfiles(source, 'FROM', 'TO', {
 					format: 'json',
 					color: false,
-					shallow: false,
 				}),
 			)
 		)[0];
@@ -132,7 +129,6 @@ describe('diffChangedLockfiles', () => {
 				diffChangedLockfiles(source, 'FROM', 'TO', {
 					format: 'text',
 					color: false,
-					shallow: false,
 				}),
 			)
 		)[0];
@@ -165,7 +161,6 @@ describe('adapter registration', () => {
 				diffChangedLockfiles(source, 'FROM', 'TO', {
 					format: 'text',
 					color: false,
-					shallow: false,
 				}),
 			);
 
@@ -179,7 +174,7 @@ describe('adapter registration', () => {
 	it('silently skips an unrecognized filename', async () => {
 		const source = fakeSource({ TO: { 'not-a-lockfile.txt': 'whatever' } }, ['not-a-lockfile.txt']);
 		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
 		);
 		expect(printed).toEqual([]);
 	});
@@ -224,7 +219,6 @@ describe('pair-by-name bump fix', () => {
 					diffChangedLockfiles(source, 'FROM', 'TO', {
 						format: 'text',
 						color: false,
-						shallow: false,
 					}),
 				)
 			)[0];
@@ -261,7 +255,6 @@ describe('multi-version resolution (real fixtures)', () => {
 					diffChangedLockfiles(source, 'FROM', 'TO', {
 						format: 'text',
 						color: false,
-						shallow: false,
 					}),
 				)
 			)[0];
@@ -293,7 +286,6 @@ describe('multi-version resolution (real fixtures)', () => {
 					diffChangedLockfiles(source, 'FROM', 'TO', {
 						format: 'text',
 						color: false,
-						shallow: false,
 					}),
 				)
 			)[0];
@@ -324,7 +316,6 @@ describe('multi-version resolution (real fixtures)', () => {
 					diffChangedLockfiles(source, 'FROM', 'TO', {
 						format: 'json',
 						color: false,
-						shallow: false,
 					}),
 				)
 			)[0];

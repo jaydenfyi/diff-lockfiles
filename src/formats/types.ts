@@ -1,8 +1,7 @@
 /**
  * One package in its display-normalized form. `name` is the bare package name
  * shown to humans (`lodash`, `@scope/pkg`); `sourceKey` is the original
- * lockfile key/path kept only for provenance and disambiguation. `direct` is
- * whether this package is directly referenced by the root project.
+ * lockfile key/path kept only for provenance and disambiguation.
  */
 export interface NormalizedPackage {
 	/** Bare package name shown to humans: lodash, @scope/pkg. */
@@ -11,22 +10,15 @@ export interface NormalizedPackage {
 	version: string;
 	/** Original key/path from the lockfile; used only for provenance/disambiguation. */
 	sourceKey: string;
-	/** Whether this package is directly referenced by the supported direct-dependency source. */
-	direct: boolean;
 }
 
 /**
  * Format-agnostic lockfile. `packages` is keyed by the original lockfile
  * `sourceKey` (preserving collisions-free provenance) and maps to fully
- * normalized package metadata. `directDependencyInfoAvailable` signals whether
- * this format can identify direct deps from the lockfile alone; when false
- * (e.g. yarn), `--shallow` degrades to "show everything". It is optional, so a
- * plain `{ packages }` object is also assignable to this type.
+ * normalized package metadata.
  */
 export interface NormalizedLockfile {
 	packages: Record<string, NormalizedPackage>;
-	/** false for formats such as yarn where lockfile alone cannot identify direct deps. */
-	directDependencyInfoAvailable?: boolean;
 }
 
 /** Each format implements this. `filename` is used to detect the format in the CLI. */
@@ -36,14 +28,6 @@ export interface LockfileAdapter {
 	/** parse raw file content into the normalized shape */
 	parse(filename: string, content: string): NormalizedLockfile;
 }
-
-/** The four npm dependency-map field names, shared by every lockfile format. */
-export const DEPENDENCY_FIELDS = [
-	'dependencies',
-	'devDependencies',
-	'optionalDependencies',
-	'peerDependencies',
-] as const;
 
 /**
  * Split a `name@version` key/descriptor into its [name, version] halves.
@@ -75,34 +59,4 @@ export function packageNameFromNodeModulesPath(sourceKey: string): string {
 	const tail = index === -1 ? sourceKey : sourceKey.slice(index + marker.length);
 	const [first, second] = tail.split('/');
 	return first?.startsWith('@') && second ? `${first}/${second}` : first;
-}
-
-/**
- * Bare dependency names declared across one or more manifests — the union of
- * every manifest's four {@link DEPENDENCY_FIELDS} maps. A package is `direct`
- * when its bare name appears in any manifest belonging to the project (the
- * root or a workspace package).
- *
- * Shared by the bun and npm adapters, which both classify a package `direct` by
- * bare name. pnpm cannot reuse it: pnpm keys packages by `name@version`, so it
- * reconstructs version-qualified keys locally (a dep at a non-declared version
- * stays `transitive` there).
- *
- * `manifests` is generic over the raw manifest shape (each format's differs),
- * but all expose their dependency maps under the canonical field names. The
- * one dep-field read is narrowed inside this helper with a defensive
- * `typeof === 'object'` check, so no caller needs a cast.
- */
-export function declaredDepNames<T extends object>(manifests: Iterable<T>): Set<string> {
-	const names = new Set<string>();
-	for (const manifest of manifests) {
-		const record = manifest as Record<string, unknown>;
-		for (const kind of DEPENDENCY_FIELDS) {
-			const deps = record[kind];
-			if (deps && typeof deps === 'object') {
-				for (const name of Object.keys(deps)) names.add(name);
-			}
-		}
-	}
-	return names;
 }

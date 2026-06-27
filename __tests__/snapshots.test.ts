@@ -40,7 +40,7 @@ const FORMATS: readonly Format[] = ['text', 'table', 'markdown', 'json'];
 
 /**
  * Build the {@link LockfileDiffs} for one fixture scenario, mirroring exactly
- * what the pipeline computes: parse both sides, diff (shallow off), and wrap
+ * what the pipeline computes: parse both sides, diff, and wrap
  * with the lockfile's filename. Renders stay pure — no console, no async.
  */
 function fixtureDiffs(manager: string, scenario: string): LockfileDiffs {
@@ -48,7 +48,7 @@ function fixtureDiffs(manager: string, scenario: string): LockfileDiffs {
 	const parse = PARSERS[manager].parse;
 	const oldLock = parse(filename, loadFixture(manager, `${scenario}-old`));
 	const newLock = parse(filename, loadFixture(manager, `${scenario}-new`));
-	return [{ lockfile: filename, changes: diff(oldLock, newLock, false) }];
+	return [{ lockfile: filename, changes: diff(oldLock, newLock) }];
 }
 
 describe('fixture render snapshots', () => {

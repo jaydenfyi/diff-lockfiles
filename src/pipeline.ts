@@ -29,7 +29,6 @@ function adapterFor(filename: string): LockfileAdapter | undefined {
 export interface DiffOptions {
 	format: Format;
 	color: boolean;
-	shallow: boolean;
 }
 
 /**
@@ -61,7 +60,6 @@ export async function diffChangedLockfiles(
 		const changes = diff(
 			oldContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, oldContent),
 			newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
-			options.shallow,
 		);
 		// Skip lockfiles with no net changes so they contribute no output section.
 		if (changes.length > 0) {

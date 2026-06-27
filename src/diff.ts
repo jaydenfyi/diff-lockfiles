@@ -6,15 +6,11 @@ import type { Change, Changes, Version } from './changes.js';
 export type { NormalizedLockfile } from './formats/types.js';
 
 /**
- * The packages a diff should consider, applying the shallow (direct-only)
- * filter when requested and the format reports that direct-dependency info is
- * available. The npm root `''` project entry (empty name) is skipped — it is
- * the project manifest, not a dependency.
+ * The packages a diff should consider. The npm root `''` project entry (empty
+ * name) is skipped — it is the project manifest, not a dependency.
  */
-function packagesFor(lock: NormalizedLockfile, shallow: boolean): NormalizedPackage[] {
-	const packages = Object.values(lock.packages).filter((pkg) => pkg.name !== '');
-	if (!shallow || !lock.directDependencyInfoAvailable) return packages;
-	return packages.filter((pkg) => pkg.direct);
+function packagesFor(lock: NormalizedLockfile): NormalizedPackage[] {
+	return Object.values(lock.packages).filter((pkg) => pkg.name !== '');
 }
 
 /** Group packages by bare name, preserving first-seen order within each name. */
@@ -102,13 +98,9 @@ function changeFromPair(
  * Deterministic ordering: names are visited in first-seen order (old side,
  * then new-only names); within a name's fallback rows, lockfile order is kept.
  */
-export function diff(
-	oldLock: NormalizedLockfile,
-	newLock: NormalizedLockfile,
-	shallow: boolean,
-): Changes {
-	const oldPackages = packagesFor(oldLock, shallow);
-	const newPackages = packagesFor(newLock, shallow);
+export function diff(oldLock: NormalizedLockfile, newLock: NormalizedLockfile): Changes {
+	const oldPackages = packagesFor(oldLock);
+	const newPackages = packagesFor(newLock);
 	const oldByName = groupByName(oldPackages);
 	const newByName = groupByName(newPackages);
 

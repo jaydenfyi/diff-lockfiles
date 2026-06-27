@@ -14,13 +14,10 @@ and Berry v2+), and `aube-lock.yaml` (aube) files.
   names (e.g. `express`), which makes for more readable diffs than the
   `node_modules/...` form.
 - **`pnpm-lock.yaml`** (pnpm v9/10/11). Keys are `name@version` (the version
-  lives in the key). `importers["."]` supplies the direct-dependency set for
-  `--shallow`.
+  lives in the key).
 - **`yarn.lock`** (Yarn classic v1 and Berry v2/v3/v4). Keys are
   `name@version` reconstructed from each entry's descriptors and resolved
-  `version` field. ⚠️ yarn.lock carries no root-manifest info, so `--shallow`
-  has no effect on yarn diffs — every package is shown and classified as
-  `transitive` (see [Limitations](#limitations)).
+  `version` field.
 - **`aube-lock.yaml`** (aube). Byte-identical to the pnpm v9 format; branch
   lockfiles (`aube-lock.<branch>.yaml`) are matched too.
 
@@ -31,10 +28,10 @@ labeled section (table title row, JSON key, `── file ──` divider, or mar
 `##` heading) — see the format examples below.
 
 All formats produce the same enriched output in all four renderers: every
-change carries its **kind** (added/removed/upgrade/downgrade/changed), the
-**bump** level (major/minor/patch) when it's a semver move, and its **scope**
-(direct vs transitive dependency). The legacy binary `bun.lockb` and the old
-`package-lock.json` v1 (`dependencies` map, no `packages`) are **not** supported.
+change carries its **kind** (added/removed/upgrade/downgrade/changed) and the
+**bump** level (major/minor/patch) when it's a semver move. The legacy binary
+`bun.lockb` and the old `package-lock.json` v1 (`dependencies` map, no
+`packages`) are **not** supported.
 
 ## Example
 
@@ -65,7 +62,6 @@ Options:
   -f, --format <format>    changes the output format (table|json|markdown|text) (default: "table")
   -m, --max-buffer <size>  maximum read buffer size (bytes) (default: 10240000)
   -c, --color              colorizes certain output formats (default: false)
-  -s, --shallow            only include direct dependencies of the project (default: false)
   -h, --help               display help for command
 ```
 
@@ -100,8 +96,8 @@ name**, with each package mapping to an **array** of change objects: a package
 name can resolve to multiple versions, so the value is always an array even
 when there's only one change. Each change carries a classified `kind`,
 structured `oldVersion`/`newVersion` (with semver components and optional
-`prerelease`/`build`), the semver magnitude `bump` (or `null`), the dependency
-`scope`, and the original lockfile `oldSourceKey`/`newSourceKey` for provenance.
+`prerelease`/`build`), the semver magnitude `bump` (or `null`), and the original
+lockfile `oldSourceKey`/`newSourceKey` for provenance.
 
 ```json
 {
@@ -126,8 +122,7 @@ structured `oldVersion`/`newVersion` (with semver components and optional
 					"minor": 17,
 					"patch": 21
 				},
-				"bump": "patch",
-				"scope": "direct"
+				"bump": "patch"
 			}
 		],
 		"dedent": [
@@ -144,8 +139,7 @@ structured `oldVersion`/`newVersion` (with semver components and optional
 					"minor": 5,
 					"patch": 1
 				},
-				"bump": null,
-				"scope": "transitive"
+				"bump": null
 			}
 		]
 	}
@@ -161,8 +155,8 @@ workspace), it produces multiple entries in its array, each carrying its own
 ```text
 $ diff-lockfiles --format text HEAD~1 HEAD
 ── package-lock.json ──
-lodash 4.17.20 -> 4.17.21 patch · direct
-dedent added 1.5.1 · transitive
+lodash 4.17.20 -> 4.17.21 ↑ patch
+dedent added 1.5.1
 ```
 
 Each lockfile is introduced by a `── <lockfile> ──` divider. With `--color`,
@@ -178,10 +172,10 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 ```markdown
 ## package-lock.json
 
-| Package | Old       | New       | Change        | Scope      |
-| ------- | --------- | --------- | ------------- | ---------- |
-| lodash  | `4.17.20` | `4.17.21` | patch upgrade | direct     |
-| dedent  | `—`       | `1.5.1`   | added         | transitive |
+| Package | Old       | New       | Change        |
+| ------- | --------- | --------- | ------------- |
+| lodash  | `4.17.20` | `4.17.21` | patch upgrade |
+| dedent  | `—`       | `1.5.1`   | added         |
 ```
 
 ## Limitations
@@ -193,10 +187,6 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
   many-to-many replacement falls back to added/removed rows. Provenance
   (`node_modules/...` path or `name@version` key) is shown only when two
   rendered rows would otherwise be identical.
-- **yarn.lock + `--shallow`:** yarn.lock contains only resolved entries — the
-  root manifest lives in `package.json`. Since `diff-lockfiles` reads only
-  lockfiles, `--shallow` cannot filter yarn output; all yarn packages are shown
-  and classified as `transitive`.
 - **pnpm peer variants:** pnpm's `snapshots:` map can carry peer-context
   variants of the same version (`pkg@1.0.0(react@16)` vs `pkg@1.0.0(react@17)`).
   This tool reads `packages:` only, so such variants collapse to a single

@@ -25,12 +25,11 @@ cli
 		DEFAULT_MAX_BUFFER,
 	)
 	.option('-c, --color', 'colorizes certain output formats', false)
-	.option('-s, --shallow', 'only include direct dependencies of the project', false)
 	.action(
 		async (
 			from: string,
 			to: string,
-			options: { format: string; maxBuffer: number; color: boolean; shallow: boolean },
+			options: { format: string; maxBuffer: number; color: boolean },
 		) => {
 			// `Format` is the single source of truth; narrow commander's string here.
 			// Unknown formats fall back to 'text' (matching the original switch default).
@@ -39,7 +38,6 @@ cli
 			await diffChangedLockfiles(source, from, to, {
 				format,
 				color: options.color,
-				shallow: options.shallow,
 			});
 		},
 	)

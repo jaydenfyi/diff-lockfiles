@@ -37,24 +37,21 @@ describe('parseNpmLockfile', () => {
 		expect(parseNpmLockfile.matches('bun.lock')).toBe(false);
 	});
 
-	it('normalizes each package with bare name, version, source key, and directness', () => {
+	it('normalizes each package with bare name, version, and source key', () => {
 		expect(lock.packages['node_modules/express']).toEqual({
 			name: 'express',
 			version: '4.18.2',
 			sourceKey: 'node_modules/express',
-			direct: true,
 		});
 		expect(lock.packages['node_modules/@types/node']).toEqual({
 			name: '@types/node',
 			version: '20.0.0',
 			sourceKey: 'node_modules/@types/node',
-			direct: true,
 		});
 		expect(lock.packages['node_modules/accepts']).toEqual({
 			name: 'accepts',
 			version: '1.3.8',
 			sourceKey: 'node_modules/accepts',
-			direct: false,
 		});
 	});
 
@@ -73,38 +70,14 @@ describe('parseNpmLockfile', () => {
 			name: '@scope/pkg',
 			version: '2.0.0',
 			sourceKey: 'node_modules/foo/node_modules/@scope/pkg',
-			direct: false,
 		});
-	});
-
-	it('flags packages as available for shallow filtering when a root entry exists', () => {
-		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});
 });
 
 describe('parseNpmLockfile (multi-workspace)', () => {
 	// Real package-lock.json v3 from a 3-workspace monorepo (see
-	// `fixtures/package-lock.workspaces.v3.json`). Root `""` declares `is-even`,
-	// the `packages/util` manifest declares `@sinclair/typebox`, and
-	// `packages/rtl-validation` declares `left-pad`. `is-even` pulls a transitive
-	// chain (is-odd -> is-number -> kind-of -> is-buffer) that no manifest
-	// declares, giving a clean direct/transitive split.
+	// `fixtures/package-lock.workspaces.v3.json`).
 	const lock = parseNpmLockfile.parse('package-lock.json', wsFixture);
-
-	it('marks deps declared in any workspace manifest as direct (not just root)', () => {
-		// Declared in the root "" manifest.
-		expect(lock.packages['node_modules/is-even'].direct).toBe(true);
-		// Declared in a NON-root workspace manifest — the bug this fixes.
-		expect(lock.packages['node_modules/@sinclair/typebox'].direct).toBe(true); // packages/util
-		expect(lock.packages['node_modules/left-pad'].direct).toBe(true); // packages/rtl-validation
-	});
-
-	it('keeps genuinely transitive deps as transitive', () => {
-		expect(lock.packages['node_modules/is-odd'].direct).toBe(false);
-		expect(lock.packages['node_modules/is-number'].direct).toBe(false);
-		expect(lock.packages['node_modules/kind-of'].direct).toBe(false);
-		expect(lock.packages['node_modules/is-buffer'].direct).toBe(false);
-	});
 
 	it('drops workspace manifest entries (no bogus package named after the dir)', () => {
 		// `packages/util` and `packages/rtl-validation` are the project's own
@@ -139,9 +112,5 @@ describe('parseNpmLockfile (multi-workspace)', () => {
 		expect(fileDepLock.packages['node_modules/my-local-pkg']).toBeUndefined();
 		// A real registry dep is unaffected.
 		expect(fileDepLock.packages['node_modules/express']).toBeDefined();
-	});
-
-	it('flags direct info available when a root manifest is present', () => {
-		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});
 });

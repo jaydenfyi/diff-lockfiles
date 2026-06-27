@@ -22,18 +22,12 @@ describe('parseAubeLockfile', () => {
 			name: 'is-even',
 			version: '1.0.0',
 			sourceKey: 'is-even@1.0.0',
-			direct: true,
 		});
 		expect(lock.packages['is-odd@3.0.1']).toEqual({
 			name: 'is-odd',
 			version: '3.0.1',
 			sourceKey: 'is-odd@3.0.1',
-			direct: true,
 		});
 		expect(Object.keys(lock.packages)).toHaveLength(7);
-	});
-
-	it('marks direct-dependency info available (shared pnpm format)', () => {
-		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});
 });

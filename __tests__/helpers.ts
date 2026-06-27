@@ -11,9 +11,8 @@ export function makePackage(
 	name: string,
 	version: string,
 	sourceKey: string = `${name}@${version}`,
-	direct = false,
 ): NormalizedPackage {
-	return { name, version, sourceKey, direct };
+	return { name, version, sourceKey };
 }
 
 /**

@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+
+  // --- required by user ---
+  "useTabs": true,
+  "trailingComma": "all",
+
+  // --- match the existing style as closely as possible ---
+  "tabWidth": 2,
+  "singleQuote": true,
+  "semi": true,
+
+  // --- sensible defaults ---
+  "printWidth": 100,
+  "insertFinalNewline": true,
+
+  // --- ignore generated / non-source trees ---
+  "ignorePatterns": [
+    "dist/**",
+    "node_modules/**",
+    "coverage/**",
+    ".local/**"
+  ]
+}

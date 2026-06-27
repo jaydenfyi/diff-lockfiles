@@ -27,6 +27,8 @@
     "prepublishOnly": "npm run build",
     "typecheck": "tsc -p tsconfig.json",
     "lint": "eslint .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -43,6 +45,7 @@
     "@types/node": "^26.0.0",
     "@types/semver": "^7.7.1",
     "eslint": "^10.5.0",
+    "oxfmt": "^0.55.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
     "vitest": "^4.1.9"

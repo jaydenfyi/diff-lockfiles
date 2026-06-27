@@ -27,8 +27,11 @@ function formatChange(name: string, change: Change, color: ReturnType<typeof cre
 /**
  * Render one section per lockfile: a `── <lockfile> ──` divider header followed
  * by one line per change. Sections are blank-line separated. An empty run
- * yields `''` (printed as nothing). A lockfile with no changes contributes no
- * section.
+ * yields `''` (printed as nothing).
+ *
+ * Empty-changes lockfiles never reach a renderer: the pipeline filters them
+ * (`Object.keys(changes).length > 0`) before pushing. If one ever did arrive,
+ * it would render a header with no body — a visible signal, not a silent drop.
  */
 export const textRenderer: Renderer = {
   render(lockfiles, options) {
@@ -39,8 +42,8 @@ export const textRenderer: Renderer = {
       const body = Object.entries(changes)
         .map(([name, change]) => formatChange(name, change, color))
         .join('\n');
-      return body === '' ? '' : `${color.bold(`── ${lockfile} ──`)}\n${body}`;
+      return `${color.bold(`── ${lockfile} ──`)}\n${body}`;
     });
-    return sections.filter((s) => s !== '').join('\n\n');
+    return sections.join('\n\n');
   },
 };

@@ -34,9 +34,8 @@ function renderTable(lockfile: string, changes: Changes, color: ReturnType<typeo
   // Title row (the lockfile name) above the header, then header, then change rows.
   const header: (string | null)[] = ['package', 'old', 'new', 'change'];
   const titleRow: (string | null)[] = [lockfile, '', '', ''];
-  const titled = [titleRow, header, ...rows];
-  // Bold the first (top/title) row only (noop when colouring is disabled).
-  const data = [titled[0].map((cell) => color.bold(cell)), ...titled.slice(1)];
+  // Bold the title row only (noop when colouring is disabled).
+  const data = [titleRow.map((cell) => color.bold(cell)), header, ...rows];
   return table(data);
 }
 

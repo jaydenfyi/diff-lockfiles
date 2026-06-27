@@ -30,24 +30,27 @@ const MISSING_PATH = /does not exist|exists on disk, but not/i;
  * injection surface even for hostile refs or file names.
  */
 export function createGitSource(options: { maxBuffer?: number } = {}): LockfileSource {
-  const maxBuffer = options.maxBuffer ?? DEFAULT_MAX_BUFFER;
+	const maxBuffer = options.maxBuffer ?? DEFAULT_MAX_BUFFER;
 
-  async function listChanged(from: string, to: string): Promise<string[]> {
-    const output = await execFilePromise('git', ['diff', '--name-only', from, to]);
-    return output.stdout.trim().split(/\r\n|\r|\n/).filter(Boolean);
-  }
+	async function listChanged(from: string, to: string): Promise<string[]> {
+		const output = await execFilePromise('git', ['diff', '--name-only', from, to]);
+		return output.stdout
+			.trim()
+			.split(/\r\n|\r|\n/)
+			.filter(Boolean);
+	}
 
-  async function read(ref: string, filename: string): Promise<string | null> {
-    try {
-      const output = await execFilePromise('git', ['show', `${ref}:${filename}`], { maxBuffer });
-      return output.stdout.trim();
-    } catch (error) {
-      // A path absent at this ref is not an error: it means the file was added
-      // or removed between refs. Surface it as `null` to the pipeline.
-      if (error instanceof Error && MISSING_PATH.test(error.message)) return null;
-      throw error;
-    }
-  }
+	async function read(ref: string, filename: string): Promise<string | null> {
+		try {
+			const output = await execFilePromise('git', ['show', `${ref}:${filename}`], { maxBuffer });
+			return output.stdout.trim();
+		} catch (error) {
+			// A path absent at this ref is not an error: it means the file was added
+			// or removed between refs. Surface it as `null` to the pipeline.
+			if (error instanceof Error && MISSING_PATH.test(error.message)) return null;
+			throw error;
+		}
+	}
 
-  return { listChanged, read };
+	return { listChanged, read };
 }

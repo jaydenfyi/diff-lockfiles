@@ -28,11 +28,11 @@ import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 // Each manager paired with its parser. Filenames come from the shared fixture
 // map so there is a single source of truth for the committed fixture layout.
 const PARSERS: Record<string, LockfileAdapter> = {
-  npm: parseNpmLockfile,
-  bun: parseBunLockfile,
-  pnpm: parsePnpmLockfile,
-  yarn: parseYarnLockfile,
-  aube: parseAubeLockfile,
+	npm: parseNpmLockfile,
+	bun: parseBunLockfile,
+	pnpm: parsePnpmLockfile,
+	yarn: parseYarnLockfile,
+	aube: parseAubeLockfile,
 };
 
 const SCENARIOS = ['pair', 'fallback'] as const;
@@ -44,25 +44,22 @@ const FORMATS: readonly Format[] = ['text', 'table', 'markdown', 'json'];
  * with the lockfile's filename. Renders stay pure — no console, no async.
  */
 function fixtureDiffs(manager: string, scenario: string): LockfileDiffs {
-  const filename = FIXTURE_FILENAME[manager];
-  const parse = PARSERS[manager].parse;
-  const oldLock = parse(filename, loadFixture(manager, `${scenario}-old`));
-  const newLock = parse(filename, loadFixture(manager, `${scenario}-new`));
-  return [{ lockfile: filename, changes: diff(oldLock, newLock, false) }];
+	const filename = FIXTURE_FILENAME[manager];
+	const parse = PARSERS[manager].parse;
+	const oldLock = parse(filename, loadFixture(manager, `${scenario}-old`));
+	const newLock = parse(filename, loadFixture(manager, `${scenario}-new`));
+	return [{ lockfile: filename, changes: diff(oldLock, newLock, false) }];
 }
 
 describe('fixture render snapshots', () => {
-  describe.each(FORMATS)('%s format', (format) => {
-    describe.each(SCENARIOS)('%s scenario', (scenario) => {
-      it.each(FIXTURE_MANAGERS)(
-        '%s',
-        (manager) => {
-          const out = renderers[format].render(fixtureDiffs(manager, scenario), {
-            color: false,
-          });
-          expect(out).toMatchSnapshot();
-        },
-      );
-    });
-  });
+	describe.each(FORMATS)('%s format', (format) => {
+		describe.each(SCENARIOS)('%s scenario', (scenario) => {
+			it.each(FIXTURE_MANAGERS)('%s', (manager) => {
+				const out = renderers[format].render(fixtureDiffs(manager, scenario), {
+					color: false,
+				});
+				expect(out).toMatchSnapshot();
+			});
+		});
+	});
 });

@@ -13,7 +13,7 @@ export type Format = 'json' | 'table' | 'markdown' | 'text';
  * {@link LockfileDiff} entry, not here.
  */
 export interface RenderOptions {
-  color: boolean;
+	color: boolean;
 }
 
 /**
@@ -22,8 +22,8 @@ export interface RenderOptions {
  * (e.g. `package-lock.json` or `apps/api/bun.lock`).
  */
 export interface LockfileDiff {
-  lockfile: string;
-  changes: Changes;
+	lockfile: string;
+	changes: Changes;
 }
 
 /** A complete run's worth of diffs, in git's changed-file order. */
@@ -37,5 +37,5 @@ export type LockfileDiffs = LockfileDiff[];
  * can label its output regardless of format.
  */
 export interface Renderer {
-  render(lockfiles: LockfileDiffs, options: RenderOptions): string;
+	render(lockfiles: LockfileDiffs, options: RenderOptions): string;
 }

@@ -14,7 +14,7 @@
 
 ## 1.0.3 - 2024-06-06
 
-- Only diff files whose string *ends* with package-lock.json (GH #24 Tim
+- Only diff files whose string _ends_ with package-lock.json (GH #24 Tim
   Vergenz)
 
 ## 1.0.2 - 2023-09-07

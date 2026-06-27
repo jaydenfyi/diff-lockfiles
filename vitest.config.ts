@@ -10,9 +10,9 @@ import { defineConfig } from 'vitest/config';
 //   - ts-jest preset/transform, moduleNameMapper  ->  not needed: Vite transforms
 //                                  TS and resolves .js->.ts imports natively.
 export default defineConfig({
-  test: {
-    environment: 'node',
-    globals: true,
-    include: ['**/__tests__/**/*.test.ts'],
-  },
+	test: {
+		environment: 'node',
+		globals: true,
+		include: ['**/__tests__/**/*.test.ts'],
+	},
 });

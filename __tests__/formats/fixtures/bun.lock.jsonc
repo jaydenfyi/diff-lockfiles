@@ -1,20 +1,20 @@
 {
-  "lockfileVersion": 1,
-  "workspaces": {
-    "": {
-      "name": "my-app",
-      "dependencies": {
-        "express": "^4.18.0",
-      },
-      "devDependencies": {
-        "@types/node": "^20.0.0",
-      },
-    },
-  },
-  "packages": {
-    // direct dependency
-    "express": ["express@4.18.2", "", { "dependencies": { "accepts": "1.3.8" } }, "sha512-AAA=="],
-    "accepts": ["accepts@1.3.8", "", {}, "sha512-BBB=="],
-    "@types/node": ["@types/node@20.0.0", "", {}, "sha512-CCC=="],
-  },
+	"lockfileVersion": 1,
+	"workspaces": {
+		"": {
+			"name": "my-app",
+			"dependencies": {
+				"express": "^4.18.0",
+			},
+			"devDependencies": {
+				"@types/node": "^20.0.0",
+			},
+		},
+	},
+	"packages": {
+		// direct dependency
+		"express": ["express@4.18.2", "", { "dependencies": { "accepts": "1.3.8" } }, "sha512-AAA=="],
+		"accepts": ["accepts@1.3.8", "", {}, "sha512-BBB=="],
+		"@types/node": ["@types/node@20.0.0", "", {}, "sha512-CCC=="],
+	},
 }

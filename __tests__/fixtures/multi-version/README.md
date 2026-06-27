@@ -17,10 +17,10 @@ each depending on a different exact version of `left-pad`.
 
 ## Snapshots
 
-| Snapshot | Apps pin | Proves |
-| --- | --- | --- |
-| `pair-old` / `pair-new` | `{1.0.2,1.1.3,1.2.0}` → `{1.1.3,1.2.0,1.3.0}` | cancellation of unchanged same-version entries **plus** one clean 1:1 upgrade (`1.0.2 → 1.3.0`) |
-| `fallback-old` / `fallback-new` | `{1.0.2,1.1.3}` → `{1.2.0,1.3.0}` | ambiguous many-to-many replacement → 2 removed + 2 added rows |
+| Snapshot                        | Apps pin                                      | Proves                                                                                          |
+| ------------------------------- | --------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `pair-old` / `pair-new`         | `{1.0.2,1.1.3,1.2.0}` → `{1.1.3,1.2.0,1.3.0}` | cancellation of unchanged same-version entries **plus** one clean 1:1 upgrade (`1.0.2 → 1.3.0`) |
+| `fallback-old` / `fallback-new` | `{1.0.2,1.1.3}` → `{1.2.0,1.3.0}`             | ambiguous many-to-many replacement → 2 removed + 2 added rows                                   |
 
 Versions are restricted to those `left-pad` has actually published (latest is
 `1.3.0`) so the fixtures regenerate reproducibly.

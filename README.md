@@ -105,50 +105,50 @@ structured `oldVersion`/`newVersion` (with semver components and optional
 
 ```json
 {
-  "package-lock.json": {
-    "lodash": [
-      {
-        "name": "lodash",
-        "oldSourceKey": "node_modules/lodash",
-        "newSourceKey": "node_modules/lodash",
-        "kind": "upgrade",
-        "oldVersion": {
-          "scheme": "semver",
-          "raw": "4.17.20",
-          "major": 4,
-          "minor": 17,
-          "patch": 20
-        },
-        "newVersion": {
-          "scheme": "semver",
-          "raw": "4.17.21",
-          "major": 4,
-          "minor": 17,
-          "patch": 21
-        },
-        "bump": "patch",
-        "scope": "direct"
-      }
-    ],
-    "dedent": [
-      {
-        "name": "dedent",
-        "oldSourceKey": null,
-        "newSourceKey": "node_modules/dedent",
-        "kind": "added",
-        "oldVersion": null,
-        "newVersion": {
-          "scheme": "semver",
-          "raw": "1.5.1",
-          "major": 1,
-          "minor": 5,
-          "patch": 1
-        },
-        "bump": null,
-        "scope": "transitive"
-      }
-    ]
-  }
+	"package-lock.json": {
+		"lodash": [
+			{
+				"name": "lodash",
+				"oldSourceKey": "node_modules/lodash",
+				"newSourceKey": "node_modules/lodash",
+				"kind": "upgrade",
+				"oldVersion": {
+					"scheme": "semver",
+					"raw": "4.17.20",
+					"major": 4,
+					"minor": 17,
+					"patch": 20
+				},
+				"newVersion": {
+					"scheme": "semver",
+					"raw": "4.17.21",
+					"major": 4,
+					"minor": 17,
+					"patch": 21
+				},
+				"bump": "patch",
+				"scope": "direct"
+			}
+		],
+		"dedent": [
+			{
+				"name": "dedent",
+				"oldSourceKey": null,
+				"newSourceKey": "node_modules/dedent",
+				"kind": "added",
+				"oldVersion": null,
+				"newVersion": {
+					"scheme": "semver",
+					"raw": "1.5.1",
+					"major": 1,
+					"minor": 5,
+					"patch": 1
+				},
+				"bump": null,
+				"scope": "transitive"
+			}
+		]
+	}
 }
 ```
 

@@ -12,26 +12,26 @@ export type { NormalizedLockfile } from './formats/types.js';
  * the project manifest, not a dependency.
  */
 function packagesFor(lock: NormalizedLockfile, shallow: boolean): NormalizedPackage[] {
-  const packages = Object.values(lock.packages).filter((pkg) => pkg.name !== '');
-  if (!shallow || !lock.directDependencyInfoAvailable) return packages;
-  return packages.filter((pkg) => pkg.direct);
+	const packages = Object.values(lock.packages).filter((pkg) => pkg.name !== '');
+	if (!shallow || !lock.directDependencyInfoAvailable) return packages;
+	return packages.filter((pkg) => pkg.direct);
 }
 
 /** Group packages by bare name, preserving first-seen order within each name. */
 function groupByName(packages: NormalizedPackage[]): Map<string, NormalizedPackage[]> {
-  const grouped = new Map<string, NormalizedPackage[]>();
-  for (const entry of packages) {
-    const list = grouped.get(entry.name);
-    if (list) list.push(entry);
-    else grouped.set(entry.name, [entry]);
-  }
-  return grouped;
+	const grouped = new Map<string, NormalizedPackage[]>();
+	for (const entry of packages) {
+		const list = grouped.get(entry.name);
+		if (list) list.push(entry);
+		else grouped.set(entry.name, [entry]);
+	}
+	return grouped;
 }
 
 /** A package pre-parsed with its {@link Version}, so cancellation parses once each. */
 interface ParsedPackage {
-  package: NormalizedPackage;
-  version: Version;
+	package: NormalizedPackage;
+	version: Version;
 }
 
 /**
@@ -44,49 +44,60 @@ interface ParsedPackage {
  * codebase and preserves the build-metadata-only-change contract end-to-end.
  */
 function cancelUnchanged(
-  oldPackages: NormalizedPackage[],
-  newPackages: NormalizedPackage[],
+	oldPackages: NormalizedPackage[],
+	newPackages: NormalizedPackage[],
 ): { oldRemaining: NormalizedPackage[]; newRemaining: NormalizedPackage[] } {
-  const oldLeft = oldPackages.map((entry) => ({ package: entry, version: parseVersion(entry.version) }));
-  const newLeft = newPackages.map((entry) => ({ package: entry, version: parseVersion(entry.version) }));
+	const oldLeft = oldPackages.map((entry) => ({
+		package: entry,
+		version: parseVersion(entry.version),
+	}));
+	const newLeft = newPackages.map((entry) => ({
+		package: entry,
+		version: parseVersion(entry.version),
+	}));
 
-  for (let i = oldLeft.length - 1; i >= 0; i--) {
-    const oldEntry: ParsedPackage = oldLeft[i];
-    const match = newLeft.findIndex((candidate) => isUnchanged(oldEntry.version, candidate.version));
-    if (match !== -1) {
-      oldLeft.splice(i, 1);
-      newLeft.splice(match, 1);
-    }
-  }
-  return {
-    oldRemaining: oldLeft.map((entry) => entry.package),
-    newRemaining: newLeft.map((entry) => entry.package),
-  };
+	for (let i = oldLeft.length - 1; i >= 0; i--) {
+		const oldEntry: ParsedPackage = oldLeft[i];
+		const match = newLeft.findIndex((candidate) =>
+			isUnchanged(oldEntry.version, candidate.version),
+		);
+		if (match !== -1) {
+			oldLeft.splice(i, 1);
+			newLeft.splice(match, 1);
+		}
+	}
+	return {
+		oldRemaining: oldLeft.map((entry) => entry.package),
+		newRemaining: newLeft.map((entry) => entry.package),
+	};
 }
 
 /** A paired change is `direct` if either side was a direct dependency. */
-function scopeOf(oldPackage: NormalizedPackage | null, newPackage: NormalizedPackage | null): Scope {
-  return oldPackage?.direct || newPackage?.direct ? 'direct' : 'transitive';
+function scopeOf(
+	oldPackage: NormalizedPackage | null,
+	newPackage: NormalizedPackage | null,
+): Scope {
+	return oldPackage?.direct || newPackage?.direct ? 'direct' : 'transitive';
 }
 
 /** Build a Change from an old/new package pair (either may be null for add/remove). */
 function changeFromPair(
-  name: string,
-  oldPackage: NormalizedPackage | null,
-  newPackage: NormalizedPackage | null,
+	name: string,
+	oldPackage: NormalizedPackage | null,
+	newPackage: NormalizedPackage | null,
 ): Change {
-  const oldVersion = oldPackage ? parseVersion(oldPackage.version) : null;
-  const newVersion = newPackage ? parseVersion(newPackage.version) : null;
-  return {
-    name,
-    oldSourceKey: oldPackage?.sourceKey ?? null,
-    newSourceKey: newPackage?.sourceKey ?? null,
-    kind: classify(oldVersion, newVersion),
-    oldVersion,
-    newVersion,
-    bump: bumpOf(oldVersion, newVersion),
-    scope: scopeOf(oldPackage, newPackage),
-  };
+	const oldVersion = oldPackage ? parseVersion(oldPackage.version) : null;
+	const newVersion = newPackage ? parseVersion(newPackage.version) : null;
+	return {
+		name,
+		oldSourceKey: oldPackage?.sourceKey ?? null,
+		newSourceKey: newPackage?.sourceKey ?? null,
+		kind: classify(oldVersion, newVersion),
+		oldVersion,
+		newVersion,
+		bump: bumpOf(oldVersion, newVersion),
+		scope: scopeOf(oldPackage, newPackage),
+	};
 }
 
 /**
@@ -101,34 +112,34 @@ function changeFromPair(
  * then new-only names); within a name's fallback rows, lockfile order is kept.
  */
 export function diff(
-  oldLock: NormalizedLockfile,
-  newLock: NormalizedLockfile,
-  shallow: boolean,
+	oldLock: NormalizedLockfile,
+	newLock: NormalizedLockfile,
+	shallow: boolean,
 ): Changes {
-  const oldPackages = packagesFor(oldLock, shallow);
-  const newPackages = packagesFor(newLock, shallow);
-  const oldByName = groupByName(oldPackages);
-  const newByName = groupByName(newPackages);
+	const oldPackages = packagesFor(oldLock, shallow);
+	const newPackages = packagesFor(newLock, shallow);
+	const oldByName = groupByName(oldPackages);
+	const newByName = groupByName(newPackages);
 
-  // First-seen order: old names, then names only present on the new side.
-  const names = [...oldByName.keys()];
-  for (const name of newByName.keys()) {
-    if (!oldByName.has(name)) names.push(name);
-  }
+	// First-seen order: old names, then names only present on the new side.
+	const names = [...oldByName.keys()];
+	for (const name of newByName.keys()) {
+		if (!oldByName.has(name)) names.push(name);
+	}
 
-  const changes: Change[] = [];
-  for (const name of names) {
-    const { oldRemaining, newRemaining } = cancelUnchanged(
-      oldByName.get(name) ?? [],
-      newByName.get(name) ?? [],
-    );
-    if (oldRemaining.length === 0 && newRemaining.length === 0) continue;
-    if (oldRemaining.length === 1 && newRemaining.length === 1) {
-      changes.push(changeFromPair(name, oldRemaining[0], newRemaining[0]));
-      continue;
-    }
-    for (const oldPackage of oldRemaining) changes.push(changeFromPair(name, oldPackage, null));
-    for (const newPackage of newRemaining) changes.push(changeFromPair(name, null, newPackage));
-  }
-  return changes;
+	const changes: Change[] = [];
+	for (const name of names) {
+		const { oldRemaining, newRemaining } = cancelUnchanged(
+			oldByName.get(name) ?? [],
+			newByName.get(name) ?? [],
+		);
+		if (oldRemaining.length === 0 && newRemaining.length === 0) continue;
+		if (oldRemaining.length === 1 && newRemaining.length === 1) {
+			changes.push(changeFromPair(name, oldRemaining[0], newRemaining[0]));
+			continue;
+		}
+		for (const oldPackage of oldRemaining) changes.push(changeFromPair(name, oldPackage, null));
+		for (const newPackage of newRemaining) changes.push(changeFromPair(name, null, newPackage));
+	}
+	return changes;
 }

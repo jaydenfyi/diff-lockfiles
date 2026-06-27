@@ -22,16 +22,16 @@ export type Scope = 'direct' | 'transitive';
  * arm only carries the raw specifier (git URLs, `file:` paths, etc.).
  */
 export type Version =
-  | {
-      scheme: 'semver';
-      raw: string;
-      major: number;
-      minor: number;
-      patch: number;
-      prerelease?: string;
-      build?: string;
-    }
-  | { scheme: 'nonsemver'; raw: string };
+	| {
+			scheme: 'semver';
+			raw: string;
+			major: number;
+			minor: number;
+			patch: number;
+			prerelease?: string;
+			build?: string;
+	  }
+	| { scheme: 'nonsemver'; raw: string };
 
 /**
  * A single package's version change, pre-classified so renderers never need to
@@ -43,14 +43,14 @@ export type Version =
  * duplicate same-name changes.
  */
 export interface Change {
-  name: string;
-  oldSourceKey: string | null;
-  newSourceKey: string | null;
-  kind: ChangeKind;
-  oldVersion: Version | null;
-  newVersion: Version | null;
-  bump: Bump | null;
-  scope: Scope;
+	name: string;
+	oldSourceKey: string | null;
+	newSourceKey: string | null;
+	kind: ChangeKind;
+	oldVersion: Version | null;
+	newVersion: Version | null;
+	bump: Bump | null;
+	scope: Scope;
 }
 
 /**
@@ -68,12 +68,18 @@ export type Changes = Change[];
  * raw string. Never throws.
  */
 export function parseVersion(raw: string): Version {
-  const parsed = semver.parse(raw);
-  if (parsed === null) return { scheme: 'nonsemver', raw };
-  const version: Version = { scheme: 'semver', raw, major: parsed.major, minor: parsed.minor, patch: parsed.patch };
-  if (parsed.prerelease.length) version.prerelease = parsed.prerelease.join('.');
-  if (parsed.build.length) version.build = parsed.build.join('.');
-  return version;
+	const parsed = semver.parse(raw);
+	if (parsed === null) return { scheme: 'nonsemver', raw };
+	const version: Version = {
+		scheme: 'semver',
+		raw,
+		major: parsed.major,
+		minor: parsed.minor,
+		patch: parsed.patch,
+	};
+	if (parsed.prerelease.length) version.prerelease = parsed.prerelease.join('.');
+	if (parsed.build.length) version.build = parsed.build.join('.');
+	return version;
 }
 
 /**
@@ -87,13 +93,13 @@ export function parseVersion(raw: string): Version {
  * is a plain `changed`.
  */
 export function classify(oldVersion: Version | null, newVersion: Version | null): ChangeKind {
-  if (oldVersion === null) return 'added';
-  if (newVersion === null) return 'removed';
-  if (oldVersion.scheme === 'semver' && newVersion.scheme === 'semver') {
-    if (semver.lt(oldVersion.raw, newVersion.raw)) return 'upgrade';
-    if (semver.gt(oldVersion.raw, newVersion.raw)) return 'downgrade';
-  }
-  return 'changed';
+	if (oldVersion === null) return 'added';
+	if (newVersion === null) return 'removed';
+	if (oldVersion.scheme === 'semver' && newVersion.scheme === 'semver') {
+		if (semver.lt(oldVersion.raw, newVersion.raw)) return 'upgrade';
+		if (semver.gt(oldVersion.raw, newVersion.raw)) return 'downgrade';
+	}
+	return 'changed';
 }
 
 /**
@@ -102,22 +108,22 @@ export function classify(oldVersion: Version | null, newVersion: Version | null)
  * onto their release level.
  */
 export function bumpOf(oldVersion: Version | null, newVersion: Version | null): Bump | null {
-  if (oldVersion === null || newVersion === null) return null;
-  if (oldVersion.scheme !== 'semver' || newVersion.scheme !== 'semver') return null;
-  switch (semver.diff(oldVersion.raw, newVersion.raw)) {
-    case 'major':
-    case 'premajor':
-      return 'major';
-    case 'minor':
-    case 'preminor':
-      return 'minor';
-    case 'patch':
-    case 'prepatch':
-    case 'prerelease':
-      return 'patch';
-    default:
-      return null;
-  }
+	if (oldVersion === null || newVersion === null) return null;
+	if (oldVersion.scheme !== 'semver' || newVersion.scheme !== 'semver') return null;
+	switch (semver.diff(oldVersion.raw, newVersion.raw)) {
+		case 'major':
+		case 'premajor':
+			return 'major';
+		case 'minor':
+		case 'preminor':
+			return 'minor';
+		case 'patch':
+		case 'prepatch':
+		case 'prerelease':
+			return 'patch';
+		default:
+			return null;
+	}
 }
 
 /**
@@ -128,9 +134,9 @@ export function bumpOf(oldVersion: Version | null, newVersion: Version | null): 
  * unchanged. Non-semver sides fall back to exact raw-string equality.
  */
 export function isUnchanged(oldVersion: Version | null, newVersion: Version | null): boolean {
-  if (oldVersion === null || newVersion === null) return false;
-  if (oldVersion.scheme === 'semver' && newVersion.scheme === 'semver') {
-    return semver.eq(oldVersion.raw, newVersion.raw);
-  }
-  return oldVersion.raw === newVersion.raw;
+	if (oldVersion === null || newVersion === null) return false;
+	if (oldVersion.scheme === 'semver' && newVersion.scheme === 'semver') {
+		return semver.eq(oldVersion.raw, newVersion.raw);
+	}
+	return oldVersion.raw === newVersion.raw;
 }

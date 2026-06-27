@@ -9,11 +9,11 @@ import type { NormalizedLockfile, LockfileAdapter } from './types.js';
  * (pnpm-style `/` encoded as `!`).
  */
 export const parseAubeLockfile: LockfileAdapter = {
-  matches(filename: string): boolean {
-    const base = filename.includes('/') ? filename.slice(filename.lastIndexOf('/') + 1) : filename;
-    return base === 'aube-lock.yaml' || /^aube-lock\..+\.yaml$/.test(base);
-  },
-  parse(_filename: string, content: string): NormalizedLockfile {
-    return parsePnpmContent(content);
-  },
+	matches(filename: string): boolean {
+		const base = filename.includes('/') ? filename.slice(filename.lastIndexOf('/') + 1) : filename;
+		return base === 'aube-lock.yaml' || /^aube-lock\..+\.yaml$/.test(base);
+	},
+	parse(_filename: string, content: string): NormalizedLockfile {
+		return parsePnpmContent(content);
+	},
 };

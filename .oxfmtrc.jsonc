@@ -1,24 +1,23 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
 
-  // --- required by user ---
-  "useTabs": true,
-  "trailingComma": "all",
+	// --- required by user ---
+	"useTabs": true,
+	"trailingComma": "all",
 
-  // --- match the existing style as closely as possible ---
-  "tabWidth": 2,
-  "singleQuote": true,
-  "semi": true,
+	// --- match the existing style as closely as possible ---
+	"tabWidth": 2,
+	"singleQuote": true,
+	"semi": true,
 
-  // --- sensible defaults ---
-  "printWidth": 100,
-  "insertFinalNewline": true,
+	// --- sensible defaults ---
+	"printWidth": 100,
+	"insertFinalNewline": true,
 
-  // --- ignore generated / non-source trees ---
-  "ignorePatterns": [
-    "dist/**",
-    "node_modules/**",
-    "coverage/**",
-    ".local/**"
-  ]
+	// oxfmt reorders package.json keys by default (schema default: true).
+	// Disable so adding a formatter doesn't reorder the maintainer's package.json.
+	"sortPackageJson": false,
+
+	// --- ignore generated / non-source trees ---
+	"ignorePatterns": ["dist/**", "node_modules/**", "coverage/**", ".local/**"],
 }

@@ -23,13 +23,13 @@ const ESC = '\x1b[';
  * ANSI open/close codes.
  */
 export function createColor(enabled: boolean) {
-  /** Wrap `text` in `open`/`close` ANSI codes, or pass it through when disabled. */
-  const style = (open: string, close: string) => (text: string | null) =>
-    enabled ? `${ESC}${open}m${text}${ESC}${close}m` : `${text}`;
+	/** Wrap `text` in `open`/`close` ANSI codes, or pass it through when disabled. */
+	const style = (open: string, close: string) => (text: string | null) =>
+		enabled ? `${ESC}${open}m${text}${ESC}${close}m` : `${text}`;
 
-  return {
-    red: style('31', '39'),
-    green: style('32', '39'),
-    bold: style('1', '22'),
-  };
+	return {
+		red: style('31', '39'),
+		green: style('32', '39'),
+		bold: style('1', '22'),
+	};
 }

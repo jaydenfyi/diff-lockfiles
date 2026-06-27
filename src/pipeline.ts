@@ -10,11 +10,11 @@ import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
 const adapters: LockfileAdapter[] = [
-  parsePnpmLockfile,
-  parseNpmLockfile,
-  parseYarnLockfile,
-  parseBunLockfile,
-  parseAubeLockfile,
+	parsePnpmLockfile,
+	parseNpmLockfile,
+	parseYarnLockfile,
+	parseBunLockfile,
+	parseAubeLockfile,
 ];
 
 /** A lockfile with no packages — the shape used for a side that is absent. */
@@ -22,14 +22,14 @@ const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };
 
 /** Find the adapter that handles `filename`, if any. */
 function adapterFor(filename: string): LockfileAdapter | undefined {
-  return adapters.find((adapter) => adapter.matches(filename));
+	return adapters.find((adapter) => adapter.matches(filename));
 }
 
 /** Options driving how changed lockfiles are diffed and rendered. */
 export interface DiffOptions {
-  format: Format;
-  color: boolean;
-  shallow: boolean;
+	format: Format;
+	color: boolean;
+	shallow: boolean;
 }
 
 /**
@@ -41,35 +41,35 @@ export interface DiffOptions {
  * adapters' `matches` check.
  */
 export async function diffChangedLockfiles(
-  source: LockfileSource,
-  from: string,
-  to: string,
-  options: DiffOptions,
+	source: LockfileSource,
+	from: string,
+	to: string,
+	options: DiffOptions,
 ): Promise<void> {
-  const files = await source.listChanged(from, to);
-  const diffs: LockfileDiff[] = [];
-  for (const filename of files) {
-    const adapter = adapterFor(filename);
-    if (!adapter) continue;
+	const files = await source.listChanged(from, to);
+	const diffs: LockfileDiff[] = [];
+	for (const filename of files) {
+		const adapter = adapterFor(filename);
+		if (!adapter) continue;
 
-    const [oldContent, newContent] = await Promise.all([
-      source.read(from, filename),
-      source.read(to, filename),
-    ]);
-    // A side that is `null` (the file was added or removed between refs) is
-    // diffed as an empty lockfile, so every package shows as added or removed.
-    const changes = diff(
-      oldContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, oldContent),
-      newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
-      options.shallow,
-    );
-    // Skip lockfiles with no net changes so they contribute no output section.
-    if (changes.length > 0) {
-      diffs.push({ lockfile: filename, changes });
-    }
-  }
+		const [oldContent, newContent] = await Promise.all([
+			source.read(from, filename),
+			source.read(to, filename),
+		]);
+		// A side that is `null` (the file was added or removed between refs) is
+		// diffed as an empty lockfile, so every package shows as added or removed.
+		const changes = diff(
+			oldContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, oldContent),
+			newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
+			options.shallow,
+		);
+		// Skip lockfiles with no net changes so they contribute no output section.
+		if (changes.length > 0) {
+			diffs.push({ lockfile: filename, changes });
+		}
+	}
 
-  // Render the whole run once into a single document (one log line), so every
-  // format can label each lockfile and JSON stays one valid object.
-  print(diffs, { color: options.color, format: options.format });
+	// Render the whole run once into a single document (one log line), so every
+	// format can label each lockfile and JSON stays one valid object.
+	print(diffs, { color: options.color, format: options.format });
 }

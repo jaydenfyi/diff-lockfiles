@@ -1,53 +1,53 @@
 {
-  "name": "diff-lockfiles",
-  "version": "0.0.0",
-  "description": "diff changed npm, bun, pnpm, yarn, and aube lockfiles between git refs",
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/jaydenfyi/diff-lockfiles.git"
-  },
-  "type": "module",
-  "bin": {
-    "diff-lockfiles": "dist/cli.js"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "author": "jaydenfyi",
-  "license": "MIT",
-  "scripts": {
-    "start": "node dist/cli.js",
-    "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build",
-    "typecheck": "tsc -p tsconfig.json",
-    "lint": "eslint .",
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "dependencies": {
-    "commander": "^15.0.0",
-    "jsonc-parser": "^3.3.1",
-    "markdown-table": "^3.0.4",
-    "semver": "^7.8.4",
-    "table": "^6.9.0",
-    "yaml": "^2.9.0"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^26.0.0",
-    "@types/semver": "^7.7.1",
-    "eslint": "^10.5.0",
-    "oxfmt": "^0.55.0",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1",
-    "vitest": "^4.1.9"
-  }
+	"name": "diff-lockfiles",
+	"version": "0.0.0",
+	"description": "diff changed npm, bun, pnpm, yarn, and aube lockfiles between git refs",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/jaydenfyi/diff-lockfiles.git"
+	},
+	"type": "module",
+	"bin": {
+		"diff-lockfiles": "dist/cli.js"
+	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"author": "jaydenfyi",
+	"license": "MIT",
+	"scripts": {
+		"start": "node dist/cli.js",
+		"build": "tsc -p tsconfig.build.json",
+		"prepublishOnly": "npm run build",
+		"typecheck": "tsc -p tsconfig.json",
+		"lint": "eslint .",
+		"format": "oxfmt",
+		"format:check": "oxfmt --check",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"dependencies": {
+		"commander": "^15.0.0",
+		"jsonc-parser": "^3.3.1",
+		"markdown-table": "^3.0.4",
+		"semver": "^7.8.4",
+		"table": "^6.9.0",
+		"yaml": "^2.9.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/node": "^26.0.0",
+		"@types/semver": "^7.7.1",
+		"eslint": "^10.5.0",
+		"oxfmt": "^0.55.0",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.61.1",
+		"vitest": "^4.1.9"
+	}
 }

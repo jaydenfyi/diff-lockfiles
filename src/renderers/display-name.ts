@@ -3,13 +3,13 @@ import type { Change } from '../changes.js';
 
 /** The identity of a rendered row: everything that would make two rows look identical. */
 function rowSignature(change: Change): string {
-  return [
-    change.name,
-    change.kind,
-    displayRaw(change.oldVersion),
-    displayRaw(change.newVersion),
-    change.scope,
-  ].join('\u0000');
+	return [
+		change.name,
+		change.kind,
+		displayRaw(change.oldVersion),
+		displayRaw(change.newVersion),
+		change.scope,
+	].join('\u0000');
 }
 
 /**
@@ -18,14 +18,10 @@ function rowSignature(change: Change): string {
  * present source key.
  */
 function sourceHint(change: Change): string | null {
-  if (
-    change.oldSourceKey &&
-    change.newSourceKey &&
-    change.oldSourceKey !== change.newSourceKey
-  ) {
-    return `${change.oldSourceKey} -> ${change.newSourceKey}`;
-  }
-  return change.oldSourceKey ?? change.newSourceKey;
+	if (change.oldSourceKey && change.newSourceKey && change.oldSourceKey !== change.newSourceKey) {
+		return `${change.oldSourceKey} -> ${change.newSourceKey}`;
+	}
+	return change.oldSourceKey ?? change.newSourceKey;
 }
 
 /**
@@ -34,15 +30,15 @@ function sourceHint(change: Change): string | null {
  * row signature, each appends `(sourceKey)` provenance so the rows stay distinct.
  */
 export function packageLabels(changes: Change[]): string[] {
-  const counts = new Map<string, number>();
-  for (const change of changes) {
-    const signature = rowSignature(change);
-    counts.set(signature, (counts.get(signature) ?? 0) + 1);
-  }
+	const counts = new Map<string, number>();
+	for (const change of changes) {
+		const signature = rowSignature(change);
+		counts.set(signature, (counts.get(signature) ?? 0) + 1);
+	}
 
-  return changes.map((change) => {
-    const duplicate = (counts.get(rowSignature(change)) ?? 0) > 1;
-    const hint = duplicate ? sourceHint(change) : null;
-    return hint ? `${change.name} (${hint})` : change.name;
-  });
+	return changes.map((change) => {
+		const duplicate = (counts.get(rowSignature(change)) ?? 0) > 1;
+		const hint = duplicate ? sourceHint(change) : null;
+		return hint ? `${change.name} (${hint})` : change.name;
+	});
 }

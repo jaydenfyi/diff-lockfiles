@@ -5,7 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 importers:
-
   .: {}
 
   apps/a:
@@ -27,21 +26,28 @@ importers:
         version: 1.2.0
 
 packages:
-
   left-pad@1.0.2:
-    resolution: {integrity: sha512-i+siCE/qH/g/aFBfv9alTWzGetfoI8pw4mT4L4DA1kcCZwxnLzCpW5W96BmcNZvSsEStD0mn3NInNjp+CXb1lw==}
+    resolution:
+      {
+        integrity: sha512-i+siCE/qH/g/aFBfv9alTWzGetfoI8pw4mT4L4DA1kcCZwxnLzCpW5W96BmcNZvSsEStD0mn3NInNjp+CXb1lw==,
+      }
     deprecated: use String.prototype.padStart()
 
   left-pad@1.1.3:
-    resolution: {integrity: sha512-m3z9QHpSXmd2H8Z5jnSXbGONPty4dFQfH1QpGgivzrEzICgsi50j9S+aGc77EaLoHpbw0BzP5+k1pp2UajTRuw==}
+    resolution:
+      {
+        integrity: sha512-m3z9QHpSXmd2H8Z5jnSXbGONPty4dFQfH1QpGgivzrEzICgsi50j9S+aGc77EaLoHpbw0BzP5+k1pp2UajTRuw==,
+      }
     deprecated: use String.prototype.padStart()
 
   left-pad@1.2.0:
-    resolution: {integrity: sha512-OQadpCyFCT/VLniZQgym8d3/ofIJtuZyw2ibsVeIUOexKgW/osn8+mMFJbwGMPeDC4GnLzD8q115WPCDx4YRWg==}
+    resolution:
+      {
+        integrity: sha512-OQadpCyFCT/VLniZQgym8d3/ofIJtuZyw2ibsVeIUOexKgW/osn8+mMFJbwGMPeDC4GnLzD8q115WPCDx4YRWg==,
+      }
     deprecated: use String.prototype.padStart()
 
 snapshots:
-
   left-pad@1.0.2: {}
 
   left-pad@1.1.3: {}

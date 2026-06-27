@@ -12,8 +12,8 @@ import { markdownRenderer } from './markdown.js';
  * anything missed.
  */
 export const renderers: Record<Format, Renderer> = {
-  json: jsonRenderer,
-  text: textRenderer,
-  table: tableRenderer,
-  markdown: markdownRenderer,
+	json: jsonRenderer,
+	text: textRenderer,
+	table: tableRenderer,
+	markdown: markdownRenderer,
 };

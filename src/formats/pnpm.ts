@@ -3,21 +3,21 @@ import type { NormalizedLockfile, LockfileAdapter } from './types.js';
 import { DEPENDENCY_FIELDS, splitNameVersion } from './types.js';
 
 interface PnpmImporterDep {
-  specifier?: string;
-  version?: string;
+	specifier?: string;
+	version?: string;
 }
 
 interface PnpmImporter {
-  dependencies?: Record<string, PnpmImporterDep>;
-  devDependencies?: Record<string, PnpmImporterDep>;
-  optionalDependencies?: Record<string, PnpmImporterDep>;
-  peerDependencies?: Record<string, PnpmImporterDep>;
+	dependencies?: Record<string, PnpmImporterDep>;
+	devDependencies?: Record<string, PnpmImporterDep>;
+	optionalDependencies?: Record<string, PnpmImporterDep>;
+	peerDependencies?: Record<string, PnpmImporterDep>;
 }
 
 interface PnpmLockfile {
-  lockfileVersion?: string;
-  importers?: Record<string, PnpmImporter>;
-  packages?: Record<string, unknown>;
+	lockfileVersion?: string;
+	importers?: Record<string, PnpmImporter>;
+	packages?: Record<string, unknown>;
 }
 
 /**
@@ -27,8 +27,8 @@ interface PnpmLockfile {
  * the caller.
  */
 function stripPeerSuffix(version: string): string {
-  const paren = version.indexOf('(');
-  return paren === -1 ? version : version.slice(0, paren);
+	const paren = version.indexOf('(');
+	return paren === -1 ? version : version.slice(0, paren);
 }
 
 /**
@@ -43,41 +43,42 @@ function stripPeerSuffix(version: string): string {
  * lockfile" document; we read only the first via `parseAll()[0]`.
  */
 export function parsePnpmContent(content: string): NormalizedLockfile {
-  const doc = parseAllDocuments(content)[0]?.toJS() as PnpmLockfile | null | undefined;
-  if (!doc || typeof doc !== 'object') return { packages: {}, directDependencyInfoAvailable: false };
+	const doc = parseAllDocuments(content)[0]?.toJS() as PnpmLockfile | null | undefined;
+	if (!doc || typeof doc !== 'object')
+		return { packages: {}, directDependencyInfoAvailable: false };
 
-  // Reconstruct `name@version` direct-dep keys from importers['.'] so they
-  // line up with the `packages:` keys for the `direct` flag. Drop
-  // `link:...` (workspace/file) resolutions, which have no packages entry.
-  const root = doc.importers?.['.'];
-  const directSourceKeys = new Set(
-    root
-      ? DEPENDENCY_FIELDS.flatMap((kind) =>
-          Object.entries(root[kind] ?? {})
-            .map(([name, dependency]): string | undefined => {
-              const version = dependency.version ? stripPeerSuffix(dependency.version) : '';
-              return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
-            })
-            .filter((value): value is string => value !== undefined),
-        )
-      : [],
-  );
+	// Reconstruct `name@version` direct-dep keys from importers['.'] so they
+	// line up with the `packages:` keys for the `direct` flag. Drop
+	// `link:...` (workspace/file) resolutions, which have no packages entry.
+	const root = doc.importers?.['.'];
+	const directSourceKeys = new Set(
+		root
+			? DEPENDENCY_FIELDS.flatMap((kind) =>
+					Object.entries(root[kind] ?? {})
+						.map(([name, dependency]): string | undefined => {
+							const version = dependency.version ? stripPeerSuffix(dependency.version) : '';
+							return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
+						})
+						.filter((value): value is string => value !== undefined),
+				)
+			: [],
+	);
 
-  const packages: NormalizedLockfile['packages'] = {};
-  for (const key of Object.keys(doc.packages ?? {})) {
-    const [name, version] = splitNameVersion(key);
-    packages[key] = { name, version, sourceKey: key, direct: directSourceKeys.has(key) };
-  }
+	const packages: NormalizedLockfile['packages'] = {};
+	for (const key of Object.keys(doc.packages ?? {})) {
+		const [name, version] = splitNameVersion(key);
+		packages[key] = { name, version, sourceKey: key, direct: directSourceKeys.has(key) };
+	}
 
-  return { packages, directDependencyInfoAvailable: Boolean(root) };
+	return { packages, directDependencyInfoAvailable: Boolean(root) };
 }
 
 /** Adapter for `pnpm-lock.yaml` (pnpm 9/10/11). */
 export const parsePnpmLockfile: LockfileAdapter = {
-  matches(filename: string): boolean {
-    return filename === 'pnpm-lock.yaml' || filename.endsWith('/pnpm-lock.yaml');
-  },
-  parse(_filename: string, content: string): NormalizedLockfile {
-    return parsePnpmContent(content);
-  },
+	matches(filename: string): boolean {
+		return filename === 'pnpm-lock.yaml' || filename.endsWith('/pnpm-lock.yaml');
+	},
+	parse(_filename: string, content: string): NormalizedLockfile {
+		return parsePnpmContent(content);
+	},
 };

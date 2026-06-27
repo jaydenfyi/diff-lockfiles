@@ -1,12 +1,21 @@
 import { diff, print } from './index.js';
 import { parseNpmLockfile } from './formats/npm.js';
 import { parseBunLockfile } from './formats/bun.js';
+import { parsePnpmLockfile } from './formats/pnpm.js';
+import { parseAubeLockfile } from './formats/aube.js';
+import { parseYarnLockfile } from './formats/yarn.js';
 import type { LockfileAdapter, NormalizedLockfile } from './formats/types.js';
 import type { Format } from './renderers/types.js';
 import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
-const adapters: LockfileAdapter[] = [parseNpmLockfile, parseBunLockfile];
+const adapters: LockfileAdapter[] = [
+  parseNpmLockfile,
+  parseBunLockfile,
+  parsePnpmLockfile,
+  parseAubeLockfile,
+  parseYarnLockfile,
+];
 
 /** A lockfile with no packages — the shape used for a side that is absent. */
 const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };

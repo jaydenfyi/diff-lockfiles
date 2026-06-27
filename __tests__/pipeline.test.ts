@@ -103,3 +103,47 @@ describe('diffChangedLockfiles', () => {
     ]);
   });
 });
+
+// Minimal valid lockfile bodies for every supported format, each containing a
+// single package "x" at version 1.0.0. Used to prove each adapter is registered
+// and reachable through the pipeline (a forgotten import would silently skip
+// the format). Content lives only on the TO side, so the package shows as added.
+const SINGLE_PACKAGE_LOCKFILES: Record<string, string> = {
+  'package-lock.json': JSON.stringify({ packages: { 'node_modules/x': { version: '1.0.0' } } }),
+  'bun.lock': JSON.stringify({ lockfileVersion: 0, packages: { x: ['x@1.0.0'] } }),
+  'pnpm-lock.yaml': 'packages:\n  x@1.0.0:\n    resolution: {integrity: sha512-aaa=}\n',
+  'aube-lock.yaml': 'packages:\n  x@1.0.0:\n    resolution: {integrity: sha512-aaa=}\n',
+  'yarn.lock': 'x@^1.0.0:\n  version "1.0.0"\n',
+};
+
+describe('adapter registration', () => {
+  it.each(Object.keys(SINGLE_PACKAGE_LOCKFILES))(
+    'recognizes %s through the pipeline',
+    async (filename) => {
+      const source = fakeSource({ TO: { [filename]: SINGLE_PACKAGE_LOCKFILES[filename] } }, [
+        filename,
+      ]);
+
+      const printed = await captureLog(() =>
+        diffChangedLockfiles(source, 'FROM', 'TO', {
+          format: 'text',
+          color: false,
+          shallow: false,
+        }),
+      );
+
+      // A recognized format emits one render call whose body mentions the
+      // package as added; an unregistered adapter would emit nothing at all.
+      expect(printed).toHaveLength(1);
+      expect(printed[0]).toMatch(/added/);
+    },
+  );
+
+  it('silently skips an unrecognized filename', async () => {
+    const source = fakeSource({ TO: { 'not-a-lockfile.txt': 'whatever' } }, ['not-a-lockfile.txt']);
+    const printed = await captureLog(() =>
+      diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+    );
+    expect(printed).toEqual([]);
+  });
+});

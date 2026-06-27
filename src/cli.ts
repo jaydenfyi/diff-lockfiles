@@ -14,7 +14,7 @@ const { version } = createRequire(import.meta.url)('../package.json');
 const cli = new Command();
 cli
   .command('diff-lockfiles')
-  .description('diff all changed package-lock.json and bun.lock files in repo')
+  .description('diff all changed lockfiles (npm, bun, pnpm, yarn, aube) in the repo')
   .version(version)
   .arguments('<from> <to>')
   .option('-f, --format <format>', 'changes the output format (table|json|markdown|text)', 'table')

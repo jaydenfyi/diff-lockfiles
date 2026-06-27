@@ -2,8 +2,10 @@ import { execSync } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createGitSource } from '../../src/sources/git.js';
+import type { LockfileSource } from '../../src/sources/types.js';
 
 /**
  * Integration tests for the real git-backed source.
@@ -15,12 +17,17 @@ import { createGitSource } from '../../src/sources/git.js';
  * and on node embedding stderr in `error.message`. Spawning real git here means
  * that translation cannot silently regress while every fake-source unit test
  * stays green.
+ *
+ * The temp repo is driven entirely by explicit paths: `git` runs with
+ * `{ cwd: repo }` and the source is created with `{ cwd: repo }`. The test
+ * never calls `process.chdir`, which mutates the process-global cwd and races
+ * with other concurrent test files under vitest's per-file parallelism.
  */
 
-/** Write a minimal package-lock.json with the given lodash version. */
-function writeLock(version: string): void {
+/** Write a minimal package-lock.json with the given lodash version into `repo`. */
+function writeLock(repo: string, version: string): void {
 	writeFileSync(
-		join(process.cwd(), 'package-lock.json'),
+		join(repo, 'package-lock.json'),
 		JSON.stringify({
 			packages: {
 				'': { version: '1.0.0' },
@@ -30,38 +37,59 @@ function writeLock(version: string): void {
 	);
 }
 
+/**
+ * Best-effort recursive removal of the temp repo. On macOS `rmSync` on a git
+ * repo dir can intermittently throw ENOTEMPTY (git's internal files not yet
+ * released by the OS) — especially under concurrent test-file load — which
+ * would otherwise fail the whole suite from afterAll. Retry briefly; a leaked
+ * temp dir is disposable ($TMPDIR is reclaimed by the OS) and far preferable to
+ * a flaky red build, so a persistent failure is warned, not thrown.
+ */
+async function cleanRepo(repo: string): Promise<void> {
+	for (let attempt = 0; attempt < 5; attempt++) {
+		try {
+			rmSync(repo, { recursive: true, force: true });
+			return;
+		} catch (error) {
+			if (attempt < 4) await delay(50);
+			else
+				console.warn(
+					`[git.test] could not clean temp repo ${repo}: ${(error as NodeJS.ErrnoException).code}`,
+				);
+		}
+	}
+}
+
 describe('createGitSource (real git)', () => {
-	let originalCwd: string;
 	let repo: string;
 	let fromSha: string;
 	let toSha: string;
+	let source: LockfileSource;
 
 	beforeAll(() => {
-		originalCwd = process.cwd();
 		repo = mkdtempSync(join(tmpdir(), 'diff-lockfiles-git-'));
-		process.chdir(repo);
 
 		// Disable any global git hook templates / GPG signing that could interfere.
-		execSync('git init -q');
-		execSync('git config user.email test@example.com');
-		execSync('git config user.name test');
-		execSync('git config commit.gpgsign false');
+		execSync('git init -q', { cwd: repo });
+		execSync('git config user.email test@example.com', { cwd: repo });
+		execSync('git config user.name test', { cwd: repo });
+		execSync('git config commit.gpgsign false', { cwd: repo });
 
-		writeLock('4.17.20');
-		execSync('git add -A && git commit -qm "init with lockfile"');
-		fromSha = execSync('git rev-parse HEAD').toString().trim();
+		writeLock(repo, '4.17.20');
+		execSync('git add -A && git commit -qm "init with lockfile"', { cwd: repo });
+		fromSha = execSync('git rev-parse HEAD', { cwd: repo }).toString().trim();
 
-		writeLock('4.17.21');
-		execSync('git add -A && git commit -qm "upgrade lodash"');
-		toSha = execSync('git rev-parse HEAD').toString().trim();
+		writeLock(repo, '4.17.21');
+		execSync('git add -A && git commit -qm "upgrade lodash"', { cwd: repo });
+		toSha = execSync('git rev-parse HEAD', { cwd: repo }).toString().trim();
+
+		// Run git against the temp repo via explicit cwd, not a process-global chdir.
+		source = createGitSource({ cwd: repo });
 	});
 
-	afterAll(() => {
-		process.chdir(originalCwd);
-		rmSync(repo, { recursive: true, force: true });
+	afterAll(async () => {
+		await cleanRepo(repo);
 	});
-
-	const source = createGitSource();
 
 	it('read() returns the file content when the path exists at the ref', async () => {
 		const content = await source.read(toSha, 'package-lock.json');

@@ -1,0 +1,23 @@
+tsconfig.json
+  s_01b2ad8b88b56c::t_463885b24ca7e9 11-14,16-17
+tsconfig.build.json
+  s_01b2ad8b88b56c::t_cae9f031388748 1-12
+package.json
+  s_01b2ad8b88b56c::t_b310736cd158ca 26,28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "86dc0d96cb2fe9115e9cfe28dbd7573f80956a03",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

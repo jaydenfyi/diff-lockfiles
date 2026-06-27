@@ -1,6 +1,6 @@
 import { tableRenderer } from '../../src/renderers/table.js';
-import { lockfiles } from '../helpers.js';
-import type { RenderOptions } from '../../src/renderers/types.js';
+import { changeEntry, lockfiles } from '../helpers.js';
+import type { LockfileDiffs, RenderOptions } from '../../src/renderers/types.js';
 
 const noColor: RenderOptions = { color: false };
 
@@ -28,5 +28,20 @@ describe('tableRenderer', () => {
 
   it('emits an empty string for an empty run', () => {
     expect(tableRenderer.render([], noColor)).toBe('');
+  });
+
+  it('adds source-key disambiguators to the package cell for duplicate rows', () => {
+    const data: LockfileDiffs = [
+      {
+        lockfile: 'package-lock.json',
+        changes: [
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/foo/node_modules/lodash' }),
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/bar/node_modules/lodash' }),
+        ],
+      },
+    ];
+    const out = tableRenderer.render(data, noColor);
+    expect(out).toContain('lodash (node_modules/foo/node_modules/lodash)');
+    expect(out).toContain('lodash (node_modules/bar/node_modules/lodash)');
   });
 });

@@ -64,7 +64,7 @@ export async function diffChangedLockfiles(
       options.shallow,
     );
     // Skip lockfiles with no net changes so they contribute no output section.
-    if (Object.keys(changes).length > 0) {
+    if (changes.length > 0) {
       diffs.push({ lockfile: filename, changes });
     }
   }

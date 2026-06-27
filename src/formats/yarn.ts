@@ -68,7 +68,7 @@ function parseEntries(content: string): YarnEntry[] {
  * Entries have comma-merged descriptors sharing one resolved `version`.
  *
  * NOTE: yarn.lock contains no root-manifest / direct-dependency info, so
- * `directDependencyKeys` is always `undefined`. `--shallow` mode therefore
+ * `directDependencyInfoAvailable` is always `false`. `--shallow` mode therefore
  * degrades to "show everything, all classified transitive" for yarn.
  */
 export const parseYarnLockfile: LockfileAdapter = {

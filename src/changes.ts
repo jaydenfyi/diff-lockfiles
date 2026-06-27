@@ -37,8 +37,15 @@ export type Version =
  * A single package's version change, pre-classified so renderers never need to
  * interpret raw versions or touch semver — they read {@link kind}, {@link bump},
  * and {@link scope} and map them to decoration.
+ *
+ * `name` is the bare package name shown to humans; `oldSourceKey`/`newSourceKey`
+ * carry the original lockfile provenance keys, surfaced only when disambiguating
+ * duplicate same-name changes.
  */
 export interface Change {
+  name: string;
+  oldSourceKey: string | null;
+  newSourceKey: string | null;
   kind: ChangeKind;
   oldVersion: Version | null;
   newVersion: Version | null;
@@ -47,10 +54,11 @@ export interface Change {
 }
 
 /**
- * Map of package key -> {@link Change}. This is the hand-off contract between
- * the diff layer (which produces it) and the renderers (which present it).
+ * A run's worth of changes as an ordered array. Using an array (not a name-keyed
+ * map) means multiple resolved versions of the same package are preserved
+ * instead of overwriting each other; renderers may still group by name.
  */
-export type Changes = Record<string, Change>;
+export type Changes = Change[];
 
 /**
  * Parse a raw version string into a {@link Version}.

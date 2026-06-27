@@ -54,7 +54,7 @@ describe('diffChangedLockfiles', () => {
     );
 
     expect(printed).toEqual([
-      '── package-lock.json ──\nnode_modules/lodash 4.17.20 -> 4.17.21 patch · transitive',
+      '── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 patch · transitive',
     ]);
   });
 
@@ -84,7 +84,7 @@ describe('diffChangedLockfiles', () => {
     // crash). The root "" project entry is skipped (empty name), so only the
     // real dependency `lodash` appears; lodash is transitive.
     expect(printed).toEqual([
-      '── package-lock.json ──\nnode_modules/lodash added 4.17.21 · transitive',
+      '── package-lock.json ──\nlodash added 4.17.21 · transitive',
     ]);
   });
 
@@ -102,7 +102,7 @@ describe('diffChangedLockfiles', () => {
     // Symmetric to the added case: every dependency entry is removed (the root
     // "" project entry is skipped).
     expect(printed).toEqual([
-      '── package-lock.json ──\nnode_modules/lodash removed 4.17.20 · transitive',
+      '── package-lock.json ──\nlodash removed 4.17.20 · transitive',
     ]);
   });
 

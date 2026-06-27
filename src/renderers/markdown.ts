@@ -1,5 +1,6 @@
 import { markdownTable } from 'markdown-table';
 import { displayRaw } from './highlight.js';
+import { packageLabels } from './display-name.js';
 import type { Bump, ChangeKind, Changes } from '../changes.js';
 import type { Renderer } from './types.js';
 
@@ -21,15 +22,19 @@ function changeLabel(kind: ChangeKind, bump: Bump | null): string {
 
 /** `## <lockfile>` heading + a GitHub-flavoured Markdown table of its changes. */
 function renderSection(lockfile: string, changes: Changes): string {
+  const labels = packageLabels(changes);
   const tableData = [
     ['Package', 'Old', 'New', 'Change', 'Scope'],
-    ...Object.entries(changes).map(([name, { oldVersion, newVersion, kind, bump, scope }]) => [
-      name,
-      `\`${displayRaw(oldVersion)}\``,
-      `\`${displayRaw(newVersion)}\``,
-      changeLabel(kind, bump),
-      scope,
-    ]),
+    ...changes.map((change, index) => {
+      const { oldVersion, newVersion, kind, bump, scope } = change;
+      return [
+        labels[index],
+        `\`${displayRaw(oldVersion)}\``,
+        `\`${displayRaw(newVersion)}\``,
+        changeLabel(kind, bump),
+        scope,
+      ];
+    }),
   ];
   return `## ${lockfile}\n\n${markdownTable(tableData)}`;
 }

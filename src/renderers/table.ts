@@ -1,6 +1,7 @@
 import { table } from 'table';
 import { createColor } from '../colors.js';
 import { highlightVersion } from './highlight.js';
+import { packageLabels } from './display-name.js';
 import type { Bump, ChangeKind, Changes } from '../changes.js';
 import type { Renderer } from './types.js';
 
@@ -22,7 +23,10 @@ function changeCell(kind: ChangeKind, bump: Bump | null): string {
 
 /** One boxed table for a single lockfile, titled by its filename/path. */
 function renderTable(lockfile: string, changes: Changes, color: ReturnType<typeof createColor>): string {
-  const rows = Object.entries(changes).map(([name, { kind, oldVersion, newVersion, bump }]) => {
+  const labels = packageLabels(changes);
+  const rows = changes.map((change, index) => {
+    const { kind, oldVersion, newVersion, bump } = change;
+    const name = labels[index];
     const oldCell = highlightVersion(oldVersion, bump, color);
     const newCell = highlightVersion(newVersion, bump, color);
     const cell = changeCell(kind, bump);

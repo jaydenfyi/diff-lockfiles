@@ -1,7 +1,7 @@
 import { textRenderer } from '../../src/renderers/text.js';
 import { createColor } from '../../src/colors.js';
-import { lockfiles } from '../helpers.js';
-import type { RenderOptions } from '../../src/renderers/types.js';
+import { changeEntry, lockfiles } from '../helpers.js';
+import type { LockfileDiffs, RenderOptions } from '../../src/renderers/types.js';
 
 const noColor: RenderOptions = { color: false };
 
@@ -64,5 +64,30 @@ describe('textRenderer', () => {
     const color = createColor(true);
     expect(colored).toContain(color.bold('1.0.0-beta+build'));
     expect(colored).toContain(color.bold('2.0.0'));
+  });
+
+  it('adds source-key disambiguators only for duplicate rendered rows', () => {
+    const data: LockfileDiffs = [
+      {
+        lockfile: 'package-lock.json',
+        changes: [
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/foo/node_modules/lodash' }),
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/bar/node_modules/lodash' }),
+        ],
+      },
+    ];
+    const out = textRenderer.render(data, noColor);
+    // Both rows share name+kind+version, so each is disambiguated with its source key.
+    expect(out).toContain('lodash (node_modules/foo/node_modules/lodash) removed 4.17.21');
+    expect(out).toContain('lodash (node_modules/bar/node_modules/lodash) removed 4.17.21');
+  });
+
+  it('omits disambiguators for distinct rows', () => {
+    const out = textRenderer.render(
+      lockfiles({ 'a.lock': { lodash: ['4.17.20', '4.17.21'] } }),
+      noColor,
+    );
+    expect(out).toContain('lodash 4.17.20 -> 4.17.21 patch · transitive');
+    expect(out).not.toContain('(');
   });
 });

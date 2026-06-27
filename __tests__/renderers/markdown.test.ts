@@ -1,6 +1,6 @@
 import { markdownRenderer } from '../../src/renderers/markdown.js';
-import { lockfiles } from '../helpers.js';
-import type { RenderOptions } from '../../src/renderers/types.js';
+import { changeEntry, lockfiles } from '../helpers.js';
+import type { LockfileDiffs, RenderOptions } from '../../src/renderers/types.js';
 
 const opts: RenderOptions = { color: false };
 
@@ -28,5 +28,20 @@ describe('markdownRenderer', () => {
 
   it('emits an empty string for an empty run', () => {
     expect(markdownRenderer.render([], opts)).toBe('');
+  });
+
+  it('adds source-key disambiguators to the Package cell for duplicate rows', () => {
+    const data: LockfileDiffs = [
+      {
+        lockfile: 'package-lock.json',
+        changes: [
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/foo/node_modules/lodash' }),
+          changeEntry('lodash', '4.17.21', null, { oldSourceKey: 'node_modules/bar/node_modules/lodash' }),
+        ],
+      },
+    ];
+    const out = markdownRenderer.render(data, opts);
+    expect(out).toContain('lodash (node_modules/foo/node_modules/lodash)');
+    expect(out).toContain('lodash (node_modules/bar/node_modules/lodash)');
   });
 });

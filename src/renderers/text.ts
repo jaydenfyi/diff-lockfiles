@@ -1,5 +1,6 @@
 import { createColor } from '../colors.js';
 import { displayRaw, highlightVersion } from './highlight.js';
+import { packageLabels } from './display-name.js';
 import type { Change } from '../changes.js';
 import type { Renderer } from './types.js';
 
@@ -30,8 +31,8 @@ function formatChange(name: string, change: Change, color: ReturnType<typeof cre
  * yields `''` (printed as nothing).
  *
  * Empty-changes lockfiles never reach a renderer: the pipeline filters them
- * (`Object.keys(changes).length > 0`) before pushing. If one ever did arrive,
- * it would render a header with no body — a visible signal, not a silent drop.
+ * (`changes.length > 0`) before pushing. If one ever did arrive, it would
+ * render a header with no body — a visible signal, not a silent drop.
  */
 export const textRenderer: Renderer = {
   render(lockfiles, options) {
@@ -39,8 +40,9 @@ export const textRenderer: Renderer = {
     // the output is identical whether or not colouring is engaged.
     const color = createColor(options.color);
     const sections = lockfiles.map(({ lockfile, changes }) => {
-      const body = Object.entries(changes)
-        .map(([name, change]) => formatChange(name, change, color))
+      const labels = packageLabels(changes);
+      const body = changes
+        .map((change, index) => formatChange(labels[index], change, color))
         .join('\n');
       return `${color.bold(`── ${lockfile} ──`)}\n${body}`;
     });

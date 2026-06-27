@@ -1,0 +1,821 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fixture render snapshots > json format > fallback scenario > aube 1`] = `
+"{
+  "aube-lock.yaml": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.1.3",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.1.3",
+          "major": 1,
+          "minor": 1,
+          "patch": 3
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.2.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.2.0",
+          "major": 1,
+          "minor": 2,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > fallback scenario > bun 1`] = `
+"{
+  "bun.lock": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": "b/left-pad",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.1.3",
+          "major": 1,
+          "minor": 1,
+          "patch": 3
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.2.0",
+          "major": 1,
+          "minor": 2,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "b/left-pad",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > fallback scenario > npm 1`] = `
+"{
+  "package-lock.json": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "apps/b/node_modules/left-pad",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.1.3",
+          "major": 1,
+          "minor": 1,
+          "patch": 3
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": "node_modules/left-pad",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "apps/b/node_modules/left-pad",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "node_modules/left-pad",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.2.0",
+          "major": 1,
+          "minor": 2,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > fallback scenario > pnpm 1`] = `
+"{
+  "pnpm-lock.yaml": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.1.3",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.1.3",
+          "major": 1,
+          "minor": 1,
+          "patch": 3
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.2.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.2.0",
+          "major": 1,
+          "minor": 2,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > fallback scenario > yarn 1`] = `
+"{
+  "yarn.lock": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.1.3",
+        "newSourceKey": null,
+        "kind": "removed",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.1.3",
+          "major": 1,
+          "minor": 1,
+          "patch": 3
+        },
+        "newVersion": null,
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.2.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.2.0",
+          "major": 1,
+          "minor": 2,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      },
+      {
+        "name": "left-pad",
+        "oldSourceKey": null,
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > pair scenario > aube 1`] = `
+"{
+  "aube-lock.yaml": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": "minor",
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > pair scenario > bun 1`] = `
+"{
+  "bun.lock": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad",
+        "newSourceKey": "c/left-pad",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": "minor",
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > pair scenario > npm 1`] = `
+"{
+  "package-lock.json": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "node_modules/left-pad",
+        "newSourceKey": "apps/c/node_modules/left-pad",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": "minor",
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > pair scenario > pnpm 1`] = `
+"{
+  "pnpm-lock.yaml": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": "minor",
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > json format > pair scenario > yarn 1`] = `
+"{
+  "yarn.lock": {
+    "left-pad": [
+      {
+        "name": "left-pad",
+        "oldSourceKey": "left-pad@1.0.2",
+        "newSourceKey": "left-pad@1.3.0",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "1.0.2",
+          "major": 1,
+          "minor": 0,
+          "patch": 2
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.3.0",
+          "major": 1,
+          "minor": 3,
+          "patch": 0
+        },
+        "bump": "minor",
+        "scope": "transitive"
+      }
+    ]
+  }
+}"
+`;
+
+exports[`fixture render snapshots > markdown format > fallback scenario > aube 1`] = `
+"## aube-lock.yaml
+
+| Package  | Old     | New     | Change  | Scope      |
+| -------- | ------- | ------- | ------- | ---------- |
+| left-pad | \`1.0.2\` | \`—\`     | removed | transitive |
+| left-pad | \`1.1.3\` | \`—\`     | removed | transitive |
+| left-pad | \`—\`     | \`1.2.0\` | added   | transitive |
+| left-pad | \`—\`     | \`1.3.0\` | added   | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > fallback scenario > bun 1`] = `
+"## bun.lock
+
+| Package  | Old     | New     | Change  | Scope      |
+| -------- | ------- | ------- | ------- | ---------- |
+| left-pad | \`1.0.2\` | \`—\`     | removed | transitive |
+| left-pad | \`1.1.3\` | \`—\`     | removed | transitive |
+| left-pad | \`—\`     | \`1.2.0\` | added   | transitive |
+| left-pad | \`—\`     | \`1.3.0\` | added   | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > fallback scenario > npm 1`] = `
+"## package-lock.json
+
+| Package  | Old     | New     | Change  | Scope      |
+| -------- | ------- | ------- | ------- | ---------- |
+| left-pad | \`1.1.3\` | \`—\`     | removed | transitive |
+| left-pad | \`1.0.2\` | \`—\`     | removed | transitive |
+| left-pad | \`—\`     | \`1.3.0\` | added   | transitive |
+| left-pad | \`—\`     | \`1.2.0\` | added   | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > fallback scenario > pnpm 1`] = `
+"## pnpm-lock.yaml
+
+| Package  | Old     | New     | Change  | Scope      |
+| -------- | ------- | ------- | ------- | ---------- |
+| left-pad | \`1.0.2\` | \`—\`     | removed | transitive |
+| left-pad | \`1.1.3\` | \`—\`     | removed | transitive |
+| left-pad | \`—\`     | \`1.2.0\` | added   | transitive |
+| left-pad | \`—\`     | \`1.3.0\` | added   | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > fallback scenario > yarn 1`] = `
+"## yarn.lock
+
+| Package  | Old     | New     | Change  | Scope      |
+| -------- | ------- | ------- | ------- | ---------- |
+| left-pad | \`1.0.2\` | \`—\`     | removed | transitive |
+| left-pad | \`1.1.3\` | \`—\`     | removed | transitive |
+| left-pad | \`—\`     | \`1.2.0\` | added   | transitive |
+| left-pad | \`—\`     | \`1.3.0\` | added   | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > pair scenario > aube 1`] = `
+"## aube-lock.yaml
+
+| Package  | Old     | New     | Change        | Scope      |
+| -------- | ------- | ------- | ------------- | ---------- |
+| left-pad | \`1.0.2\` | \`1.3.0\` | minor upgrade | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > pair scenario > bun 1`] = `
+"## bun.lock
+
+| Package  | Old     | New     | Change        | Scope      |
+| -------- | ------- | ------- | ------------- | ---------- |
+| left-pad | \`1.0.2\` | \`1.3.0\` | minor upgrade | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > pair scenario > npm 1`] = `
+"## package-lock.json
+
+| Package  | Old     | New     | Change        | Scope      |
+| -------- | ------- | ------- | ------------- | ---------- |
+| left-pad | \`1.0.2\` | \`1.3.0\` | minor upgrade | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > pair scenario > pnpm 1`] = `
+"## pnpm-lock.yaml
+
+| Package  | Old     | New     | Change        | Scope      |
+| -------- | ------- | ------- | ------------- | ---------- |
+| left-pad | \`1.0.2\` | \`1.3.0\` | minor upgrade | transitive |"
+`;
+
+exports[`fixture render snapshots > markdown format > pair scenario > yarn 1`] = `
+"## yarn.lock
+
+| Package  | Old     | New     | Change        | Scope      |
+| -------- | ------- | ------- | ------------- | ---------- |
+| left-pad | \`1.0.2\` | \`1.3.0\` | minor upgrade | transitive |"
+`;
+
+exports[`fixture render snapshots > table format > fallback scenario > aube 1`] = `
+"╔════════════════╤═══════╤═══════╤═════════╗
+║ aube-lock.yaml │       │       │         ║
+╟────────────────┼───────┼───────┼─────────╢
+║ package        │ old   │ new   │ change  ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.0.2 │ —     │ removed ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.1.3 │ —     │ removed ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ —     │ 1.2.0 │ added   ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ —     │ 1.3.0 │ added   ║
+╚════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > fallback scenario > bun 1`] = `
+"╔══════════╤═══════╤═══════╤═════════╗
+║ bun.lock │       │       │         ║
+╟──────────┼───────┼───────┼─────────╢
+║ package  │ old   │ new   │ change  ║
+╟──────────┼───────┼───────┼─────────╢
+║ left-pad │ 1.0.2 │ —     │ removed ║
+╟──────────┼───────┼───────┼─────────╢
+║ left-pad │ 1.1.3 │ —     │ removed ║
+╟──────────┼───────┼───────┼─────────╢
+║ left-pad │ —     │ 1.2.0 │ added   ║
+╟──────────┼───────┼───────┼─────────╢
+║ left-pad │ —     │ 1.3.0 │ added   ║
+╚══════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > fallback scenario > npm 1`] = `
+"╔═══════════════════╤═══════╤═══════╤═════════╗
+║ package-lock.json │       │       │         ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ package           │ old   │ new   │ change  ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ left-pad          │ 1.1.3 │ —     │ removed ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ left-pad          │ 1.0.2 │ —     │ removed ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ left-pad          │ —     │ 1.3.0 │ added   ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ left-pad          │ —     │ 1.2.0 │ added   ║
+╚═══════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > fallback scenario > pnpm 1`] = `
+"╔════════════════╤═══════╤═══════╤═════════╗
+║ pnpm-lock.yaml │       │       │         ║
+╟────────────────┼───────┼───────┼─────────╢
+║ package        │ old   │ new   │ change  ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.0.2 │ —     │ removed ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.1.3 │ —     │ removed ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ —     │ 1.2.0 │ added   ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ —     │ 1.3.0 │ added   ║
+╚════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > fallback scenario > yarn 1`] = `
+"╔═══════════╤═══════╤═══════╤═════════╗
+║ yarn.lock │       │       │         ║
+╟───────────┼───────┼───────┼─────────╢
+║ package   │ old   │ new   │ change  ║
+╟───────────┼───────┼───────┼─────────╢
+║ left-pad  │ 1.0.2 │ —     │ removed ║
+╟───────────┼───────┼───────┼─────────╢
+║ left-pad  │ 1.1.3 │ —     │ removed ║
+╟───────────┼───────┼───────┼─────────╢
+║ left-pad  │ —     │ 1.2.0 │ added   ║
+╟───────────┼───────┼───────┼─────────╢
+║ left-pad  │ —     │ 1.3.0 │ added   ║
+╚═══════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > pair scenario > aube 1`] = `
+"╔════════════════╤═══════╤═══════╤═════════╗
+║ aube-lock.yaml │       │       │         ║
+╟────────────────┼───────┼───────┼─────────╢
+║ package        │ old   │ new   │ change  ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.0.2 │ 1.3.0 │ ↑ minor ║
+╚════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > pair scenario > bun 1`] = `
+"╔══════════╤═══════╤═══════╤═════════╗
+║ bun.lock │       │       │         ║
+╟──────────┼───────┼───────┼─────────╢
+║ package  │ old   │ new   │ change  ║
+╟──────────┼───────┼───────┼─────────╢
+║ left-pad │ 1.0.2 │ 1.3.0 │ ↑ minor ║
+╚══════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > pair scenario > npm 1`] = `
+"╔═══════════════════╤═══════╤═══════╤═════════╗
+║ package-lock.json │       │       │         ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ package           │ old   │ new   │ change  ║
+╟───────────────────┼───────┼───────┼─────────╢
+║ left-pad          │ 1.0.2 │ 1.3.0 │ ↑ minor ║
+╚═══════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > pair scenario > pnpm 1`] = `
+"╔════════════════╤═══════╤═══════╤═════════╗
+║ pnpm-lock.yaml │       │       │         ║
+╟────────────────┼───────┼───────┼─────────╢
+║ package        │ old   │ new   │ change  ║
+╟────────────────┼───────┼───────┼─────────╢
+║ left-pad       │ 1.0.2 │ 1.3.0 │ ↑ minor ║
+╚════════════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > table format > pair scenario > yarn 1`] = `
+"╔═══════════╤═══════╤═══════╤═════════╗
+║ yarn.lock │       │       │         ║
+╟───────────┼───────┼───────┼─────────╢
+║ package   │ old   │ new   │ change  ║
+╟───────────┼───────┼───────┼─────────╢
+║ left-pad  │ 1.0.2 │ 1.3.0 │ ↑ minor ║
+╚═══════════╧═══════╧═══════╧═════════╝
+"
+`;
+
+exports[`fixture render snapshots > text format > fallback scenario > aube 1`] = `
+"── aube-lock.yaml ──
+left-pad removed 1.0.2 · transitive
+left-pad removed 1.1.3 · transitive
+left-pad added 1.2.0 · transitive
+left-pad added 1.3.0 · transitive"
+`;
+
+exports[`fixture render snapshots > text format > fallback scenario > bun 1`] = `
+"── bun.lock ──
+left-pad removed 1.0.2 · transitive
+left-pad removed 1.1.3 · transitive
+left-pad added 1.2.0 · transitive
+left-pad added 1.3.0 · transitive"
+`;
+
+exports[`fixture render snapshots > text format > fallback scenario > npm 1`] = `
+"── package-lock.json ──
+left-pad removed 1.1.3 · transitive
+left-pad removed 1.0.2 · transitive
+left-pad added 1.3.0 · transitive
+left-pad added 1.2.0 · transitive"
+`;
+
+exports[`fixture render snapshots > text format > fallback scenario > pnpm 1`] = `
+"── pnpm-lock.yaml ──
+left-pad removed 1.0.2 · transitive
+left-pad removed 1.1.3 · transitive
+left-pad added 1.2.0 · transitive
+left-pad added 1.3.0 · transitive"
+`;
+
+exports[`fixture render snapshots > text format > fallback scenario > yarn 1`] = `
+"── yarn.lock ──
+left-pad removed 1.0.2 · transitive
+left-pad removed 1.1.3 · transitive
+left-pad added 1.2.0 · transitive
+left-pad added 1.3.0 · transitive"
+`;
+
+exports[`fixture render snapshots > text format > pair scenario > aube 1`] = `
+"── aube-lock.yaml ──
+left-pad 1.0.2 -> 1.3.0 minor · transitive"
+`;
+
+exports[`fixture render snapshots > text format > pair scenario > bun 1`] = `
+"── bun.lock ──
+left-pad 1.0.2 -> 1.3.0 minor · transitive"
+`;
+
+exports[`fixture render snapshots > text format > pair scenario > npm 1`] = `
+"── package-lock.json ──
+left-pad 1.0.2 -> 1.3.0 minor · transitive"
+`;
+
+exports[`fixture render snapshots > text format > pair scenario > pnpm 1`] = `
+"── pnpm-lock.yaml ──
+left-pad 1.0.2 -> 1.3.0 minor · transitive"
+`;
+
+exports[`fixture render snapshots > text format > pair scenario > yarn 1`] = `
+"── yarn.lock ──
+left-pad 1.0.2 -> 1.3.0 minor · transitive"
+`;

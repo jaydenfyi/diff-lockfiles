@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { bumpOf, classify, parseVersion } from '../src/changes.js';
 import type { Change, Scope, Version } from '../src/changes.js';
 import type { NormalizedPackage } from '../src/formats/types.js';
@@ -66,4 +69,43 @@ export function lockfiles(
     lockfile,
     changes: changes(changesMap),
   }));
+}
+
+// --- Multi-version fixture loading (shared by pipeline + snapshot tests) ---
+
+const here = dirname(fileURLToPath(import.meta.url));
+const multiVersionDir = join(here, 'fixtures', 'multi-version');
+
+/** File extension for each manager's committed lockfile fixtures. */
+const FIXTURE_EXT: Record<string, string> = {
+  npm: '.json',
+  bun: '.lock',
+  pnpm: '.yaml',
+  yarn: '.lock',
+  aube: '.yaml',
+};
+
+/** The lockfile managers with committed multi-version fixtures. */
+export const FIXTURE_MANAGERS = Object.keys(FIXTURE_EXT) as readonly string[];
+
+/** The lockfile filename each manager uses (its committed fixture's name). */
+export const FIXTURE_FILENAME: Record<string, string> = {
+  npm: 'package-lock.json',
+  bun: 'bun.lock',
+  pnpm: 'pnpm-lock.yaml',
+  yarn: 'yarn.lock',
+  aube: 'aube-lock.yaml',
+};
+
+/**
+ * Read a multi-version fixture lockfile from disk (see
+ * `fixtures/multi-version/README.md`). These are real, package-manager-
+ * generated lockfiles committed as static files for offline, deterministic
+ * tests of genuine duplicate/triplicate package resolution.
+ */
+export function loadFixture(manager: string, scenario: string): string {
+  return readFileSync(
+    join(multiVersionDir, manager, `${scenario}${FIXTURE_EXT[manager]}`),
+    'utf8',
+  );
 }

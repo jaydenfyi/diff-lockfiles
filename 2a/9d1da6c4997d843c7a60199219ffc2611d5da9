@@ -1,0 +1,20 @@
+README.md
+  s_296e11cb9998fe::t_fc2f56095cb129 66
+  s_296e11cb9998fe::t_0bc137f839e3b1 27-32,49,64-65,67-69,172-175
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "2a9d1da6c4997d843c7a60199219ffc2611d5da9",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

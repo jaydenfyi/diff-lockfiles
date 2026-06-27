@@ -1,0 +1,22 @@
+__tests__/renderers/text.test.ts
+  s_296e11cb9998fe::t_e119849746ddaf 48-67
+src/renderers/highlight.ts
+  s_296e11cb9998fe::t_82b9da6e5f1c46 25
+  s_296e11cb9998fe::t_759ad7c6266920 22-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "191a201577651b318cc0ef91d21aa8551e9705dd",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": null
+    }
+  }
+}

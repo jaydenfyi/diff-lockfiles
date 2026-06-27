@@ -1,5 +1,5 @@
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { DEPENDENCY_FIELDS, packageNameFromNodeModulesPath } from './types.js';
+import { declaredDepNames, packageNameFromNodeModulesPath } from './types.js';
 
 /**
  * package-lock.json v2/v3 uses a top-level `packages` map keyed by node_modules
@@ -17,34 +17,33 @@ export const parseNpmLockfile: LockfileAdapter = {
 		};
 		const rawPackages = raw.packages ?? {};
 
-		// Manifests are the project's own package.jsons: root "" plus every
-		// workspace dir (any key NOT under node_modules/). Each manifest's
-		// dependency fields declare first-party (direct) deps. Matching on the
-		// bare name (not the full node_modules path) is intentionally broader
-		// than the old root-only behavior: a workspace's direct dep, or a direct
-		// dep forced nested by a version conflict, is still "direct".
-		const directNames = new Set(
-			Object.entries(rawPackages)
-				.filter(([key]) => key === '' || !key.includes('node_modules/'))
-				.flatMap(([, entry]) =>
-					DEPENDENCY_FIELDS.flatMap((kind) =>
-						Object.keys((entry[kind] as Record<string, unknown> | undefined) ?? {}),
-					),
-				),
-		);
+		// A key is one of the project's own manifests iff it contains no
+		// `node_modules/` segment anywhere: the root `""` plus every workspace
+		// dir (e.g. "packages/foo"). Nested installs like
+		// "apps/b/node_modules/left-pad" DO contain it and are real packages.
+		const isManifestKey = (key: string): boolean => key === '' || !key.includes('node_modules/');
+
+		// Each manifest's dependency fields declare first-party (direct) deps.
+		// Matching on the bare name (not the full node_modules path) is
+		// intentionally broader than the old root-only behavior: a workspace's
+		// direct dep, or a direct dep forced nested by a version conflict, is
+		// still "direct". (pnpm differs: it keys packages by name@version, so a
+		// non-declared version stays transitive there.)
+		const manifests = Object.entries(rawPackages)
+			.filter(([key]) => isManifestKey(key))
+			.map(([, entry]) => entry);
+		const directNames = declaredDepNames(manifests);
 
 		const packages: NormalizedLockfile['packages'] = {};
 		for (const [sourceKey, entry] of Object.entries(rawPackages)) {
-			// Skip workspace manifest entries (e.g. "packages/foo"): they are the
-			// project's own manifests, not installed deps. Without this they'd
-			// leak as a bogus package named after the parent dir. Root "" is kept
-			// (its empty name is filtered downstream as before). A key is a
-			// manifest iff it contains no `node_modules/` segment anywhere — nested
-			// installs like `apps/b/node_modules/left-pad` DO contain it and must
-			// be kept.
-			if (sourceKey !== '' && !sourceKey.includes('node_modules/')) continue;
-			// Skip workspace symlinks: they carry `link: true` and have no real
-			// version (installed packages never set `link`).
+			// Skip workspace manifest entries: the project's own manifests, not
+			// installed deps (otherwise they'd leak as a bogus package named after
+			// the parent dir). Root "" is kept — its empty name is filtered downstream.
+			if (sourceKey !== '' && isManifestKey(sourceKey)) continue;
+			// Skip local-linked entries: workspace symlinks AND file:/link: deps
+			// all carry `link: true` with no real registry version, so they have no
+			// meaningful version to diff. This mirrors pnpm (drops `link:`
+			// resolutions) and bun (drops `workspace:` refs).
 			if (entry.link) continue;
 			packages[sourceKey] = {
 				name: packageNameFromNodeModulesPath(sourceKey),
@@ -54,6 +53,6 @@ export const parseNpmLockfile: LockfileAdapter = {
 			};
 		}
 
-		return { packages, directDependencyInfoAvailable: Boolean(rawPackages['']) };
+		return { packages, directDependencyInfoAvailable: manifests.length > 0 };
 	},
 };

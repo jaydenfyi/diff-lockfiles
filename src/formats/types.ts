@@ -76,3 +76,33 @@ export function packageNameFromNodeModulesPath(sourceKey: string): string {
 	const [first, second] = tail.split('/');
 	return first?.startsWith('@') && second ? `${first}/${second}` : first;
 }
+
+/**
+ * Bare dependency names declared across one or more manifests — the union of
+ * every manifest's four {@link DEPENDENCY_FIELDS} maps. A package is `direct`
+ * when its bare name appears in any manifest belonging to the project (the
+ * root or a workspace package).
+ *
+ * Shared by the bun and npm adapters, which both classify a package `direct` by
+ * bare name. pnpm cannot reuse it: pnpm keys packages by `name@version`, so it
+ * reconstructs version-qualified keys locally (a dep at a non-declared version
+ * stays `transitive` there).
+ *
+ * `manifests` is generic over the raw manifest shape (each format's differs),
+ * but all expose their dependency maps under the canonical field names. The
+ * one dep-field read is narrowed inside this helper with a defensive
+ * `typeof === 'object'` check, so no caller needs a cast.
+ */
+export function declaredDepNames<T extends object>(manifests: Iterable<T>): Set<string> {
+	const names = new Set<string>();
+	for (const manifest of manifests) {
+		const record = manifest as Record<string, unknown>;
+		for (const kind of DEPENDENCY_FIELDS) {
+			const deps = record[kind];
+			if (deps && typeof deps === 'object') {
+				for (const name of Object.keys(deps)) names.add(name);
+			}
+		}
+	}
+	return names;
+}

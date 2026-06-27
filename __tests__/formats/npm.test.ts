@@ -121,6 +121,26 @@ describe('parseNpmLockfile (multi-workspace)', () => {
 		expect(lock.packages['node_modules/@monorepo/rtl-validation']).toBeUndefined();
 	});
 
+	it('drops ANY local-linked entry (file:/link: deps too, not only workspace symlinks)', () => {
+		// npm marks every linked package with `link: true` — workspace symlinks
+		// AND file:/link: deps — none of which carry a real registry version to
+		// diff. This pins that policy so it is intentional rather than incidental
+		// (and so a future change to workspace handling can't silently regress it).
+		const fileDepLock = parseNpmLockfile.parse(
+			'package-lock.json',
+			JSON.stringify({
+				packages: {
+					'': { dependencies: { 'my-local-pkg': 'file:./local' } },
+					'node_modules/my-local-pkg': { link: true, resolved: 'file:./local' },
+					'node_modules/express': { version: '4.18.2' },
+				},
+			}),
+		);
+		expect(fileDepLock.packages['node_modules/my-local-pkg']).toBeUndefined();
+		// A real registry dep is unaffected.
+		expect(fileDepLock.packages['node_modules/express']).toBeDefined();
+	});
+
 	it('flags direct info available when a root manifest is present', () => {
 		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});

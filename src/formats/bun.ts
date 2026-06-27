@@ -1,6 +1,6 @@
 import { parse as jsoncParse } from 'jsonc-parser';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { DEPENDENCY_FIELDS, splitNameVersion } from './types.js';
+import { declaredDepNames, splitNameVersion } from './types.js';
 
 interface BunLockfile {
 	lockfileVersion: number;
@@ -32,11 +32,7 @@ export const parseBunLockfile: LockfileAdapter = {
 		// workspace is a real package with its own package.json, so its declared
 		// deps are first-party (direct), not transitive pulls.
 		const workspaces = raw.workspaces ?? {};
-		const directNames = new Set(
-			Object.values(workspaces).flatMap((ws) =>
-				DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(ws[kind] ?? {})),
-			),
-		);
+		const directNames = declaredDepNames(Object.values(workspaces));
 
 		const packages: NormalizedLockfile['packages'] = {};
 		for (const [key, value] of Object.entries(raw.packages ?? {})) {

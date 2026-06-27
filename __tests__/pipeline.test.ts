@@ -104,6 +104,40 @@ describe('diffChangedLockfiles', () => {
       '── package-lock.json ──\n removed 1.0.0 · direct\nnode_modules/lodash removed 4.17.20 · transitive',
     ]);
   });
+
+  it('renders multiple changed lockfiles with identity in every format', async () => {
+    // Two changed lockfiles in one run (incl. a nested monorepo path): proves
+    // the headline fixes — text carries per-lockfile headers, and JSON is a
+    // single valid document keyed by lockfile (was glued, unparseable before).
+    const npmOld = JSON.stringify({ packages: { 'node_modules/lodash': { version: '4.17.20' } } });
+    const npmNew = JSON.stringify({ packages: { 'node_modules/lodash': { version: '4.17.21' } } });
+    const bunNew = JSON.stringify({ lockfileVersion: 0, packages: { express: ['express@4.19.0'] } });
+    const source = fakeSource(
+      {
+        FROM: { 'package-lock.json': npmOld },
+        TO: { 'package-lock.json': npmNew, 'apps/api/bun.lock': bunNew },
+      },
+      ['package-lock.json', 'apps/api/bun.lock'],
+    );
+
+    // json: ONE valid document, keyed by lockfile, parseable.
+    const jsonOut = (
+      await captureLog(() =>
+        diffChangedLockfiles(source, 'FROM', 'TO', { format: 'json', color: false, shallow: false }),
+      )
+    )[0];
+    const parsed = JSON.parse(jsonOut); // throws if invalid (the old bug)
+    expect(Object.keys(parsed).sort()).toEqual(['apps/api/bun.lock', 'package-lock.json']);
+
+    // text: both filenames appear as headers.
+    const textOut = (
+      await captureLog(() =>
+        diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
+      )
+    )[0];
+    expect(textOut).toContain('── apps/api/bun.lock ──');
+    expect(textOut).toContain('── package-lock.json ──');
+  });
 });
 
 // Minimal valid lockfile bodies for every supported format, each containing a

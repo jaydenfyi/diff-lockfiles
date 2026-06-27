@@ -67,68 +67,68 @@ Options:
 
 ```text
 $ diff-lockfiles HEAD~1 HEAD
-╔════════════════════════════╤════════╤════════╤═════════╗
-║ package-lock.json          │        │        │         ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ package                    │ old    │ new    │ change  ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ node_modules/@jest/core    │ 29.6.2 │ 29.6.3 │ ↑ patch ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ node_modules/jest          │ 29.6.2 │ 29.6.3 │ ↑ patch ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ node_modules/dedent        │ 1.3.0  │ 1.5.1  │ ↑ minor ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ node_modules/resolve       │ 1.22.2 │ 1.22.4 │ ↑ patch ║
-╟────────────────────────────┼────────┼────────┼─────────╢
-║ node_modules/pretty-format │ —      │ 29.6.3 │ added   ║
-╚════════════════════════════╧════════╧════════╧═════════╝
+╔═════════════════════╤═════════╤═════════╤═════════╗
+║ package-lock.json   │         │         │         ║
+╟─────────────────────┼─────────┼─────────┼─────────╢
+║ package             │ old     │ new     │ change  ║
+╟─────────────────────┼─────────┼─────────┼─────────╢
+║ node_modules/lodash │ 4.17.20 │ 4.17.21 │ ↑ patch ║
+╟─────────────────────┼─────────┼─────────┼─────────╢
+║ node_modules/dedent │ —       │ 1.5.1   │ added   ║
+╚═════════════════════╧═════════╧═════════╧═════════╝
 ```
 
-With `--color`, the bumped version segment is bolded and old/new cells are
-coloured by direction (red old / green new for upgrades, the reverse for
-downgrades).
+The first row labels the lockfile. When more than one lockfile changes in a
+run, each gets its own boxed table (and the other formats label each section
+similarly — see below). With `--color`, the bumped version segment is bolded
+and old/new cells are coloured by direction (red old / green new for upgrades,
+the reverse for downgrades).
 
 ### `--format=json`
 
 `diff-lockfiles --format json HEAD~1 HEAD`
 
-Each package maps to a full change object: a classified `kind`, structured
-`oldVersion`/`newVersion` (with semver components and optional `prerelease`/
-`build`), the semver magnitude `bump` (or `null`), and the dependency `scope`.
+Output is a single JSON object keyed by lockfile path, so a multi-lockfile run
+is still one valid, `jq`-friendly document. Each package maps to a full change
+object: a classified `kind`, structured `oldVersion`/`newVersion` (with semver
+components and optional `prerelease`/`build`), the semver magnitude `bump` (or
+`null`), and the dependency `scope`.
 
 ```json
 {
-  "node_modules/dedent": {
-    "kind": "upgrade",
-    "oldVersion": {
-      "scheme": "semver",
-      "raw": "1.3.0",
-      "major": 1,
-      "minor": 3,
-      "patch": 0
+  "package-lock.json": {
+    "node_modules/lodash": {
+      "kind": "upgrade",
+      "oldVersion": {
+        "scheme": "semver",
+        "raw": "4.17.20",
+        "major": 4,
+        "minor": 17,
+        "patch": 20
+      },
+      "newVersion": {
+        "scheme": "semver",
+        "raw": "4.17.21",
+        "major": 4,
+        "minor": 17,
+        "patch": 21
+      },
+      "bump": "patch",
+      "scope": "direct"
     },
-    "newVersion": {
-      "scheme": "semver",
-      "raw": "1.5.1",
-      "major": 1,
-      "minor": 5,
-      "patch": 1
-    },
-    "bump": "minor",
-    "scope": "transitive"
-  },
-  "node_modules/pretty-format": {
-    "kind": "added",
-    "oldVersion": null,
-    "newVersion": {
-      "scheme": "semver",
-      "raw": "29.6.3",
-      "major": 29,
-      "minor": 6,
-      "patch": 3
-    },
-    "bump": null,
-    "scope": "transitive"
+    "node_modules/dedent": {
+      "kind": "added",
+      "oldVersion": null,
+      "newVersion": {
+        "scheme": "semver",
+        "raw": "1.5.1",
+        "major": 1,
+        "minor": 5,
+        "patch": 1
+      },
+      "bump": null,
+      "scope": "transitive"
+    }
   }
 }
 ```
@@ -137,15 +137,14 @@ Each package maps to a full change object: a classified `kind`, structured
 
 ```text
 $ diff-lockfiles --format text HEAD~1 HEAD
-node_modules/@jest/core 29.6.2 -> 29.6.3 patch · transitive
-node_modules/jest 29.6.2 -> 29.6.3 patch · direct
-node_modules/dedent 1.3.0 -> 1.5.1 minor · transitive
-node_modules/resolve 1.22.2 -> 1.22.4 patch · transitive
-node_modules/pretty-format added 29.6.3 · transitive
+── package-lock.json ──
+node_modules/lodash 4.17.20 -> 4.17.21 patch · direct
+node_modules/dedent added 1.5.1 · transitive
 ```
 
-With `--color`, upgrades render green and downgrades red, and the bumped
-version segment (everything from the changed component onward) is bolded.
+Each lockfile is introduced by a `── <lockfile> ──` divider. With `--color`,
+upgrades render green and downgrades red, and the bumped version segment
+(everything from the changed component onward) is bolded.
 
 ### `--format=markdown`
 
@@ -153,13 +152,14 @@ version segment (everything from the changed component onward) is bolded.
 $ diff-lockfiles --format markdown HEAD~1 HEAD
 ```
 
-| Package                    | Old      | New      | Change        | Scope      |
-| -------------------------- | -------- | -------- | ------------- | ---------- |
-| node_modules/@jest/core    | `29.6.2` | `29.6.3` | patch upgrade | transitive |
-| node_modules/jest          | `29.6.2` | `29.6.3` | patch upgrade | direct     |
-| node_modules/dedent        | `1.3.0`  | `1.5.1`  | minor upgrade | transitive |
-| node_modules/resolve       | `1.22.2` | `1.22.4` | patch upgrade | transitive |
-| node_modules/pretty-format | `—`      | `29.6.3` | added         | transitive |
+```markdown
+## package-lock.json
+
+| Package             | Old       | New       | Change        | Scope      |
+| ------------------- | --------- | --------- | ------------- | ---------- |
+| node_modules/lodash | `4.17.20` | `4.17.21` | patch upgrade | direct     |
+| node_modules/dedent | `—`       | `1.5.1`   | added         | transitive |
+```
 
 ## Limitations
 

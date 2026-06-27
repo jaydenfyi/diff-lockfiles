@@ -1,0 +1,50 @@
+__tests__/formats/fixtures/package-lock.workspaces.v3.json
+  s_626c1a029b9f8f::t_70f49d880a58b6 2-104
+  s_626c1a029b9f8f::t_4a8faa04bb40c5 1,105
+__tests__/formats/fixtures/bun.workspaces.lock.jsonc
+  s_626c1a029b9f8f::t_70f49d880a58b6 2-79
+  s_626c1a029b9f8f::t_4a8faa04bb40c5 1,80
+__tests__/formats/bun.test.ts
+  s_626c1a029b9f8f::t_9befaf1567cf5d 8,51-87
+  s_626c1a029b9f8f::t_26b94285259aab 88
+__tests__/formats/npm.test.ts
+  s_626c1a029b9f8f::t_8e7ffa06eb6bb6 30,84-124,126
+  s_626c1a029b9f8f::t_2fd024dc9c80f1 125
+  s_626c1a029b9f8f::t_3dbb6b3c88c56f 127
+src/formats/npm.ts
+  s_626c1a029b9f8f::t_70f49d880a58b6 31
+  s_626c1a029b9f8f::t_b6e8d4cfd03be0 20-27,29,33-34,38-40,46-48,53,57
+  s_626c1a029b9f8f::t_78c876b4c47e5d 28,41-45
+eslint.config.js
+  s_626c1a029b9f8f::t_08170720fe7c28 31
+src/formats/bun.ts
+  s_626c1a029b9f8f::t_24e00af5d1e66e 29-34,36-38,47-50,61
+__tests__/pipeline.test.ts
+  s_626c1a029b9f8f::t_ece31ae5a3adce 272-277
+__tests__/formats/pnpm.test.ts
+  s_626c1a029b9f8f::t_74f4b5e3890f03 8,68-95
+  s_626c1a029b9f8f::t_c5c7bef6b8fc57 96
+src/formats/pnpm.ts
+  s_626c1a029b9f8f::t_605f4074dfa0cb 50-54,56,58-67,76
+__tests__/formats/fixtures/pnpm-lock.workspaces.v9.yaml
+  s_626c1a029b9f8f::t_4a8faa04bb40c5 1-27,32-33,38-39,45-46,52-53,59-60,66-67,72-95
+  s_626c1a029b9f8f::t_70f49d880a58b6 28-31,34-37,40-44,47-51,54-58,61-65,68-71
+__tests__/__snapshots__/snapshots.test.ts.snap
+  s_626c1a029b9f8f::t_da90d38b2efa01 21,37,53,69,94,110,126,142,167,183,199,215,240,256,272,288,392,423,454,485,526-531,537-542,548-553,559-564,581-583,589-591,597-599,605-607,619-631,636-648,653-665,670-682,704-710,715-721,726-732,737-743,760-763,768-771,776-779,784-787,800,805,810,815
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "3d4343fbdef1b4790798695658144160bfb1a0d4",
+  "prompts": {},
+  "sessions": {
+    "s_626c1a029b9f8f": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0987-5f9d-7d6f-b59c-555f2e94fb5b",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

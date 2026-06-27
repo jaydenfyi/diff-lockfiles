@@ -1,0 +1,22 @@
+.github/workflows/node.yml
+  s_296e11cb9998fe::t_a01927ac89c8ac 10-12,20-22,24
+.github/workflows/npmpublish.yml
+  s_296e11cb9998fe::t_99fb4bb9a4db1c 10-12,17-20,32-35
+  s_296e11cb9998fe::t_f5937d61755fa3 23,38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "2692eaec4e349dc12adda94e04637387b6fa16b4",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

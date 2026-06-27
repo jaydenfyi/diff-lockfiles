@@ -1,0 +1,69 @@
+__tests__/renderers/markdown.test.ts
+  s_01b2ad8b88b56c::t_bcb719a1267546 20
+  s_01b2ad8b88b56c::t_83b4a0b609f02f 18,22-23,25-27
+  s_01b2ad8b88b56c::t_f5346466b25d19 8,24
+__tests__/index.test.ts
+  s_01b2ad8b88b56c::t_db154d59b15da0 53
+src/renderers/text.ts
+  s_01b2ad8b88b56c::t_0bae884e5aa7fd 5-6,8-10,18-19
+  s_01b2ad8b88b56c::t_c2053e396f4e62 2,7,22,24,26-30,33
+__tests__/changes.test.ts
+  s_01b2ad8b88b56c::t_41b692ec2605c5 91-98
+  s_01b2ad8b88b56c::t_2e76aa45ad550f 15-29,33-47
+  s_01b2ad8b88b56c::t_f1edc3cee1b4fe 1-14,30-32,48-54,58-59,63,67,71,75,79,83-90,99-111,117,121,125-130,134-136,140-142
+  s_01b2ad8b88b56c::t_514d816472a181 55-57
+src/diff.ts
+  s_01b2ad8b88b56c::t_6b1bd22e67e860 2-3,9,12,17,25-26,45-50,55-65
+src/renderers/highlight.ts
+  s_01b2ad8b88b56c::t_5d03754cc328ee 7-8
+  s_01b2ad8b88b56c::t_2e7be20f931147 20-22,25,27,29
+  s_01b2ad8b88b56c::t_15f84e33022ca0 1-5,11-16,19,23-24,26,28,30-31
+  s_01b2ad8b88b56c::t_e0de7f41dad0f3 6,9-10,17-18
+__tests__/renderers/table.test.ts
+  s_01b2ad8b88b56c::t_982430ae50e632 15,20,22
+__tests__/renderers/json.test.ts
+  s_01b2ad8b88b56c::t_7c0a9197c41a50 33
+  s_01b2ad8b88b56c::t_0d46b25d42edda 8,17-32
+src/renderers/json.ts
+  s_01b2ad8b88b56c::t_719f768da83802 3-7,10
+__tests__/renderers/text.test.ts
+  s_01b2ad8b88b56c::t_bb1401c7997945 19
+  s_01b2ad8b88b56c::t_c1256a4378f35d 18,20,31,49
+  s_01b2ad8b88b56c::t_aaa941a34f9bc8 39-41
+src/changes.ts
+  s_01b2ad8b88b56c::t_b65f4885270a9d 13-35,38-39,43-46,55-62,69-70,78-79,81,84-86,91-114,118-120,122,124-127
+  s_01b2ad8b88b56c::t_632957c9388d77 63-68
+__tests__/pipeline.test.ts
+  s_01b2ad8b88b56c::t_a071e37bb9b56b 56
+  s_01b2ad8b88b56c::t_140b20fcb2bdb4 82-86
+  s_01b2ad8b88b56c::t_76846b0d2a47c4 101-103
+src/renderers/table.ts
+  s_01b2ad8b88b56c::t_990e84359798fc 4,8,30,33-35,37,41-43
+  s_01b2ad8b88b56c::t_b342c288586a92 3,7,9-23,31-32
+src/index.ts
+  s_01b2ad8b88b56c::t_1407db1a9bd660 8-9,11
+__tests__/diff.test.ts
+  s_01b2ad8b88b56c::t_47c3721059e153 1-33
+__tests__/helpers.ts
+  s_01b2ad8b88b56c::t_fe404ff410df08 1-2,4-18
+src/renderers/markdown.ts
+  s_01b2ad8b88b56c::t_4cf88c6d724ae8 2,27,29-32
+  s_01b2ad8b88b56c::t_1081f4304bbeca 6-21,26
+  s_01b2ad8b88b56c::t_8b55a109ded0e8 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "1030af53b55be0b8254423b3295b551bfc581aec",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -1,7 +1,6 @@
 # diff-lockfiles
 
-Note: this is a fork of <https://github.com/mxweaver/lock-diff>, but it
-operates on Git commit ranges rather than on files. It diffs `package-lock.json`
+Note: this is a fork of <https://github.com/oalders/diff-lockfiles>. It diffs `package-lock.json`
 (npm), `bun.lock` (Bun), `pnpm-lock.yaml` (pnpm), `yarn.lock` (Yarn classic v1
 and Berry v2+), and `aube-lock.yaml` (aube) files.
 

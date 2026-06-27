@@ -24,6 +24,12 @@ and Berry v2+), and `aube-lock.yaml` (aube) files.
 - **`aube-lock.yaml`** (aube). Byte-identical to the pnpm v9 format; branch
   lockfiles (`aube-lock.<branch>.yaml`) are matched too.
 
+Changed lockfiles are discovered anywhere in the repo (nested workspace paths
+included); any file in the diff that isn't a recognized lockfile is ignored.
+When more than one lockfile changes in a run, each is reported as its own
+labeled section (table title row, JSON key, `── file ──` divider, or markdown
+`##` heading) — see the format examples below.
+
 All formats produce the same enriched output in all four renderers: every
 change carries its **kind** (added/removed/upgrade/downgrade/changed), the
 **bump** level (major/minor/patch) when it's a semver move, and its **scope**
@@ -40,7 +46,7 @@ npm install -g diff-lockfiles
 
 Try it out:
 
-```ssh
+```sh
 diff-lockfiles --color origin/main dependabot/branch
 
 diff-lockfiles --color HEAD~1 HEAD
@@ -55,12 +61,12 @@ Usage:  diff-lockfiles [options] <from> <to>
 diff all changed lockfiles (npm, bun, pnpm, yarn, aube) in the repo
 
 Options:
-  -V, --version          output the version number
-  -f, --format <format>  changes the output format (default: "table")
-  -m, --max-buffer       maximum read buffer size
-  -c, --color            colorizes certain output formats (default: false)
-  -s, --shallow          only include direct dependencies of the project (default: false)
-  -h, --help             display help for command
+  -V, --version            output the version number
+  -f, --format <format>    changes the output format (table|json|markdown|text) (default: "table")
+  -m, --max-buffer <size>  maximum read buffer size (bytes) (default: 10240000)
+  -c, --color              colorizes certain output formats (default: false)
+  -s, --shallow            only include direct dependencies of the project (default: false)
+  -h, --help               display help for command
 ```
 
 ### `--format=table` (default)
@@ -163,6 +169,10 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 
 ## Limitations
 
+- **pnpm & yarn upgrades render as remove + add:** these lockfiles key packages
+  by `name@version`, so bumping a version looks like the old key removed and a
+  new key added, rather than a single `upgrade`. npm and bun key by a stable
+  path or bare name, so they upgrade normally.
 - **yarn.lock + `--shallow`:** yarn.lock contains only resolved entries — the
   root manifest lives in `package.json`. Since `diff-lockfiles` reads only
   lockfiles, `--shallow` cannot filter yarn output; all yarn packages are shown

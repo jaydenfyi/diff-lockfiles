@@ -1,7 +1,5 @@
-// This is a fork of <https://github.com/mxweaver/lock-diff>
-import type { Changes } from './changes.js';
 import { renderers } from './renderers/registry.js';
-import type { Format, RenderOptions } from './renderers/types.js';
+import type { Format, RenderOptions, LockfileDiffs } from './renderers/types.js';
 
 /** Public API: the pure diff function. */
 export { diff } from './diff.js';
@@ -10,7 +8,7 @@ export { parseVersion } from './changes.js';
 /** Public API types. */
 export type { Changes, Change, ChangeKind, Version, Bump, Scope } from './changes.js';
 export type { NormalizedLockfile } from './diff.js';
-export type { Format, RenderOptions, Renderer } from './renderers/types.js';
+export type { Format, RenderOptions, Renderer, LockfileDiff, LockfileDiffs } from './renderers/types.js';
 
 /** Options for `print`. Extends `RenderOptions` with the format to select. */
 export interface PrintOptions extends RenderOptions {
@@ -18,17 +16,13 @@ export interface PrintOptions extends RenderOptions {
 }
 
 /**
- * Render `changes` in the selected format and write them to stdout.
- *
- * Thin wrapper over the renderer registry: look up the renderer for the format,
- * ask it for a string, and `console.log` it (skipping the log entirely when the
- * renderer returns an empty string, e.g. the text renderer with no changes).
+ * Render a full run's lockfile diffs in the selected format and write the single
+ * resulting document to stdout. Emits nothing when `lockfiles` is empty (nothing
+ * changed) or when the renderer returns an empty string.
  */
-export function print(changes: Changes, options: PrintOptions): void {
-  const output = renderers[options.format].render(changes, {
-    color: options.color,
-    title: options.title,
-  });
+export function print(lockfiles: LockfileDiffs, options: PrintOptions): void {
+  if (lockfiles.length === 0) return;
+  const output = renderers[options.format].render(lockfiles, { color: options.color });
   if (output !== '') {
     console.log(output);
   }

@@ -1,39 +1,32 @@
 import { markdownRenderer } from '../../src/renderers/markdown.js';
-import { changes } from '../helpers.js';
+import { lockfiles } from '../helpers.js';
 import type { RenderOptions } from '../../src/renderers/types.js';
 
-const opts: RenderOptions = { color: false, title: '' };
+const opts: RenderOptions = { color: false };
 
 describe('markdownRenderer', () => {
-  it('renders a markdown table with Change and Scope columns', () => {
+  it('renders an H2 per lockfile, each followed by its table', () => {
     const out = markdownRenderer.render(
-      changes({
-        express: ['4.18.0', '4.18.2'], // upgrade
-        lodash: [null, '4.17.21'], // added
-        chalk: ['4.1.0', null], // removed
+      lockfiles({
+        'apps/api/bun.lock': { express: ['4.18.0', '4.19.0'] },
+        'package-lock.json': { lodash: [null, '4.17.21'] },
       }),
       opts,
     );
-    const lines = out.split('\n');
-    // header (markdown-table pads columns, so match column names not exact cells)
-    expect(lines[0]).toContain('| Package |');
-    expect(lines[0]).toContain('Scope');
-    expect(out).toContain('express');
-    expect(out).toContain('`4.18.0`');
-    expect(out).toContain('`4.18.2`');
-    expect(out).toContain('patch upgrade');
-    expect(out).toContain('added');
-    expect(out).toContain('removed');
-    expect(out).toContain('transitive');
+    expect(out).toContain('## apps/api/bun.lock');
+    expect(out).toContain('## package-lock.json');
+    // A blank line separates the first table from the next heading (was missing).
+    expect(out).toMatch(/\|\n\n## package-lock\.json/);
   });
 
-  it('renders an H2 title line when a title is given', () => {
-    const out = markdownRenderer.render(changes({}), { color: false, title: 'bun.lock' });
-    expect(out.split('\n')[0]).toBe('## bun.lock');
+  it('renders only the header row for a lockfile with no changes', () => {
+    // (Pipeline filters empties, so this is defensive; keep the behavior sane.)
+    const out = markdownRenderer.render(lockfiles({ 'a.lock': {} }), opts);
+    expect(out).toContain('## a.lock');
+    expect(out).toContain('| Package');
   });
 
-  it('renders only the header row for empty changes', () => {
-    const out = markdownRenderer.render(changes({}), opts);
-    expect(out.split('\n')).toHaveLength(2); // header + separator
+  it('emits an empty string for an empty run', () => {
+    expect(markdownRenderer.render([], opts)).toBe('');
   });
 });

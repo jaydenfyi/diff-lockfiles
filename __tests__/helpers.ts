@@ -1,5 +1,6 @@
 import { bumpOf, classify, parseVersion } from '../src/changes.js';
 import type { Change, Changes, Scope, Version } from '../src/changes.js';
+import type { LockfileDiffs } from '../src/renderers/types.js';
 
 /** Build a single classified {@link Change} from raw version strings. */
 export function change(
@@ -29,4 +30,17 @@ export function changes(entries: Record<string, [string | null, string | null]>)
       change(oldVersion, newVersion),
     ]),
   );
+}
+
+/**
+ * Build a {@link LockfileDiffs} array from `lockfile -> { name -> [old, new] }`,
+ * so multi-lockfile renderer tests stay readable while constructing real data.
+ */
+export function lockfiles(
+  entries: Record<string, Record<string, [string | null, string | null]>>,
+): LockfileDiffs {
+  return Object.entries(entries).map(([lockfile, changesMap]) => ({
+    lockfile,
+    changes: changes(changesMap),
+  }));
 }

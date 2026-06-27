@@ -5,7 +5,7 @@ import { parsePnpmLockfile } from './formats/pnpm.js';
 import { parseAubeLockfile } from './formats/aube.js';
 import { parseYarnLockfile } from './formats/yarn.js';
 import type { LockfileAdapter, NormalizedLockfile } from './formats/types.js';
-import type { Format } from './renderers/types.js';
+import type { Format, LockfileDiff } from './renderers/types.js';
 import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
@@ -47,6 +47,7 @@ export async function diffChangedLockfiles(
   options: DiffOptions,
 ): Promise<void> {
   const files = await source.listChanged(from, to);
+  const diffs: LockfileDiff[] = [];
   for (const filename of files) {
     const adapter = adapterFor(filename);
     if (!adapter) continue;
@@ -62,11 +63,13 @@ export async function diffChangedLockfiles(
       newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
       options.shallow,
     );
-
-    print(changes, {
-      color: options.color,
-      format: options.format,
-      title: filename,
-    });
+    // Skip lockfiles with no net changes so they contribute no output section.
+    if (Object.keys(changes).length > 0) {
+      diffs.push({ lockfile: filename, changes });
+    }
   }
+
+  // Render the whole run once into a single document (one log line), so every
+  // format can label each lockfile and JSON stays one valid object.
+  print(diffs, { color: options.color, format: options.format });
 }

@@ -1,6 +1,6 @@
 import type { NormalizedLockfile, NormalizedPackage } from './formats/types.js';
-import { bumpOf, classify, parseVersion } from './changes.js';
-import type { Change, Changes, Scope } from './changes.js';
+import { bumpOf, classify, isUnchanged, parseVersion } from './changes.js';
+import type { Change, Changes, Scope, Version } from './changes.js';
 
 /** Re-export the canonical lockfile type for library consumers. */
 export type { NormalizedLockfile } from './formats/types.js';
@@ -28,30 +28,40 @@ function groupByName(packages: NormalizedPackage[]): Map<string, NormalizedPacka
   return grouped;
 }
 
+/** A package pre-parsed with its {@link Version}, so cancellation parses once each. */
+interface ParsedPackage {
+  pkg: NormalizedPackage;
+  version: Version;
+}
+
 /**
- * Cancel unchanged same-name/same-version entries as a multiset. Prefers exact
- * `sourceKey` matches first (for stable, meaningful cancellation), then cancels
- * any remaining old/new pair with equal raw `version`. Returns the leftovers.
+ * Cancel unchanged same-name/same-version entries as a multiset: each old entry
+ * is paired with the first remaining new entry that compares equal under the
+ * canonical {@link isUnchanged} (semver `eq`, which ignores build metadata), and
+ * both are removed. Leftovers are the genuinely changed versions.
+ *
+ * Reusing `isUnchanged` keeps a single notion of "unchanged" for the whole
+ * codebase and preserves the build-metadata-only-change contract end-to-end.
  */
 function cancelUnchanged(
   oldPkgs: NormalizedPackage[],
   newPkgs: NormalizedPackage[],
 ): { oldRemaining: NormalizedPackage[]; newRemaining: NormalizedPackage[] } {
-  const oldLeft = [...oldPkgs];
-  const newLeft = [...newPkgs];
+  const oldLeft = oldPkgs.map((pkg) => ({ pkg, version: parseVersion(pkg.version) }));
+  const newLeft = newPkgs.map((pkg) => ({ pkg, version: parseVersion(pkg.version) }));
 
-  // Pass 1: cancel exact same-version pairs (preserving multiset equality, not
-  // just source-key equality — a rename of the key with the same resolved
-  // version is not a change we report).
   for (let i = oldLeft.length - 1; i >= 0; i--) {
-    const oldPkg = oldLeft[i];
-    const match = newLeft.findIndex((n) => n.version === oldPkg.version);
+    const oldEntry: ParsedPackage = oldLeft[i];
+    const match = newLeft.findIndex((n) => isUnchanged(oldEntry.version, n.version));
     if (match !== -1) {
       oldLeft.splice(i, 1);
       newLeft.splice(match, 1);
     }
   }
-  return { oldRemaining: oldLeft, newRemaining: newLeft };
+  return {
+    oldRemaining: oldLeft.map((e) => e.pkg),
+    newRemaining: newLeft.map((e) => e.pkg),
+  };
 }
 
 /** A paired change is `direct` if either side was a direct dependency. */

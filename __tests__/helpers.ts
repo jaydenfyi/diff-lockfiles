@@ -13,15 +13,6 @@ export function pkg(
   return { name, version, sourceKey, direct };
 }
 
-/** Build a single classified {@link Change} from raw version strings (array model). */
-export function change(
-  oldVersion: string | null,
-  newVersion: string | null,
-  scope: Scope = 'transitive',
-): Change {
-  return changeEntry('pkg', oldVersion, newVersion, { scope });
-}
-
 /**
  * Build a {@link Change} carrying bare name + provenance source keys. The
  * default source keys are `name@version`; pass `oldSourceKey`/`newSourceKey`

@@ -195,4 +195,14 @@ describe('diff (name-grouped resolution pairing)', () => {
     const newLock = { packages: { '': pkg('', '2.0.0') } };
     expect(diff(oldLock, newLock, false)).toEqual([]);
   });
+
+  it('treats a build-metadata-only change as unchanged (semver.eq ignores build)', () => {
+    // The canonical `isUnchanged` uses semver `eq`, which ignores build metadata,
+    // so a pure build-metadata change produces no diff row. This pins the
+    // documented contract end-to-end (it had been silently dropped when
+    // cancellation switched to raw-string equality).
+    const oldLock = { packages: { 'foo@1.0.0+build1': pkg('foo', '1.0.0+build1', 'foo@1.0.0+build1') } };
+    const newLock = { packages: { 'foo@1.0.0+build2': pkg('foo', '1.0.0+build2', 'foo@1.0.0+build2') } };
+    expect(diff(oldLock, newLock, false)).toEqual([]);
+  });
 });

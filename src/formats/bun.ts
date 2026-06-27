@@ -1,6 +1,6 @@
 import { parse as jsoncParse } from 'jsonc-parser';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { DEPENDENCY_FIELDS } from './types.js';
+import { DEPENDENCY_FIELDS, splitNameVersion } from './types.js';
 
 interface BunLockfile {
   lockfileVersion: number;
@@ -14,17 +14,6 @@ interface BunWorkspace {
   devDependencies?: Record<string, string>;
   optionalDependencies?: Record<string, string>;
   peerDependencies?: Record<string, string>;
-}
-
-/**
- * Extract the version specifier from a Bun "name@version" string.
- * Scoped names ("@scope/name@1.2.3") start with '@', so we skip that leading
- * '@' before searching for the '@' that separates name from version.
- */
-export function extractVersion(specifier: string): string {
-  const start = specifier.startsWith('@') ? 1 : 0;
-  const at = specifier.indexOf('@', start);
-  return at === -1 ? specifier : specifier.slice(at + 1);
 }
 
 export const parseBunLockfile: LockfileAdapter = {
@@ -41,7 +30,7 @@ export const parseBunLockfile: LockfileAdapter = {
       ? Object.fromEntries(
           Object.entries(raw.packages).map(([key, value]) => {
             const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
-            return [key, { version: extractVersion(specifier) }];
+            return [key, { version: splitNameVersion(specifier)[1] }];
           }),
         )
       : {};

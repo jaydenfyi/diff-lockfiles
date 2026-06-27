@@ -24,3 +24,16 @@ export const DEPENDENCY_FIELDS = [
   'optionalDependencies',
   'peerDependencies',
 ] as const;
+
+/**
+ * Split a `name@version` key/descriptor into its [name, version] halves.
+ * Scoped names (`@scope/name@1.2.3`) start with '@', so the leading '@' is
+ * skipped before searching for the '@' that separates name from version.
+ * Shared by the bun, pnpm, and yarn adapters, which all key packages as
+ * `name@version`. Returns `[specifier, '']` when no separator is present.
+ */
+export function splitNameVersion(specifier: string): [name: string, version: string] {
+  const start = specifier.startsWith('@') ? 1 : 0;
+  const at = specifier.indexOf('@', start);
+  return at === -1 ? [specifier, ''] : [specifier.slice(0, at), specifier.slice(at + 1)];
+}

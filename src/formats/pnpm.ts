@@ -1,6 +1,6 @@
 import { parseAllDocuments } from 'yaml';
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { DEPENDENCY_FIELDS } from './types.js';
+import { DEPENDENCY_FIELDS, splitNameVersion } from './types.js';
 
 interface PnpmImporterDep {
   specifier?: string;
@@ -18,18 +18,6 @@ interface PnpmLockfile {
   lockfileVersion?: string;
   importers?: Record<string, PnpmImporter>;
   packages?: Record<string, unknown>;
-}
-
-/**
- * Extract the version from a pnpm v9 package key (`name@version`).
- * Scoped names start with '@', so skip that leading '@' before searching
- * for the '@' that separates name from version. (Same shape as bun.ts
- * `extractVersion` — kept inline here to avoid widening bun's export.)
- */
-function versionFromKey(key: string): string {
-  const start = key.startsWith('@') ? 1 : 0;
-  const at = key.indexOf('@', start);
-  return at === -1 ? key : key.slice(at + 1);
 }
 
 /**
@@ -61,7 +49,7 @@ export function parsePnpmContent(content: string): NormalizedLockfile {
   const rawPackages = doc.packages ?? {};
   const packages: NormalizedLockfile['packages'] = {};
   for (const key of Object.keys(rawPackages)) {
-    packages[key] = { version: versionFromKey(key) };
+    packages[key] = { version: splitNameVersion(key)[1] };
   }
 
   // Reconstruct `name@version` keys from importers['.'] so they line up

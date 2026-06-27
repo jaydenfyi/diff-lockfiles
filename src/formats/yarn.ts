@@ -1,4 +1,5 @@
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import { splitNameVersion } from './types.js';
 
 interface YarnEntry {
   /** Raw descriptor strings (quotes stripped): `name@range` or `name@protocol:range`. */
@@ -63,18 +64,6 @@ function parseEntries(content: string): YarnEntry[] {
 }
 
 /**
- * Extract the package name from a yarn descriptor.
- * `is-odd@3.0.1`        -> `is-odd`
- * `@scope/name@5.6.0`   -> `@scope/name`  (skip leading '@', split on next '@')
- * `is-odd@npm:3.0.1`    -> `is-odd`       (berry protocol; range is irrelevant)
- */
-function nameFromDescriptor(descriptor: string): string {
-  const start = descriptor.startsWith('@') ? 1 : 0;
-  const at = descriptor.indexOf('@', start);
-  return at === -1 ? descriptor : descriptor.slice(0, at);
-}
-
-/**
  * yarn.lock (v1 classic and berry v2+) share a custom line-oriented format.
  * Entries have comma-merged descriptors sharing one resolved `version`.
  *
@@ -94,7 +83,7 @@ export const parseYarnLockfile: LockfileAdapter = {
       // Skip the berry __metadata block (its "version" is the format version).
       if (descriptors[0] === '__metadata') continue;
       // Use the first descriptor's name; key as name@version.
-      const name = nameFromDescriptor(descriptors[0]);
+      const name = splitNameVersion(descriptors[0])[0];
       const key = `${name}@${version}`;
       // Multiple descriptors share one entry; don't overwrite if seen.
       if (!packages[key]) packages[key] = { version };

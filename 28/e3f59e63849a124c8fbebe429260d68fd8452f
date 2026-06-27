@@ -1,0 +1,21 @@
+src/renderers/text.ts
+  s_296e11cb9998fe::t_11d86085b79fd8 30-34,45,47
+src/renderers/table.ts
+  s_296e11cb9998fe::t_1101b5222ca038 37-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "28e3f59e63849a124c8fbebe429260d68fd8452f",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

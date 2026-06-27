@@ -1,0 +1,23 @@
+__tests__/formats/aube.test.ts
+  s_01b2ad8b88b56c::t_94aab9599aa3ff 1-30
+src/formats/aube.ts
+  s_01b2ad8b88b56c::t_95a789457f72e3 1-19
+__tests__/formats/fixtures/aube-lock.yaml
+  s_01b2ad8b88b56c::t_d1caa75cd09b6f 1-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "bd78fae7e7dc40cd2a3156984299ca39434bac42",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

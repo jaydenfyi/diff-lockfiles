@@ -1,24 +1,9 @@
 import { markdownTable } from 'markdown-table';
+import { changeLabel } from './change-label.js';
 import { displayRaw } from './highlight.js';
 import { packageLabels } from './display-name.js';
-import type { Bump, ChangeKind, Changes } from '../changes.js';
+import type { Changes } from '../changes.js';
 import type { Renderer } from './types.js';
-
-/** Descriptive change label for the markdown `Change` column. */
-function changeLabel(kind: ChangeKind, bump: Bump | null): string {
-	switch (kind) {
-		case 'upgrade':
-			return `${bump} upgrade`;
-		case 'downgrade':
-			return `${bump} downgrade`;
-		case 'added':
-			return 'added';
-		case 'removed':
-			return 'removed';
-		case 'changed':
-			return 'changed';
-	}
-}
 
 /** `## <lockfile>` heading + a GitHub-flavoured Markdown table of its changes. */
 function renderSection(lockfile: string, changes: Changes): string {

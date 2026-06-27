@@ -1,4 +1,5 @@
 import { createColor } from '../colors.js';
+import { changeLabel } from './change-label.js';
 import { displayRaw, highlightVersion } from './highlight.js';
 import { packageLabels } from './display-name.js';
 import type { Change } from '../changes.js';
@@ -17,7 +18,7 @@ function formatChange(name: string, change: Change, color: ReturnType<typeof cre
 		case 'downgrade': {
 			// Direction maps directly to colour: upgrades green, downgrades red.
 			const paint = kind === 'upgrade' ? color.green : color.red;
-			return `${name} ${paint(`${highlightVersion(oldVersion, bump, color)} -> ${highlightVersion(newVersion, bump, color)} ${bump}`)}${scopeSuffix}`;
+			return `${name} ${paint(`${highlightVersion(oldVersion, bump, color)} -> ${highlightVersion(newVersion, bump, color)} ${changeLabel(kind, bump)}`)}${scopeSuffix}`;
 		}
 		case 'changed':
 			// Non-semver move (git/file specifier): render plainly, no colour.

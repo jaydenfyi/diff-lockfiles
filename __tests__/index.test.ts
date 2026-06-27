@@ -50,6 +50,6 @@ describe('diff (shallow via directDependencyKeys)', () => {
       },
       directDependencyKeys: ['express'],
     };
-    expect(diff(oldLock, newLock, true)).toEqual({ express: change('4.18.0', '4.18.2') });
+    expect(diff(oldLock, newLock, true)).toEqual({ express: change('4.18.0', '4.18.2', 'direct') });
   });
 });

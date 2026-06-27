@@ -15,7 +15,9 @@ describe('textRenderer', () => {
       }),
       noColor,
     );
-    expect(out).toBe('lodash added\nexpress removed\nchalk 4.1.0 -> 5.0.0');
+    expect(out).toBe(
+      'lodash added 4.17.21 · transitive\nexpress removed 4.18.0 · transitive\nchalk 4.1.0 -> 5.0.0 major · transitive',
+    );
   });
 
   it('returns an empty string for empty changes (print() then emits nothing)', () => {
@@ -26,7 +28,7 @@ describe('textRenderer', () => {
     // diff() drops truly-unchanged entries, so a renderer only ever sees real
     // changes; a non-semver specifier is a `changed` kind and renders plain.
     const out = textRenderer.render(changes({ foo: ['git+ssh://host/a', 'git+ssh://host/b'] }), noColor);
-    expect(out).toBe('foo git+ssh://host/a -> git+ssh://host/b');
+    expect(out).toBe('foo git+ssh://host/a -> git+ssh://host/b · transitive');
   });
 
   it('paints upgrade green and downgrade red when colour is enabled', () => {
@@ -34,8 +36,9 @@ describe('textRenderer', () => {
       changes({ up: ['1.0.0', '2.0.0'], down: ['2.0.0', '1.0.0'] }),
       { color: true, title: '' },
     );
-    expect(out).toContain(createColor(true).green('1.0.0 -> 2.0.0'));
-    expect(out).toContain(createColor(true).red('2.0.0 -> 1.0.0'));
+    const color = createColor(true);
+    expect(out).toContain(color.green(`${color.bold('1.0.0')} -> ${color.bold('2.0.0')} major`));
+    expect(out).toContain(color.red(`${color.bold('2.0.0')} -> ${color.bold('1.0.0')} major`));
   });
 
   it('emits no ANSI codes when color=false', () => {
@@ -43,7 +46,7 @@ describe('textRenderer', () => {
       changes({ lodash: [null, '1.0.0'], express: ['4.18.0', null] }),
       noColor,
     );
-    expect(out).toBe('lodash added\nexpress removed');
+    expect(out).toBe('lodash added 1.0.0 · transitive\nexpress removed 4.18.0 · transitive');
     expect(out).not.toContain('\x1b');
   });
 });

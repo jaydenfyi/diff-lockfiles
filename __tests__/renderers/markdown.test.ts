@@ -5,7 +5,7 @@ import type { RenderOptions } from '../../src/renderers/types.js';
 const opts: RenderOptions = { color: false, title: '' };
 
 describe('markdownRenderer', () => {
-  it('renders a markdown table with a Change column', () => {
+  it('renders a markdown table with Change and Scope columns', () => {
     const out = markdownRenderer.render(
       changes({
         express: ['4.18.0', '4.18.2'], // upgrade
@@ -15,12 +15,16 @@ describe('markdownRenderer', () => {
       opts,
     );
     const lines = out.split('\n');
-    // header (markdown-table pads columns, so match a prefix not exact equality)
+    // header (markdown-table pads columns, so match column names not exact cells)
     expect(lines[0]).toContain('| Package |');
+    expect(lines[0]).toContain('Scope');
     expect(out).toContain('express');
-    expect(out).toContain('4.18.0 → **4.18.2**'); // upgrade bolds new
-    expect(out).toContain('**4.17.21** (added)');
-    expect(out).toContain('~~4.1.0~~ (removed)');
+    expect(out).toContain('`4.18.0`');
+    expect(out).toContain('`4.18.2`');
+    expect(out).toContain('patch upgrade');
+    expect(out).toContain('added');
+    expect(out).toContain('removed');
+    expect(out).toContain('transitive');
   });
 
   it('renders an H2 title line when a title is given', () => {

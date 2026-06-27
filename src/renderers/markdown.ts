@@ -1,32 +1,35 @@
 import { markdownTable } from 'markdown-table';
-import type { Change } from '../changes.js';
+import { displayRaw } from './highlight.js';
+import type { Bump, ChangeKind } from '../changes.js';
 import type { Renderer } from './types.js';
+
+/** Descriptive change label for the markdown `Change` column. */
+function changeLabel(kind: ChangeKind, bump: Bump | null): string {
+  switch (kind) {
+    case 'upgrade':
+      return `${bump} upgrade`;
+    case 'downgrade':
+      return `${bump} downgrade`;
+    case 'added':
+      return 'added';
+    case 'removed':
+      return 'removed';
+    case 'changed':
+      return 'changed';
+  }
+}
 
 /** Render changes as a GitHub-flavoured Markdown table. */
 export const markdownRenderer: Renderer = {
   render(changes, options) {
-    function formatVersionChange({ kind, oldVersion, newVersion }: Change): string {
-      switch (kind) {
-        case 'added':
-          return `**${newVersion}** (added)`;
-        case 'removed':
-          return `~~${oldVersion}~~ (removed)`;
-        case 'upgrade':
-          return `${oldVersion} → **${newVersion}**`;
-        case 'downgrade':
-          return `**${oldVersion}** → ${newVersion}`;
-        case 'changed':
-          return `${oldVersion} → ${newVersion}`;
-      }
-    }
-
     const tableData = [
-      ['Package', 'Old Version', 'New Version', 'Change'],
-      ...Object.entries(changes).map(([name, change]) => [
+      ['Package', 'Old', 'New', 'Change', 'Scope'],
+      ...Object.entries(changes).map(([name, { oldVersion, newVersion, kind, bump, scope }]) => [
         name,
-        change.oldVersion || '—',
-        change.newVersion || '—',
-        formatVersionChange(change),
+        `\`${displayRaw(oldVersion)}\``,
+        `\`${displayRaw(newVersion)}\``,
+        changeLabel(kind, bump),
+        scope,
       ]),
     ];
 

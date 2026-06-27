@@ -5,8 +5,10 @@ import type { Format, RenderOptions } from './renderers/types.js';
 
 /** Public API: the pure diff function. */
 export { diff } from './diff.js';
+/** Public API: the version parser. */
+export { parseVersion } from './changes.js';
 /** Public API types. */
-export type { Changes } from './changes.js';
+export type { Changes, Change, ChangeKind, Version, Bump, Scope } from './changes.js';
 export type { NormalizedLockfile } from './diff.js';
 export type { Format, RenderOptions, Renderer } from './renderers/types.js';
 

@@ -12,13 +12,14 @@ describe('tableRenderer', () => {
     );
     // header labels
     expect(out).toContain('package');
-    expect(out).toContain('old version');
-    expect(out).toContain('new version');
+    expect(out).toContain('change');
     // change rows
     expect(out).toContain('express');
     expect(out).toContain('4.18.0');
     expect(out).toContain('4.18.2');
+    expect(out).toContain('↑ patch'); // upgrade change cell
     expect(out).toContain('lodash');
+    expect(out).toContain('added'); // added change cell
   });
 
   it('prepends a title row when a title is given', () => {

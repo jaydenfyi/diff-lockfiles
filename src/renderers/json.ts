@@ -1,17 +1,12 @@
 import type { Renderer } from './types.js';
 
-/** Render changes as a compact JSON object. */
+/**
+ * Render changes as a pretty-printed JSON object. Each package maps to its full
+ * {@link Change} (`kind`, structured `oldVersion`/`newVersion`, `bump`, `scope`),
+ * so consumers get the classified data directly rather than raw version tuples.
+ */
 export const jsonRenderer: Renderer = {
   render(changes) {
-    // Flatten each Change back to its [oldVersion, newVersion] tuple: JSON is a
-    // data format, so it carries the raw versions rather than the presentation
-    // `kind` (consumers can classify from the data themselves).
-    const tuples = Object.fromEntries(
-      Object.entries(changes).map(([name, { oldVersion, newVersion }]) => [
-        name,
-        [oldVersion, newVersion],
-      ]),
-    );
-    return JSON.stringify(tuples);
+    return JSON.stringify(changes, null, 2);
   },
 };

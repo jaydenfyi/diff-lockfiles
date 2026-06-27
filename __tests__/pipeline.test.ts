@@ -53,7 +53,7 @@ describe('diffChangedLockfiles', () => {
       diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
     );
 
-    expect(printed).toEqual(['node_modules/lodash 4.17.20 -> 4.17.21']);
+    expect(printed).toEqual(['node_modules/lodash 4.17.20 -> 4.17.21 patch · transitive']);
   });
 
   it('does nothing (and does not throw) when no lockfiles changed', async () => {
@@ -79,8 +79,11 @@ describe('diffChangedLockfiles', () => {
     );
 
     // The whole lockfile is new, so every entry — including the root "" project
-    // entry carried by the fixture — shows as added (no crash).
-    expect(printed).toEqual([' added\nnode_modules/lodash added']);
+    // entry carried by the fixture — shows as added (no crash). The root entry
+    // is a direct dep (the npm adapter lists "" itself); lodash is transitive.
+    expect(printed).toEqual([
+      ' added 1.0.0 · direct\nnode_modules/lodash added 4.17.21 · transitive',
+    ]);
   });
 
   it('treats a removed lockfile as fully removed (no crash)', async () => {
@@ -95,6 +98,8 @@ describe('diffChangedLockfiles', () => {
     );
 
     // Symmetric to the added case: every entry (including root "") is removed.
-    expect(printed).toEqual([' removed\nnode_modules/lodash removed']);
+    expect(printed).toEqual([
+      ' removed 1.0.0 · direct\nnode_modules/lodash removed 4.17.20 · transitive',
+    ]);
   });
 });

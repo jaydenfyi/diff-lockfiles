@@ -43,7 +43,6 @@ describe('jsonRenderer', () => {
 				oldVersion: { scheme: 'semver', raw: '4.18.0', major: 4, minor: 18, patch: 0 },
 				newVersion: { scheme: 'semver', raw: '4.18.2', major: 4, minor: 18, patch: 2 },
 				bump: 'patch',
-				scope: 'transitive',
 			},
 		]);
 	});

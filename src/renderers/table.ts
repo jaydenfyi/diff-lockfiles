@@ -14,24 +14,24 @@ function renderTable(
 ): string {
 	const labels = packageLabels(changes);
 	const rows = changes.map((change, index) => {
-		const { kind, oldVersion, newVersion, bump, scope } = change;
+		const { kind, oldVersion, newVersion, bump } = change;
 		const name = labels[index];
 		const oldCell = highlightVersion(oldVersion, bump, color);
 		const newCell = highlightVersion(newVersion, bump, color);
 		const cell = changeLabel(kind, bump);
 		if (kind === 'upgrade') {
-			return [name, color.red(oldCell), color.green(newCell), cell, scope];
+			return [name, color.red(oldCell), color.green(newCell), cell];
 		}
 		if (kind === 'downgrade') {
-			return [name, color.green(oldCell), color.red(newCell), cell, scope];
+			return [name, color.green(oldCell), color.red(newCell), cell];
 		}
-		return [name, oldCell, newCell, cell, scope];
+		return [name, oldCell, newCell, cell];
 	});
 
 	// Title row (the lockfile name) above the header, then header, then change rows.
 	// Headers are Title Case to match the markdown renderer.
-	const header: (string | null)[] = ['Package', 'Old', 'New', 'Change', 'Scope'];
-	const titleRow: (string | null)[] = [lockfile, '', '', '', ''];
+	const header: (string | null)[] = ['Package', 'Old', 'New', 'Change'];
+	const titleRow: (string | null)[] = [lockfile, '', '', ''];
 	// Bold the title row only (noop when colouring is disabled).
 	const data = [titleRow.map((cell) => color.bold(cell)), header, ...rows];
 	return table(data);

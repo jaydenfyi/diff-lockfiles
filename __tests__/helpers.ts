@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bumpOf, classify, parseVersion } from '../src/changes.js';
-import type { Change, Scope, Version } from '../src/changes.js';
+import type { Change, Version } from '../src/changes.js';
 import type { NormalizedPackage } from '../src/formats/types.js';
 import type { LockfileDiffs } from '../src/renderers/types.js';
 
@@ -28,8 +28,6 @@ export function changeEntry(
 	options: {
 		oldSourceKey?: string | null;
 		newSourceKey?: string | null;
-		direct?: boolean;
-		scope?: Scope;
 	} = {},
 ): Change {
 	const oldV: Version | null = oldVersion === null ? null : parseVersion(oldVersion);
@@ -42,7 +40,6 @@ export function changeEntry(
 		oldVersion: oldV,
 		newVersion: newV,
 		bump: bumpOf(oldV, newV),
-		scope: options.scope ?? (options.direct ? 'direct' : 'transitive'),
 	};
 }
 

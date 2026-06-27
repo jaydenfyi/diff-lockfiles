@@ -6,7 +6,7 @@ export { diff } from './diff.js';
 /** Public API: the version parser. */
 export { parseVersion } from './changes.js';
 /** Public API types. */
-export type { Changes, Change, ChangeKind, Version, Bump, Scope } from './changes.js';
+export type { Changes, Change, ChangeKind, Version, Bump } from './changes.js';
 export type { NormalizedLockfile } from './diff.js';
 export type {
 	Format,

@@ -9,15 +9,14 @@ import type { Renderer } from './types.js';
 function renderSection(lockfile: string, changes: Changes): string {
 	const labels = packageLabels(changes);
 	const tableData = [
-		['Package', 'Old', 'New', 'Change', 'Scope'],
+		['Package', 'Old', 'New', 'Change'],
 		...changes.map((change, index) => {
-			const { oldVersion, newVersion, kind, bump, scope } = change;
+			const { oldVersion, newVersion, kind, bump } = change;
 			return [
 				labels[index],
 				`\`${displayRaw(oldVersion)}\``,
 				`\`${displayRaw(newVersion)}\``,
 				changeLabel(kind, bump),
-				scope,
 			];
 		}),
 	];

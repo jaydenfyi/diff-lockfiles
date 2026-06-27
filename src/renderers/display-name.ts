@@ -8,7 +8,6 @@ function rowSignature(change: Change): string {
 		change.kind,
 		displayRaw(change.oldVersion),
 		displayRaw(change.newVersion),
-		change.scope,
 	].join('\u0000');
 }
 

@@ -51,7 +51,6 @@ describe('diff (shallow via directDependencyInfoAvailable)', () => {
 			changeEntry('express', '4.18.0', '4.18.2', {
 				oldSourceKey: 'express',
 				newSourceKey: 'express',
-				scope: 'direct',
 			}),
 		]);
 	});

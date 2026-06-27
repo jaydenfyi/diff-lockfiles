@@ -21,12 +21,10 @@ describe('diff (array output)', () => {
 			changeEntry('express', '4.18.0', '4.18.2', {
 				oldSourceKey: 'node_modules/express',
 				newSourceKey: 'node_modules/express',
-				scope: 'direct',
 			}),
 			changeEntry('accepts', '1.3.7', '1.3.8', {
 				oldSourceKey: 'node_modules/accepts',
 				newSourceKey: 'node_modules/accepts',
-				scope: 'transitive',
 			}),
 		]);
 	});
@@ -60,26 +58,6 @@ describe('diff (array output)', () => {
 	});
 });
 
-describe('diff scope', () => {
-	it('marks a paired change direct when either side is direct', () => {
-		const oldLock = {
-			packages: { lodash: makePackage('lodash', '1.0.0', 'lodash@1.0.0', true) },
-			directDependencyInfoAvailable: true,
-		};
-		const newLock = {
-			packages: { lodash: makePackage('lodash', '2.0.0', 'lodash@2.0.0', false) },
-			directDependencyInfoAvailable: true,
-		};
-		expect(diff(oldLock, newLock, false)[0].scope).toBe('direct');
-	});
-
-	it('defaults to transitive when neither side is direct', () => {
-		const oldLock = { packages: { foo: makePackage('foo', '1.0.0') } };
-		const newLock = { packages: { foo: makePackage('foo', '1.1.0') } };
-		expect(diff(oldLock, newLock, false)[0].scope).toBe('transitive');
-	});
-});
-
 describe('diff (shallow via directDependencyInfoAvailable)', () => {
 	it('only includes direct packages when shallow and direct info is available', () => {
 		const oldLock = {
@@ -100,7 +78,6 @@ describe('diff (shallow via directDependencyInfoAvailable)', () => {
 			changeEntry('express', '4.18.0', '4.18.2', {
 				oldSourceKey: 'express',
 				newSourceKey: 'express',
-				scope: 'direct',
 			}),
 		]);
 	});
@@ -129,7 +106,6 @@ describe('diff (name-grouped resolution pairing)', () => {
 				newSourceKey: 'lodash@4.17.21',
 				kind: 'upgrade',
 				bump: 'patch',
-				scope: 'transitive',
 			}),
 		]);
 	});

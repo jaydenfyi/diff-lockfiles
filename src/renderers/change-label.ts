@@ -6,9 +6,9 @@ import type { Bump, ChangeKind } from '../changes.js';
  *
  * Single source of truth shared by every text-oriented renderer (text, table,
  * markdown) so the same change reads identically across formats. The JSON
- * renderer is intentionally excluded — it exposes `kind` + `bump` + `scope` as
- * structured fields rather than a pre-baked label, so consumers can phrase it
- * however they like.
+ * renderer is intentionally excluded — it exposes `kind` + `bump` as structured
+ * fields rather than a pre-baked label, so consumers can phrase it however
+ * they like.
  *
  * - `upgrade`/`downgrade` carry an arrow for direction plus the semver
  *   magnitude (`↑ minor`, `↓ major`).

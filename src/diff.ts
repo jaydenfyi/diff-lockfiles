@@ -1,6 +1,6 @@
 import type { NormalizedLockfile, NormalizedPackage } from './formats/types.js';
 import { bumpOf, classify, isUnchanged, parseVersion } from './changes.js';
-import type { Change, Changes, Scope, Version } from './changes.js';
+import type { Change, Changes, Version } from './changes.js';
 
 /** Re-export the canonical lockfile type for library consumers. */
 export type { NormalizedLockfile } from './formats/types.js';
@@ -72,14 +72,6 @@ function cancelUnchanged(
 	};
 }
 
-/** A paired change is `direct` if either side was a direct dependency. */
-function scopeOf(
-	oldPackage: NormalizedPackage | null,
-	newPackage: NormalizedPackage | null,
-): Scope {
-	return oldPackage?.direct || newPackage?.direct ? 'direct' : 'transitive';
-}
-
 /** Build a Change from an old/new package pair (either may be null for add/remove). */
 function changeFromPair(
 	name: string,
@@ -96,7 +88,6 @@ function changeFromPair(
 		oldVersion,
 		newVersion,
 		bump: bumpOf(oldVersion, newVersion),
-		scope: scopeOf(oldPackage, newPackage),
 	};
 }
 

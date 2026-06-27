@@ -17,10 +17,10 @@ describe('textRenderer', () => {
 		expect(out).toBe(
 			[
 				'── apps/api/bun.lock ──',
-				'lodash added 4.17.21 · transitive',
+				'lodash added 4.17.21',
 				'',
 				'── package-lock.json ──',
-				'chalk 4.1.0 -> 5.0.0 ↑ major · transitive',
+				'chalk 4.1.0 -> 5.0.0 ↑ major',
 			].join('\n'),
 		);
 	});
@@ -34,7 +34,7 @@ describe('textRenderer', () => {
 			lockfiles({ 'a.lock': { foo: ['git+ssh://host/a', 'git+ssh://host/b'] } }),
 			noColor,
 		);
-		expect(out).toBe('── a.lock ──\nfoo git+ssh://host/a -> git+ssh://host/b · transitive');
+		expect(out).toBe('── a.lock ──\nfoo git+ssh://host/a -> git+ssh://host/b');
 	});
 
 	it('paints upgrades green / downgrades red when colour is enabled', () => {
@@ -58,7 +58,7 @@ describe('textRenderer', () => {
 			lockfiles({ 'a.lock': { pkg: ['1.2.3-alpha+sha', '1.3.0'] } }), // minor bump
 			noColor,
 		);
-		expect(plain).toContain('1.2.3-alpha+sha -> 1.3.0 ↑ minor · transitive');
+		expect(plain).toContain('1.2.3-alpha+sha -> 1.3.0 ↑ minor');
 
 		// With colour, a major bump bolds the entire version incl. its prerelease
 		// + build suffix — pinning that the suffix rides along inside the bolded
@@ -97,7 +97,7 @@ describe('textRenderer', () => {
 			lockfiles({ 'a.lock': { lodash: ['4.17.20', '4.17.21'] } }),
 			noColor,
 		);
-		expect(out).toContain('lodash 4.17.20 -> 4.17.21 ↑ patch · transitive');
+		expect(out).toContain('lodash 4.17.20 -> 4.17.21 ↑ patch');
 		expect(out).not.toContain('(');
 	});
 });

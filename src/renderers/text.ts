@@ -7,22 +7,21 @@ import type { Renderer } from './types.js';
 
 /** One package's change as a single line. */
 function formatChange(name: string, change: Change, color: ReturnType<typeof createColor>): string {
-	const { kind, oldVersion, newVersion, bump, scope } = change;
-	const scopeSuffix = ` · ${scope}`;
+	const { kind, oldVersion, newVersion, bump } = change;
 	switch (kind) {
 		case 'added':
-			return `${name} ${color.green('added')} ${displayRaw(newVersion)}${scopeSuffix}`;
+			return `${name} ${color.green('added')} ${displayRaw(newVersion)}`;
 		case 'removed':
-			return `${name} ${color.red('removed')} ${displayRaw(oldVersion)}${scopeSuffix}`;
+			return `${name} ${color.red('removed')} ${displayRaw(oldVersion)}`;
 		case 'upgrade':
 		case 'downgrade': {
 			// Direction maps directly to colour: upgrades green, downgrades red.
 			const paint = kind === 'upgrade' ? color.green : color.red;
-			return `${name} ${paint(`${highlightVersion(oldVersion, bump, color)} -> ${highlightVersion(newVersion, bump, color)} ${changeLabel(kind, bump)}`)}${scopeSuffix}`;
+			return `${name} ${paint(`${highlightVersion(oldVersion, bump, color)} -> ${highlightVersion(newVersion, bump, color)} ${changeLabel(kind, bump)}`)}`;
 		}
 		case 'changed':
 			// Non-semver move (git/file specifier): render plainly, no colour.
-			return `${name} ${displayRaw(oldVersion)} -> ${displayRaw(newVersion)}${scopeSuffix}`;
+			return `${name} ${displayRaw(oldVersion)} -> ${displayRaw(newVersion)}`;
 	}
 }
 

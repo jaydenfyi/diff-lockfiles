@@ -54,9 +54,7 @@ describe('diffChangedLockfiles', () => {
 			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
 		);
 
-		expect(printed).toEqual([
-			'── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch · transitive',
-		]);
+		expect(printed).toEqual(['── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch']);
 	});
 
 	it('does nothing (and does not throw) when no lockfiles changed', async () => {
@@ -81,7 +79,7 @@ describe('diffChangedLockfiles', () => {
 		// The whole lockfile is new, so every dependency entry shows as added (no
 		// crash). The root "" project entry is skipped (empty name), so only the
 		// real dependency `lodash` appears; lodash is transitive.
-		expect(printed).toEqual(['── package-lock.json ──\nlodash added 4.17.21 · transitive']);
+		expect(printed).toEqual(['── package-lock.json ──\nlodash added 4.17.21']);
 	});
 
 	it('treats a removed lockfile as fully removed (no crash)', async () => {
@@ -94,7 +92,7 @@ describe('diffChangedLockfiles', () => {
 
 		// Symmetric to the added case: every dependency entry is removed (the root
 		// "" project entry is skipped).
-		expect(printed).toEqual(['── package-lock.json ──\nlodash removed 4.17.20 · transitive']);
+		expect(printed).toEqual(['── package-lock.json ──\nlodash removed 4.17.20']);
 	});
 
 	it('renders multiple changed lockfiles with identity in every format', async () => {
@@ -269,12 +267,7 @@ describe('multi-version resolution (real fixtures)', () => {
 			)[0];
 
 			// One clean upgrade; cancelled versions (1.1.3, 1.2.0) never appear.
-			// left-pad is declared as a direct dep in the workspace manifests, so
-			// it is correctly `direct` for every format that can detect directness
-			// from the lockfile. yarn cannot (its lockfile has no manifest mirror),
-			// so it stays `transitive` — hence the per-manager expectation here.
-			const expectedScope = manager === 'yarn' ? 'transitive' : 'direct';
-			expect(out).toContain(`left-pad 1.0.2 -> 1.3.0 ↑ minor · ${expectedScope}`);
+			expect(out).toContain('left-pad 1.0.2 -> 1.3.0 ↑ minor');
 			expect(out).not.toMatch(/left-pad .*removed 1\.(1|2)\.0/);
 			expect(out).not.toMatch(/left-pad .*added 1\.(1|2)\.0/);
 			// No lockfile key leakage into the display name.

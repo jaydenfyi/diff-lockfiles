@@ -13,9 +13,6 @@ export type ChangeKind = 'added' | 'removed' | 'upgrade' | 'downgrade' | 'change
 /** Semver magnitude of a version move, or null when not a clean semver bump. */
 export type Bump = 'major' | 'minor' | 'patch';
 
-/** Whether a package is a direct dependency of the root project or transitive. */
-export type Scope = 'direct' | 'transitive';
-
 /**
  * A parsed version. The `semver` arm exposes its numeric components (plus
  * optional `prerelease`/`build`, omitted entirely when absent); the `nonsemver`
@@ -35,8 +32,8 @@ export type Version =
 
 /**
  * A single package's version change, pre-classified so renderers never need to
- * interpret raw versions or touch semver — they read {@link kind}, {@link bump},
- * and {@link scope} and map them to decoration.
+ * interpret raw versions or touch semver — they read {@link kind} and
+ * {@link bump} and map them to decoration.
  *
  * `name` is the bare package name shown to humans; `oldSourceKey`/`newSourceKey`
  * carry the original lockfile provenance keys, surfaced only when disambiguating
@@ -50,7 +47,6 @@ export interface Change {
 	oldVersion: Version | null;
 	newVersion: Version | null;
 	bump: Bump | null;
-	scope: Scope;
 }
 
 /**

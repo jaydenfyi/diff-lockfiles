@@ -5,6 +5,7 @@ import { parsePnpmLockfile } from '../../src/formats/pnpm.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/pnpm-lock.v9.yaml'), 'utf8');
+const wsFixture = readFileSync(join(here, 'fixtures/pnpm-lock.workspaces.v9.yaml'), 'utf8');
 
 describe('parsePnpmLockfile', () => {
 	const lock = parsePnpmLockfile.parse('pnpm-lock.yaml', fixture);
@@ -62,5 +63,34 @@ describe('parsePnpmLockfile', () => {
 			packages: {},
 			directDependencyInfoAvailable: false,
 		});
+	});
+});
+
+describe('parsePnpmLockfile (multi-workspace)', () => {
+	// Real pnpm-lock.yaml v9 from a 3-workspace monorepo (see
+	// `fixtures/pnpm-lock.workspaces.v9.yaml`). The root importer `.` declares
+	// `is-even`, the `packages/util` importer declares `@sinclair/typebox`, and
+	// `packages/rtl-validation` declares `left-pad`. `is-even` pulls a transitive
+	// chain (is-odd -> is-number -> kind-of -> is-buffer) that no importer
+	// declares, giving a clean direct/transitive split.
+	const lock = parsePnpmLockfile.parse('pnpm-lock.yaml', wsFixture);
+
+	it('marks deps declared in any workspace importer as direct (not just root)', () => {
+		// Declared in the root importer ".".
+		expect(lock.packages['is-even@1.0.0'].direct).toBe(true);
+		// Declared in a NON-root importer — the bug this fixes.
+		expect(lock.packages['@sinclair/typebox@0.32.35'].direct).toBe(true); // packages/util
+		expect(lock.packages['left-pad@1.3.0'].direct).toBe(true); // packages/rtl-validation
+	});
+
+	it('keeps genuinely transitive deps as transitive', () => {
+		expect(lock.packages['is-odd@0.1.2'].direct).toBe(false);
+		expect(lock.packages['is-number@3.0.0'].direct).toBe(false);
+		expect(lock.packages['kind-of@3.2.2'].direct).toBe(false);
+		expect(lock.packages['is-buffer@1.1.6'].direct).toBe(false);
+	});
+
+	it('flags direct info available with multiple importers present', () => {
+		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});
 });

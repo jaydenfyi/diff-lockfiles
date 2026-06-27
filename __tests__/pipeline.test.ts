@@ -269,7 +269,12 @@ describe('multi-version resolution (real fixtures)', () => {
 			)[0];
 
 			// One clean upgrade; cancelled versions (1.1.3, 1.2.0) never appear.
-			expect(out).toContain('left-pad 1.0.2 -> 1.3.0 ↑ minor · transitive');
+			// left-pad is declared as a direct dep in the workspace manifests, so
+			// it is correctly `direct` for every format that can detect directness
+			// from the lockfile. yarn cannot (its lockfile has no manifest mirror),
+			// so it stays `transitive` — hence the per-manager expectation here.
+			const expectedScope = manager === 'yarn' ? 'transitive' : 'direct';
+			expect(out).toContain(`left-pad 1.0.2 -> 1.3.0 ↑ minor · ${expectedScope}`);
 			expect(out).not.toMatch(/left-pad .*removed 1\.(1|2)\.0/);
 			expect(out).not.toMatch(/left-pad .*added 1\.(1|2)\.0/);
 			// No lockfile key leakage into the display name.

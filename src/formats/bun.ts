@@ -26,11 +26,16 @@ export const parseBunLockfile: LockfileAdapter = {
 		// integrity hashes) is not mistaken for a comment. Trailing commas tolerated.
 		const raw = jsoncParse(content) as BunLockfile;
 
-		// Root dependency ranges live in workspaces[""] (the package-lock "packages['']" equivalent).
-		const root = raw.workspaces?.[''];
-		// bun.lock hoisted-dep keys are the bare package names.
+		// Direct deps are declared in the manifest of the root OR any workspace
+		// package. bun.lock keys `workspaces` by path ("" = root,
+		// "packages/<ws>" = workspace); each carries its own dependency maps. A
+		// workspace is a real package with its own package.json, so its declared
+		// deps are first-party (direct), not transitive pulls.
+		const workspaces = raw.workspaces ?? {};
 		const directNames = new Set(
-			root ? DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(root[kind] ?? {})) : [],
+			Object.values(workspaces).flatMap((ws) =>
+				DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(ws[kind] ?? {})),
+			),
 		);
 
 		const packages: NormalizedLockfile['packages'] = {};
@@ -39,6 +44,10 @@ export const parseBunLockfile: LockfileAdapter = {
 			// not the map key (which may be workspace-namespaced, e.g. `b/left-pad`).
 			const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
 			const [name, version] = splitNameVersion(specifier);
+			// Workspace self/cross-references resolve to "name@workspace:<path>".
+			// They are repo-local packages, not registry deps — drop them so a
+			// workspace path rename never surfaces as a version bump.
+			if (version.startsWith('workspace:')) continue;
 			// When the map key carries only the bare name (no version), prefer it as
 			// the provenance-preserving source key and the display name.
 			packages[key] = {
@@ -49,6 +58,6 @@ export const parseBunLockfile: LockfileAdapter = {
 			};
 		}
 
-		return { packages, directDependencyInfoAvailable: Boolean(root) };
+		return { packages, directDependencyInfoAvailable: Object.keys(workspaces).length > 0 };
 	},
 };

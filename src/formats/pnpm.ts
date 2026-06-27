@@ -47,21 +47,24 @@ export function parsePnpmContent(content: string): NormalizedLockfile {
 	if (!doc || typeof doc !== 'object')
 		return { packages: {}, directDependencyInfoAvailable: false };
 
-	// Reconstruct `name@version` direct-dep keys from importers['.'] so they
-	// line up with the `packages:` keys for the `direct` flag. Drop
+	// Reconstruct `name@version` direct-dep keys from importers so they line
+	// up with the `packages:` keys for the `direct` flag. Direct deps come from
+	// the manifest of the root OR any workspace package: pnpm keys `importers`
+	// by path ("." = root, "packages/<ws>" = workspace), and each workspace is a
+	// real package whose declared deps are first-party (direct). Drop
 	// `link:...` (workspace/file) resolutions, which have no packages entry.
-	const root = doc.importers?.['.'];
+	const importers = doc.importers ?? {};
 	const directSourceKeys = new Set(
-		root
-			? DEPENDENCY_FIELDS.flatMap((kind) =>
-					Object.entries(root[kind] ?? {})
-						.map(([name, dependency]): string | undefined => {
-							const version = dependency.version ? stripPeerSuffix(dependency.version) : '';
-							return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
-						})
-						.filter((value): value is string => value !== undefined),
-				)
-			: [],
+		Object.values(importers).flatMap((importer) =>
+			DEPENDENCY_FIELDS.flatMap((kind) =>
+				Object.entries(importer[kind] ?? {})
+					.map(([name, dependency]): string | undefined => {
+						const version = dependency.version ? stripPeerSuffix(dependency.version) : '';
+						return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
+					})
+					.filter((value): value is string => value !== undefined),
+			),
+		),
 	);
 
 	const packages: NormalizedLockfile['packages'] = {};
@@ -70,7 +73,7 @@ export function parsePnpmContent(content: string): NormalizedLockfile {
 		packages[key] = { name, version, sourceKey: key, direct: directSourceKeys.has(key) };
 	}
 
-	return { packages, directDependencyInfoAvailable: Boolean(root) };
+	return { packages, directDependencyInfoAvailable: Object.keys(importers).length > 0 };
 }
 
 /** Adapter for `pnpm-lock.yaml` (pnpm 9/10/11). */

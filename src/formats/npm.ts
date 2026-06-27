@@ -16,31 +16,44 @@ export const parseNpmLockfile: LockfileAdapter = {
 			packages: Record<string, { version: string } & Record<string, unknown>>;
 		};
 		const rawPackages = raw.packages ?? {};
-		const selfPackage = rawPackages[''];
 
-		// Each direct dependency of the root project lives at `node_modules/<name>`.
-		// (The root "" entry itself is not a direct dependency and is filtered out
-		// downstream because its bare name is empty.)
-		const directSourceKeys = selfPackage
-			? new Set(
+		// Manifests are the project's own package.jsons: root "" plus every
+		// workspace dir (any key NOT under node_modules/). Each manifest's
+		// dependency fields declare first-party (direct) deps. Matching on the
+		// bare name (not the full node_modules path) is intentionally broader
+		// than the old root-only behavior: a workspace's direct dep, or a direct
+		// dep forced nested by a version conflict, is still "direct".
+		const directNames = new Set(
+			Object.entries(rawPackages)
+				.filter(([key]) => key === '' || !key.includes('node_modules/'))
+				.flatMap(([, entry]) =>
 					DEPENDENCY_FIELDS.flatMap((kind) =>
-						Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).map(
-							(name) => `node_modules/${name}`,
-						),
+						Object.keys((entry[kind] as Record<string, unknown> | undefined) ?? {}),
 					),
-				)
-			: new Set<string>();
+				),
+		);
 
 		const packages: NormalizedLockfile['packages'] = {};
 		for (const [sourceKey, entry] of Object.entries(rawPackages)) {
+			// Skip workspace manifest entries (e.g. "packages/foo"): they are the
+			// project's own manifests, not installed deps. Without this they'd
+			// leak as a bogus package named after the parent dir. Root "" is kept
+			// (its empty name is filtered downstream as before). A key is a
+			// manifest iff it contains no `node_modules/` segment anywhere — nested
+			// installs like `apps/b/node_modules/left-pad` DO contain it and must
+			// be kept.
+			if (sourceKey !== '' && !sourceKey.includes('node_modules/')) continue;
+			// Skip workspace symlinks: they carry `link: true` and have no real
+			// version (installed packages never set `link`).
+			if (entry.link) continue;
 			packages[sourceKey] = {
 				name: packageNameFromNodeModulesPath(sourceKey),
 				version: entry.version,
 				sourceKey,
-				direct: directSourceKeys.has(sourceKey),
+				direct: directNames.has(packageNameFromNodeModulesPath(sourceKey)),
 			};
 		}
 
-		return { packages, directDependencyInfoAvailable: Boolean(selfPackage) };
+		return { packages, directDependencyInfoAvailable: Boolean(rawPackages['']) };
 	},
 };

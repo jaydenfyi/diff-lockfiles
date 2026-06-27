@@ -27,6 +27,7 @@ describe('packageNameFromNodeModulesPath', () => {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/package-lock.v3.json'), 'utf8');
+const wsFixture = readFileSync(join(here, 'fixtures/package-lock.workspaces.v3.json'), 'utf8');
 
 describe('parseNpmLockfile', () => {
 	const lock = parseNpmLockfile.parse('package-lock.json', fixture);
@@ -77,6 +78,50 @@ describe('parseNpmLockfile', () => {
 	});
 
 	it('flags packages as available for shallow filtering when a root entry exists', () => {
+		expect(lock.directDependencyInfoAvailable).toBe(true);
+	});
+});
+
+describe('parseNpmLockfile (multi-workspace)', () => {
+	// Real package-lock.json v3 from a 3-workspace monorepo (see
+	// `fixtures/package-lock.workspaces.v3.json`). Root `""` declares `is-even`,
+	// the `packages/util` manifest declares `@sinclair/typebox`, and
+	// `packages/rtl-validation` declares `left-pad`. `is-even` pulls a transitive
+	// chain (is-odd -> is-number -> kind-of -> is-buffer) that no manifest
+	// declares, giving a clean direct/transitive split.
+	const lock = parseNpmLockfile.parse('package-lock.json', wsFixture);
+
+	it('marks deps declared in any workspace manifest as direct (not just root)', () => {
+		// Declared in the root "" manifest.
+		expect(lock.packages['node_modules/is-even'].direct).toBe(true);
+		// Declared in a NON-root workspace manifest — the bug this fixes.
+		expect(lock.packages['node_modules/@sinclair/typebox'].direct).toBe(true); // packages/util
+		expect(lock.packages['node_modules/left-pad'].direct).toBe(true); // packages/rtl-validation
+	});
+
+	it('keeps genuinely transitive deps as transitive', () => {
+		expect(lock.packages['node_modules/is-odd'].direct).toBe(false);
+		expect(lock.packages['node_modules/is-number'].direct).toBe(false);
+		expect(lock.packages['node_modules/kind-of'].direct).toBe(false);
+		expect(lock.packages['node_modules/is-buffer'].direct).toBe(false);
+	});
+
+	it('drops workspace manifest entries (no bogus package named after the dir)', () => {
+		// `packages/util` and `packages/rtl-validation` are the project's own
+		// manifests (keys with no `node_modules/` segment). They must not leak as
+		// packages — previously they did, bogusly named after the parent dir.
+		expect(lock.packages['packages/util']).toBeUndefined();
+		expect(lock.packages['packages/rtl-validation']).toBeUndefined();
+	});
+
+	it('drops workspace symlinks (link:true, no real version)', () => {
+		// Workspace packages are symlinked under node_modules/@monorepo/* with
+		// `link: true` and no `version`. They are repo-local, not registry deps.
+		expect(lock.packages['node_modules/@monorepo/util']).toBeUndefined();
+		expect(lock.packages['node_modules/@monorepo/rtl-validation']).toBeUndefined();
+	});
+
+	it('flags direct info available when a root manifest is present', () => {
 		expect(lock.directDependencyInfoAvailable).toBe(true);
 	});
 });

@@ -1,0 +1,25 @@
+src/renderers/box-table.ts
+  s_b29b475179a59b::t_9b4dececbac432 24-27
+  s_b29b475179a59b::t_3967f91ea40996 1-23,28-71
+__tests__/renderers/box-table.test.ts
+  s_b29b475179a59b::t_53fc167d9a66b7 1-5,15-19,24,26-32,43-47,49-65,72-82
+  s_b29b475179a59b::t_080f393affbaff 25,48
+  s_b29b475179a59b::t_cb91f606277f48 37-42
+  s_b29b475179a59b::t_8a265390f95430 6-14,20-23,33-36,66-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "efd987993a4adfb2c84ab087617f25af6993ac51",
+  "prompts": {},
+  "sessions": {
+    "s_b29b475179a59b": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a1b-a6e0-7eaf-af52-14ea6aafeb21",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

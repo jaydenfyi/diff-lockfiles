@@ -1,0 +1,27 @@
+src/formats/yarn.ts
+  s_01b2ad8b88b56c::t_4f51a61d59a636 86
+  s_01b2ad8b88b56c::t_223f14a4b90c91 2
+src/formats/pnpm.ts
+  s_01b2ad8b88b56c::t_917825d34a384a 3
+  s_01b2ad8b88b56c::t_841f6ec5db6eba 52
+src/formats/bun.ts
+  s_01b2ad8b88b56c::t_6201d35650aeca 3,33
+src/formats/types.ts
+  s_01b2ad8b88b56c::t_26a20ff7e0b367 27-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "39ea608c26b05d58e59e809ebdb877753c6dd68d",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

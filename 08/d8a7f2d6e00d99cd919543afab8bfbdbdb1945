@@ -1,0 +1,19 @@
+__tests__/formats/fixtures/pnpm-lock.v9.yaml
+  s_01b2ad8b88b56c::t_04e2a4f6e323a2 1-71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "08d8a7f2d6e00d99cd919543afab8bfbdbdb1945",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

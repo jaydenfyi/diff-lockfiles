@@ -1,0 +1,19 @@
+src/renderers/box-table.ts
+  s_b29b475179a59b::t_3ce55003c253a1 24-29,65-70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "b87ef82478c9d7c8a5d8788c4635190f0cf236d1",
+  "prompts": {},
+  "sessions": {
+    "s_b29b475179a59b": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a1b-a6e0-7eaf-af52-14ea6aafeb21",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

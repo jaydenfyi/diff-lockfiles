@@ -1,0 +1,21 @@
+__tests__/formats/fixtures/yarn.berry.lock
+  s_01b2ad8b88b56c::t_715ef80fac0162 1-36
+__tests__/formats/fixtures/yarn.v1.lock
+  s_01b2ad8b88b56c::t_5291a9e53c2e3a 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "1ca5accaef87445e960ba0e60ea31014945f6d94",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

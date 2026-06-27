@@ -1,0 +1,97 @@
+import { parseAllDocuments } from 'yaml';
+import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import { DEPENDENCY_FIELDS } from './types.js';
+
+interface PnpmImporterDep {
+  specifier?: string;
+  version?: string;
+}
+
+interface PnpmImporter {
+  dependencies?: Record<string, PnpmImporterDep>;
+  devDependencies?: Record<string, PnpmImporterDep>;
+  optionalDependencies?: Record<string, PnpmImporterDep>;
+  peerDependencies?: Record<string, PnpmImporterDep>;
+}
+
+interface PnpmLockfile {
+  lockfileVersion?: string;
+  importers?: Record<string, PnpmImporter>;
+  packages?: Record<string, unknown>;
+}
+
+/**
+ * Extract the version from a pnpm v9 package key (`name@version`).
+ * Scoped names start with '@', so skip that leading '@' before searching
+ * for the '@' that separates name from version. (Same shape as bun.ts
+ * `extractVersion` — kept inline here to avoid widening bun's export.)
+ */
+function versionFromKey(key: string): string {
+  const start = key.startsWith('@') ? 1 : 0;
+  const at = key.indexOf('@', start);
+  return at === -1 ? key : key.slice(at + 1);
+}
+
+/**
+ * Strip a trailing peer-context suffix from a resolved version:
+ * `1.2.1(typescript@5.3.3)` -> `1.2.1`. Workspace/file deps resolve to
+ * `link:...` and have no `packages:` entry, so they're filtered out by
+ * the caller.
+ */
+function stripPeerSuffix(version: string): string {
+  const paren = version.indexOf('(');
+  return paren === -1 ? version : version.slice(0, paren);
+}
+
+/**
+ * Parse pnpm-lock.yaml / aube-lock.yaml v9 content into the normalized
+ * shape. Exported standalone so the aube adapter can reuse it without a
+ * factory — both adapters are plain `LockfileAdapter` objects (matching
+ * npm.ts / bun.ts), differing only in their `matches()`.
+ *
+ * pnpm v9 keys `packages:` by `name@version` (the version lives in the
+ * key; there is no `version` field inside the entry). Direct deps live in
+ * `importers['.']`. pnpm 11 may emit a second `---`-separated "env
+ * lockfile" document; we read only the first via `parseAll()[0]`.
+ */
+export function parsePnpmContent(content: string): NormalizedLockfile {
+  const doc = parseAllDocuments(content)[0]?.toJS() as PnpmLockfile | null | undefined;
+  if (!doc || typeof doc !== 'object') return { packages: {} };
+
+  const rawPackages = doc.packages ?? {};
+  const packages: NormalizedLockfile['packages'] = {};
+  for (const key of Object.keys(rawPackages)) {
+    packages[key] = { version: versionFromKey(key) };
+  }
+
+  // Reconstruct `name@version` keys from importers['.'] so they line up
+  // with the `packages:` keys for the scope check in diff.ts. Drop
+  // `link:...` (workspace/file) resolutions, which have no packages entry.
+  const root = doc.importers?.['.'];
+  const directDependencyKeys = root
+    ? [
+        ...new Set(
+          DEPENDENCY_FIELDS.flatMap((kind) =>
+            Object.entries(root[kind] ?? {})
+              .map(([name, dep]): string | undefined => {
+                const version = dep.version ? stripPeerSuffix(dep.version) : '';
+                return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
+              })
+              .filter((value): value is string => value !== undefined),
+          ),
+        ),
+      ]
+    : undefined;
+
+  return { packages, directDependencyKeys };
+}
+
+/** Adapter for `pnpm-lock.yaml` (pnpm 9/10/11). */
+export const parsePnpmLockfile: LockfileAdapter = {
+  matches(filename: string): boolean {
+    return filename === 'pnpm-lock.yaml' || filename.endsWith('/pnpm-lock.yaml');
+  },
+  parse(_filename: string, content: string): NormalizedLockfile {
+    return parsePnpmContent(content);
+  },
+};

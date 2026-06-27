@@ -1,0 +1,62 @@
+__tests__/pipeline.test.ts
+  s_296e11cb9998fe::t_5c60edb66c26c8 57,87,105
+src/renderers/table.ts
+  s_296e11cb9998fe::t_ff66a0c9dc15c8 4,26-29
+__tests__/index.test.ts
+  s_296e11cb9998fe::t_db0cc23c240c06 51-55
+  s_296e11cb9998fe::t_e97fbc69015e36 2,5-6,22,28-30,35,39,50,56
+src/changes.ts
+  s_296e11cb9998fe::t_6c43815f4abe0d 40-43,46-48,57-59,61
+__tests__/renderers/json.test.ts
+  s_296e11cb9998fe::t_bfccd6d4f5db85 2,8,18-19,22-51,62,65-67,71-75
+  s_296e11cb9998fe::t_d8f50b9e638cec 3
+  s_296e11cb9998fe::t_ff862e8b6ad93c 63-64
+  s_296e11cb9998fe::t_6955f4a83612ea 81-100
+  s_296e11cb9998fe::t_b513ee80685e06 52-61
+src/pipeline.ts
+  s_296e11cb9998fe::t_01fcfb3d151fca 67
+__tests__/renderers/text.test.ts
+  s_296e11cb9998fe::t_72768e77807d7b 3
+  s_296e11cb9998fe::t_9e713af011855b 4,70-82
+  s_296e11cb9998fe::t_339e55109854e1 68-69,83-92
+src/renderers/markdown.ts
+  s_296e11cb9998fe::t_7758ca33015698 3,25,28-37
+__tests__/renderers/table.test.ts
+  s_296e11cb9998fe::t_0cb07693cf107d 2-3,32-45
+  s_296e11cb9998fe::t_ebd58f41e7018a 46
+src/diff.ts
+  s_296e11cb9998fe::t_85ce3e96882e8b 2-3,9-12,14-79,85-88,90-91,98-101,103-107,109-123
+__tests__/renderers/markdown.test.ts
+  s_296e11cb9998fe::t_521b3586b73af2 2-3,32-45
+  s_296e11cb9998fe::t_dff63d17e1c791 46
+src/formats/yarn.ts
+  s_296e11cb9998fe::t_04ff8042241fec 71
+src/renderers/json.ts
+  s_296e11cb9998fe::t_8ccf7a0d5eb8b7 1
+  s_296e11cb9998fe::t_258c2baf39422f 5-11,15-24
+src/renderers/display-name.ts
+  s_296e11cb9998fe::t_eca1a445d69fe6 1-48
+src/renderers/text.ts
+  s_296e11cb9998fe::t_d00642f5ca2aff 3,34-35,43-45
+__tests__/helpers.ts
+  s_296e11cb9998fe::t_f9468349a644b0 2,16,21-39,44-46,51,56-57,59-63
+__tests__/diff.test.ts
+  s_296e11cb9998fe::t_b0a414c5110381 100-104
+  s_296e11cb9998fe::t_84e0d415700352 2-61,64-84,87-88,99,105,108-196
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "50f4b9aa5f97b8b4e1da05dd9a80d5eae6f7fd44",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

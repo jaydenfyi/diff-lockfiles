@@ -1,0 +1,40 @@
+src/renderers/change-label.ts
+  s_b29b475179a59b::t_45949aea87af13 9-11
+__tests__/renderers/text.test.ts
+  s_b29b475179a59b::t_1052d23c981292 20,23,37,61,100
+__tests__/helpers.ts
+  s_b29b475179a59b::t_ddf91fab1079e4 5
+__tests__/pipeline.test.ts
+  s_b29b475179a59b::t_9a131cb0d2ad01 57
+  s_b29b475179a59b::t_6fda4a18560d5e 82,95,270
+src/index.ts
+  s_b29b475179a59b::t_5db063ab0101fe 9
+src/changes.ts
+  s_b29b475179a59b::t_9121650c0be354 35-36
+src/renderers/table.ts
+  s_b29b475179a59b::t_c78d36ca7245d3 17,23,26,28,33-34
+src/diff.ts
+  s_b29b475179a59b::t_5375f63c1efec2 3
+src/renderers/markdown.ts
+  s_b29b475179a59b::t_f85b066597d207 12,14
+src/renderers/text.ts
+  s_b29b475179a59b::t_01d73107584da0 10,13,15,20,24
+__tests__/__snapshots__/snapshots.test.ts.snap
+  s_b29b475179a59b::t_808327da559267 20,35,50,65,89,104,119,134,158,173,188,203,227,242,257,272,296,311,326,341,371,401,431,461,491,501-506,512-517,523-528,534-539,545-550,556-558,564-566,572-574,580-582,588-590,594-606,611-623,628-640,645-657,662-674,679-685,690-696,701-707,712-718,723-729,735-738,743-746,751-754,759-762,767-770,775,780,785,790,795
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "aea3820b1ae32bef0810c61c0a5a100f0d086355",
+  "prompts": {},
+  "sessions": {
+    "s_b29b475179a59b": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a1b-a6e0-7eaf-af52-14ea6aafeb21",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

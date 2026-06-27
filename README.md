@@ -78,74 +78,91 @@ $ diff-lockfiles HEAD~1 HEAD
 ╟─────────────────────┼─────────┼─────────┼─────────╢
 ║ package             │ old     │ new     │ change  ║
 ╟─────────────────────┼─────────┼─────────┼─────────╢
-║ node_modules/lodash │ 4.17.20 │ 4.17.21 │ ↑ patch ║
+║ lodash              │ 4.17.20 │ 4.17.21 │ ↑ patch ║
 ╟─────────────────────┼─────────┼─────────┼─────────╢
-║ node_modules/dedent │ —       │ 1.5.1   │ added   ║
+║ dedent              │ —       │ 1.5.1   │ added   ║
 ╚═════════════════════╧═════════╧═════════╧═════════╝
 ```
 
-The first row labels the lockfile. When more than one lockfile changes in a
-run, each gets its own boxed table (and the other formats label each section
-similarly — see below). With `--color`, the bumped version segment is bolded
-and old/new cells are coloured by direction (red old / green new for upgrades,
-the reverse for downgrades).
+The first row labels the lockfile. Package names are the bare name (`lodash`,
+not the lockfile's internal `node_modules/lodash` key), consistent across all
+formats. When more than one lockfile changes in a run, each gets its own boxed
+table (and the other formats label each section similarly — see below). With
+`--color`, the bumped version segment is bolded and old/new cells are coloured
+by direction (red old / green new for upgrades, the reverse for downgrades).
 
 ### `--format=json`
 
 `diff-lockfiles --format json HEAD~1 HEAD`
 
-Output is a single JSON object keyed by lockfile path, so a multi-lockfile run
-is still one valid, `jq`-friendly document. Each package maps to a full change
-object: a classified `kind`, structured `oldVersion`/`newVersion` (with semver
-components and optional `prerelease`/`build`), the semver magnitude `bump` (or
-`null`), and the dependency `scope`.
+Output is a single JSON object keyed by lockfile path, then by **bare package
+name**, with each package mapping to an **array** of change objects: a package
+name can resolve to multiple versions, so the value is always an array even
+when there's only one change. Each change carries a classified `kind`,
+structured `oldVersion`/`newVersion` (with semver components and optional
+`prerelease`/`build`), the semver magnitude `bump` (or `null`), the dependency
+`scope`, and the original lockfile `oldSourceKey`/`newSourceKey` for provenance.
 
 ```json
 {
   "package-lock.json": {
-    "node_modules/lodash": {
-      "kind": "upgrade",
-      "oldVersion": {
-        "scheme": "semver",
-        "raw": "4.17.20",
-        "major": 4,
-        "minor": 17,
-        "patch": 20
-      },
-      "newVersion": {
-        "scheme": "semver",
-        "raw": "4.17.21",
-        "major": 4,
-        "minor": 17,
-        "patch": 21
-      },
-      "bump": "patch",
-      "scope": "direct"
-    },
-    "node_modules/dedent": {
-      "kind": "added",
-      "oldVersion": null,
-      "newVersion": {
-        "scheme": "semver",
-        "raw": "1.5.1",
-        "major": 1,
-        "minor": 5,
-        "patch": 1
-      },
-      "bump": null,
-      "scope": "transitive"
-    }
+    "lodash": [
+      {
+        "name": "lodash",
+        "oldSourceKey": "node_modules/lodash",
+        "newSourceKey": "node_modules/lodash",
+        "kind": "upgrade",
+        "oldVersion": {
+          "scheme": "semver",
+          "raw": "4.17.20",
+          "major": 4,
+          "minor": 17,
+          "patch": 20
+        },
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "4.17.21",
+          "major": 4,
+          "minor": 17,
+          "patch": 21
+        },
+        "bump": "patch",
+        "scope": "direct"
+      }
+    ],
+    "dedent": [
+      {
+        "name": "dedent",
+        "oldSourceKey": null,
+        "newSourceKey": "node_modules/dedent",
+        "kind": "added",
+        "oldVersion": null,
+        "newVersion": {
+          "scheme": "semver",
+          "raw": "1.5.1",
+          "major": 1,
+          "minor": 5,
+          "patch": 1
+        },
+        "bump": null,
+        "scope": "transitive"
+      }
+    ]
   }
 }
 ```
+
+When a package name appears at multiple resolved versions (e.g. across a
+workspace), it produces multiple entries in its array, each carrying its own
+`sourceKey` so the versions stay distinct.
 
 ### `--format=text`
 
 ```text
 $ diff-lockfiles --format text HEAD~1 HEAD
 ── package-lock.json ──
-node_modules/lodash 4.17.20 -> 4.17.21 patch · direct
-node_modules/dedent added 1.5.1 · transitive
+lodash 4.17.20 -> 4.17.21 patch · direct
+dedent added 1.5.1 · transitive
 ```
 
 Each lockfile is introduced by a `── <lockfile> ──` divider. With `--color`,
@@ -161,18 +178,21 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 ```markdown
 ## package-lock.json
 
-| Package             | Old       | New       | Change        | Scope      |
-| ------------------- | --------- | --------- | ------------- | ---------- |
-| node_modules/lodash | `4.17.20` | `4.17.21` | patch upgrade | direct     |
-| node_modules/dedent | `—`       | `1.5.1`   | added         | transitive |
+| Package | Old       | New       | Change        | Scope      |
+| ------- | --------- | --------- | ------------- | ---------- |
+| lodash  | `4.17.20` | `4.17.21` | patch upgrade | direct     |
+| dedent  | `—`       | `1.5.1`   | added         | transitive |
 ```
 
 ## Limitations
 
-- **pnpm & yarn upgrades render as remove + add:** these lockfiles key packages
-  by `name@version`, so bumping a version looks like the old key removed and a
-  new key added, rather than a single `upgrade`. npm and bun key by a stable
-  path or bare name, so they upgrade normally.
+- **Duplicate resolved versions are reported conservatively:** when a package
+  name appears at multiple resolved versions (e.g. across a workspace),
+  unchanged same-name/same-version entries are cancelled first. A single
+  remaining old/new pair is shown as one upgrade/downgrade; an ambiguous
+  many-to-many replacement falls back to added/removed rows. Provenance
+  (`node_modules/...` path or `name@version` key) is shown only when two
+  rendered rows would otherwise be identical.
 - **yarn.lock + `--shallow`:** yarn.lock contains only resolved entries — the
   root manifest lives in `package.json`. Since `diff-lockfiles` reads only
   lockfiles, `--shallow` cannot filter yarn output; all yarn packages are shown

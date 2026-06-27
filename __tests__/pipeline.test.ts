@@ -80,11 +80,11 @@ describe('diffChangedLockfiles', () => {
       diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
     );
 
-    // The whole lockfile is new, so every entry — including the root "" project
-    // entry carried by the fixture — shows as added (no crash). The root entry
-    // is a direct dep (the npm adapter lists "" itself); lodash is transitive.
+    // The whole lockfile is new, so every dependency entry shows as added (no
+    // crash). The root "" project entry is skipped (empty name), so only the
+    // real dependency `lodash` appears; lodash is transitive.
     expect(printed).toEqual([
-      '── package-lock.json ──\n added 1.0.0 · direct\nnode_modules/lodash added 4.17.21 · transitive',
+      '── package-lock.json ──\nnode_modules/lodash added 4.17.21 · transitive',
     ]);
   });
 
@@ -99,9 +99,10 @@ describe('diffChangedLockfiles', () => {
       diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false, shallow: false }),
     );
 
-    // Symmetric to the added case: every entry (including root "") is removed.
+    // Symmetric to the added case: every dependency entry is removed (the root
+    // "" project entry is skipped).
     expect(printed).toEqual([
-      '── package-lock.json ──\n removed 1.0.0 · direct\nnode_modules/lodash removed 4.17.20 · transitive',
+      '── package-lock.json ──\nnode_modules/lodash removed 4.17.20 · transitive',
     ]);
   });
 

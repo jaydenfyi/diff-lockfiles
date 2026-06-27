@@ -1,6 +1,17 @@
 import { bumpOf, classify, parseVersion } from '../src/changes.js';
 import type { Change, Changes, Scope, Version } from '../src/changes.js';
+import type { NormalizedPackage } from '../src/formats/types.js';
 import type { LockfileDiffs } from '../src/renderers/types.js';
+
+/** Build a {@link NormalizedPackage} for inline lockfile fixtures in tests. */
+export function pkg(
+  name: string,
+  version: string,
+  sourceKey: string = `${name}@${version}`,
+  direct = false,
+): NormalizedPackage {
+  return { name, version, sourceKey, direct };
+}
 
 /** Build a single classified {@link Change} from raw version strings. */
 export function change(

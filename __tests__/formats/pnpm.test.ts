@@ -17,10 +17,25 @@ describe('parsePnpmLockfile', () => {
     expect(parsePnpmLockfile.matches('yarn.lock')).toBe(false);
   });
 
-  it('extracts the version from the "name@version" key (no version field)', () => {
-    expect(lock.packages['is-even@1.0.0']).toEqual({ version: '1.0.0' });
-    expect(lock.packages['is-odd@3.0.1']).toEqual({ version: '3.0.1' });
-    expect(lock.packages['is-number@3.0.0']).toEqual({ version: '3.0.0' });
+  it('normalizes each package with bare name, version, and source key', () => {
+    expect(lock.packages['is-even@1.0.0']).toEqual({
+      name: 'is-even',
+      version: '1.0.0',
+      sourceKey: 'is-even@1.0.0',
+      direct: true,
+    });
+    expect(lock.packages['is-odd@3.0.1']).toEqual({
+      name: 'is-odd',
+      version: '3.0.1',
+      sourceKey: 'is-odd@3.0.1',
+      direct: true,
+    });
+    expect(lock.packages['is-number@3.0.0']).toEqual({
+      name: 'is-number',
+      version: '3.0.0',
+      sourceKey: 'is-number@3.0.0',
+      direct: false,
+    });
   });
 
   it('keeps multiple versions of the same package as distinct keys', () => {
@@ -30,9 +45,8 @@ describe('parsePnpmLockfile', () => {
     expect(lock.packages['is-odd@3.0.1']).toBeDefined();
   });
 
-  it('reads direct dependency keys from importers["."]', () => {
-    expect(lock.directDependencyKeys).toBeDefined();
-    expect(lock.directDependencyKeys?.sort()).toEqual(['is-even@1.0.0', 'is-odd@3.0.1']);
+  it('marks packages available for shallow filtering when importers["."] exists', () => {
+    expect(lock.directDependencyInfoAvailable).toBe(true);
   });
 
   it('parses every package entry in packages:', () => {
@@ -40,7 +54,13 @@ describe('parsePnpmLockfile', () => {
   });
 
   it('returns an empty packages map for unparseable input', () => {
-    expect(parsePnpmLockfile.parse('pnpm-lock.yaml', '')).toEqual({ packages: {} });
-    expect(parsePnpmLockfile.parse('pnpm-lock.yaml', 'not: valid: yaml: :')).toEqual({ packages: {} });
+    expect(parsePnpmLockfile.parse('pnpm-lock.yaml', '')).toEqual({
+      packages: {},
+      directDependencyInfoAvailable: false,
+    });
+    expect(parsePnpmLockfile.parse('pnpm-lock.yaml', 'not: valid: yaml: :')).toEqual({
+      packages: {},
+      directDependencyInfoAvailable: false,
+    });
   });
 });

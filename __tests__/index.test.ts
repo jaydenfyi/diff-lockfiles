@@ -1,5 +1,5 @@
 import { diff } from '../src/index.js';
-import { change } from './helpers.js';
+import { change, pkg } from './helpers.js';
 
 describe('diff', () => {
   it('returns an empty object when given two empty objects', () => {
@@ -12,43 +12,43 @@ describe('diff', () => {
   it('classifies each change and drops unchanged packages', () => {
     const oldLock = {
       packages: {
-        express: { version: '4.18.0' }, // unchanged -> dropped
-        lodash: { version: '4.17.21' }, // downgrade
+        express: pkg('express', '4.18.0'), // unchanged -> dropped
+        lodash: pkg('lodash', '4.17.21'), // downgrade
       },
     };
     const newLock = {
       packages: {
-        express: { version: '4.18.0' },
-        lodash: { version: '4.17.20' },
+        express: pkg('express', '4.18.0'),
+        lodash: pkg('lodash', '4.17.20'),
       },
     };
     expect(diff(oldLock, newLock, false)).toEqual({ lodash: change('4.17.21', '4.17.20') });
   });
 
   it('does not throw on non-semver specifiers (classifies as changed)', () => {
-    const oldLock = { packages: { foo: { version: 'git+ssh://host/a' } } };
-    const newLock = { packages: { foo: { version: 'git+ssh://host/b' } } };
+    const oldLock = { packages: { foo: pkg('foo', 'git+ssh://host/a') } };
+    const newLock = { packages: { foo: pkg('foo', 'git+ssh://host/b') } };
     expect(diff(oldLock, newLock, false)).toEqual({
       foo: change('git+ssh://host/a', 'git+ssh://host/b'),
     });
   });
 });
 
-describe('diff (shallow via directDependencyKeys)', () => {
-  it('only includes packages whose key is in directDependencyKeys', () => {
+describe('diff (shallow via directDependencyInfoAvailable)', () => {
+  it('only includes direct packages when shallow and direct info is available', () => {
     const oldLock = {
       packages: {
-        express: { version: '4.18.0' },
-        accepts: { version: '1.3.7' }, // transitive; not in direct set
+        express: pkg('express', '4.18.0', 'express', true),
+        accepts: pkg('accepts', '1.3.7'), // transitive; filtered out
       },
-      directDependencyKeys: ['express'],
+      directDependencyInfoAvailable: true,
     };
     const newLock = {
       packages: {
-        express: { version: '4.18.2' },
-        accepts: { version: '1.3.8' },
+        express: pkg('express', '4.18.2', 'express', true),
+        accepts: pkg('accepts', '1.3.8'),
       },
-      directDependencyKeys: ['express'],
+      directDependencyInfoAvailable: true,
     };
     expect(diff(oldLock, newLock, true)).toEqual({ express: change('4.18.0', '4.18.2', 'direct') });
   });

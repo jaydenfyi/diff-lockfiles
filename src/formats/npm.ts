@@ -1,9 +1,10 @@
 import type { NormalizedLockfile, LockfileAdapter } from './types.js';
-import { DEPENDENCY_FIELDS } from './types.js';
+import { DEPENDENCY_FIELDS, packageNameFromNodeModulesPath } from './types.js';
 
 /**
  * package-lock.json v2/v3 uses a top-level `packages` map keyed by node_modules
- * path (root at ""). Each entry has a `version` field, so this is a near-passthrough.
+ * path (root at ""). Each entry has a `version` field; the bare package name is
+ * derived from the path itself.
  */
 export const parseNpmLockfile: LockfileAdapter = {
   matches(filename: string): boolean {
@@ -14,23 +15,32 @@ export const parseNpmLockfile: LockfileAdapter = {
     const raw = JSON.parse(content) as {
       packages: Record<string, { version: string } & Record<string, unknown>>;
     };
-    const packages = raw.packages ?? {};
-    const selfPackage = packages[''];
+    const rawPackages = raw.packages ?? {};
+    const selfPackage = rawPackages[''];
 
-    // Root entry key "" plus each direct dependency's node_modules path.
-    const directDependencyKeys = selfPackage
-      ? [
-          ...new Set([
-            '',
-            ...DEPENDENCY_FIELDS.flatMap((kind) =>
-              Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).map(
-                (name) => `node_modules/${name}`,
-              ),
+    // Each direct dependency of the root project lives at `node_modules/<name>`.
+    // (The root "" entry itself is not a direct dependency and is filtered out
+    // downstream because its bare name is empty.)
+    const directSourceKeys = selfPackage
+      ? new Set(
+          DEPENDENCY_FIELDS.flatMap((kind) =>
+            Object.keys((selfPackage[kind] as Record<string, unknown> | undefined) ?? {}).map(
+              (name) => `node_modules/${name}`,
             ),
-          ]),
-        ]
-      : undefined;
+          ),
+        )
+      : new Set<string>();
 
-    return { packages, directDependencyKeys };
+    const packages: NormalizedLockfile['packages'] = {};
+    for (const [sourceKey, entry] of Object.entries(rawPackages)) {
+      packages[sourceKey] = {
+        name: packageNameFromNodeModulesPath(sourceKey),
+        version: entry.version,
+        sourceKey,
+        direct: directSourceKeys.has(sourceKey),
+      };
+    }
+
+    return { packages, directDependencyInfoAvailable: Boolean(selfPackage) };
   },
 };

@@ -14,19 +14,32 @@ describe('parseBunLockfile', () => {
     expect(parseBunLockfile.matches('package-lock.json')).toBe(false);
   });
 
-  it('extracts the version from the "name@version" array element', () => {
-    expect(lock.packages['express']).toEqual({ version: '4.18.2' });
-    expect(lock.packages['accepts']).toEqual({ version: '1.3.8' });
+  it('normalizes each package with bare name, version, source key, and directness', () => {
+    expect(lock.packages['express']).toEqual({
+      name: 'express',
+      version: '4.18.2',
+      sourceKey: 'express',
+      direct: true,
+    });
+    expect(lock.packages['accepts']).toEqual({
+      name: 'accepts',
+      version: '1.3.8',
+      sourceKey: 'accepts',
+      direct: false,
+    });
   });
 
   it('handles scoped names with two "@" characters', () => {
-    expect(lock.packages['@types/node']).toEqual({ version: '20.0.0' });
+    expect(lock.packages['@types/node']).toEqual({
+      name: '@types/node',
+      version: '20.0.0',
+      sourceKey: '@types/node',
+      direct: true,
+    });
   });
 
-  it('reads direct dependency keys from workspaces[""] for shallow mode', () => {
-    expect(lock.directDependencyKeys?.sort()).toEqual(
-      ['@types/node', 'express'].sort(),
-    );
+  it('marks packages available for shallow filtering when a root workspace exists', () => {
+    expect(lock.directDependencyInfoAvailable).toBe(true);
   });
 
   it('tolerates JSONC comments and trailing commas', () => {

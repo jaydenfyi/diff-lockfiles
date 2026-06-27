@@ -26,22 +26,29 @@ export const parseBunLockfile: LockfileAdapter = {
     // integrity hashes) is not mistaken for a comment. Trailing commas tolerated.
     const raw = jsoncParse(content) as BunLockfile;
 
-    const packages: NormalizedLockfile['packages'] = raw.packages
-      ? Object.fromEntries(
-          Object.entries(raw.packages).map(([key, value]) => {
-            const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
-            return [key, { version: splitNameVersion(specifier)[1] }];
-          }),
-        )
-      : {};
-
     // Root dependency ranges live in workspaces[""] (the package-lock "packages['']" equivalent).
     const root = raw.workspaces?.[''];
     // bun.lock hoisted-dep keys are the bare package names.
-    const directDependencyKeys = root
-      ? [...new Set(DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(root[kind] ?? {})))]
-      : undefined;
+    const directNames = new Set(
+      root ? DEPENDENCY_FIELDS.flatMap((kind) => Object.keys(root[kind] ?? {})) : [],
+    );
 
-    return { packages, directDependencyKeys };
+    const packages: NormalizedLockfile['packages'] = {};
+    for (const [key, value] of Object.entries(raw.packages ?? {})) {
+      // The array element carries `name@version`; the bare name comes from it,
+      // not the map key (which may be workspace-namespaced, e.g. `b/left-pad`).
+      const specifier = Array.isArray(value) && typeof value[0] === 'string' ? value[0] : key;
+      const [name, version] = splitNameVersion(specifier);
+      // When the map key carries only the bare name (no version), prefer it as
+      // the provenance-preserving source key and the display name.
+      packages[key] = {
+        name: name || key,
+        version,
+        sourceKey: key,
+        direct: directNames.has(name || key),
+      };
+    }
+
+    return { packages, directDependencyInfoAvailable: Boolean(root) };
   },
 };

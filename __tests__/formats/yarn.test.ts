@@ -18,14 +18,34 @@ describe('parseYarnLockfile', () => {
   describe('v1 (classic)', () => {
     const lock = parseYarnLockfile.parse('yarn.lock', v1);
 
-    it('keys packages as name@version using the resolved version field', () => {
-      expect(lock.packages['is-odd@3.0.1']).toEqual({ version: '3.0.1' });
-      expect(lock.packages['is-number@6.0.0']).toEqual({ version: '6.0.0' });
-      expect(lock.packages['kind-of@6.0.3']).toEqual({ version: '6.0.3' });
+    it('normalizes each package with bare name, version, and source key', () => {
+      expect(lock.packages['is-odd@3.0.1']).toEqual({
+        name: 'is-odd',
+        version: '3.0.1',
+        sourceKey: 'is-odd@3.0.1',
+        direct: false,
+      });
+      expect(lock.packages['is-number@6.0.0']).toEqual({
+        name: 'is-number',
+        version: '6.0.0',
+        sourceKey: 'is-number@6.0.0',
+        direct: false,
+      });
+      expect(lock.packages['kind-of@6.0.3']).toEqual({
+        name: 'kind-of',
+        version: '6.0.3',
+        sourceKey: 'kind-of@6.0.3',
+        direct: false,
+      });
     });
 
     it('handles scoped package names', () => {
-      expect(lock.packages['@sindresorhus/is@5.6.0']).toEqual({ version: '5.6.0' });
+      expect(lock.packages['@sindresorhus/is@5.6.0']).toEqual({
+        name: '@sindresorhus/is',
+        version: '5.6.0',
+        sourceKey: '@sindresorhus/is@5.6.0',
+        direct: false,
+      });
     });
 
     it('parses every entry in the fixture', () => {
@@ -36,9 +56,19 @@ describe('parseYarnLockfile', () => {
   describe('berry (v2+)', () => {
     const lock = parseYarnLockfile.parse('yarn.lock', berry);
 
-    it('keys packages as name@version, stripping the npm: protocol', () => {
-      expect(lock.packages['is-odd@3.0.1']).toEqual({ version: '3.0.1' });
-      expect(lock.packages['@sindresorhus/is@5.6.0']).toEqual({ version: '5.6.0' });
+    it('normalizes each package with bare name, version, and source key', () => {
+      expect(lock.packages['is-odd@3.0.1']).toEqual({
+        name: 'is-odd',
+        version: '3.0.1',
+        sourceKey: 'is-odd@3.0.1',
+        direct: false,
+      });
+      expect(lock.packages['@sindresorhus/is@5.6.0']).toEqual({
+        name: '@sindresorhus/is',
+        version: '5.6.0',
+        sourceKey: '@sindresorhus/is@5.6.0',
+        direct: false,
+      });
     });
 
     it('skips the __metadata block', () => {
@@ -51,8 +81,8 @@ describe('parseYarnLockfile', () => {
     });
   });
 
-  it('returns undefined directDependencyKeys (yarn.lock has no manifest info)', () => {
+  it('reports direct-dependency info as unavailable (yarn.lock has no manifest info)', () => {
     const lock = parseYarnLockfile.parse('yarn.lock', v1);
-    expect(lock.directDependencyKeys).toBeUndefined();
+    expect(lock.directDependencyInfoAvailable).toBe(false);
   });
 });

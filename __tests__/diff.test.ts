@@ -1,21 +1,22 @@
 import { diff } from '../src/diff.js';
 import { change } from './helpers.js';
+import { pkg } from './helpers.js';
 
 describe('diff scope', () => {
   it('marks direct deps "direct" and everything else "transitive" in one pass', () => {
     const oldLock = {
       packages: {
-        express: { version: '4.18.0' }, // direct, changed
-        accepts: { version: '1.3.7' }, // transitive, changed
+        express: pkg('express', '4.18.0', 'express', true), // direct, changed
+        accepts: pkg('accepts', '1.3.7'), // transitive, changed
       },
-      directDependencyKeys: ['express'],
+      directDependencyInfoAvailable: true,
     };
     const newLock = {
       packages: {
-        express: { version: '4.18.2' },
-        accepts: { version: '1.3.8' },
+        express: pkg('express', '4.18.2', 'express', true),
+        accepts: pkg('accepts', '1.3.8'),
       },
-      directDependencyKeys: ['express'],
+      directDependencyInfoAvailable: true,
     };
     expect(diff(oldLock, newLock, false)).toEqual({
       express: change('4.18.0', '4.18.2', 'direct'),
@@ -23,9 +24,9 @@ describe('diff scope', () => {
     });
   });
 
-  it('without directDependencyKeys, everything is transitive', () => {
-    const oldLock = { packages: { foo: { version: '1.0.0' } } };
-    const newLock = { packages: { foo: { version: '1.1.0' } } };
+  it('without direct info, everything is transitive', () => {
+    const oldLock = { packages: { foo: pkg('foo', '1.0.0') } };
+    const newLock = { packages: { foo: pkg('foo', '1.1.0') } };
     expect(diff(oldLock, newLock, false)).toEqual({
       foo: change('1.0.0', '1.1.0', 'transitive'),
     });

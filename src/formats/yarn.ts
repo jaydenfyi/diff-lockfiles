@@ -84,10 +84,12 @@ export const parseYarnLockfile: LockfileAdapter = {
       if (descriptors[0] === '__metadata') continue;
       // Use the first descriptor's name; key as name@version.
       const name = splitNameVersion(descriptors[0])[0];
-      const key = `${name}@${version}`;
+      const sourceKey = `${name}@${version}`;
       // Multiple descriptors share one entry; don't overwrite if seen.
-      if (!packages[key]) packages[key] = { version };
+      if (!packages[sourceKey]) {
+        packages[sourceKey] = { name, version, sourceKey, direct: false };
+      }
     }
-    return { packages };
+    return { packages, directDependencyInfoAvailable: false };
   },
 };

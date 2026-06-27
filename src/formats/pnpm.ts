@@ -44,34 +44,32 @@ function stripPeerSuffix(version: string): string {
  */
 export function parsePnpmContent(content: string): NormalizedLockfile {
   const doc = parseAllDocuments(content)[0]?.toJS() as PnpmLockfile | null | undefined;
-  if (!doc || typeof doc !== 'object') return { packages: {} };
+  if (!doc || typeof doc !== 'object') return { packages: {}, directDependencyInfoAvailable: false };
 
-  const rawPackages = doc.packages ?? {};
-  const packages: NormalizedLockfile['packages'] = {};
-  for (const key of Object.keys(rawPackages)) {
-    packages[key] = { version: splitNameVersion(key)[1] };
-  }
-
-  // Reconstruct `name@version` keys from importers['.'] so they line up
-  // with the `packages:` keys for the scope check in diff.ts. Drop
+  // Reconstruct `name@version` direct-dep keys from importers['.'] so they
+  // line up with the `packages:` keys for the `direct` flag. Drop
   // `link:...` (workspace/file) resolutions, which have no packages entry.
   const root = doc.importers?.['.'];
-  const directDependencyKeys = root
-    ? [
-        ...new Set(
-          DEPENDENCY_FIELDS.flatMap((kind) =>
-            Object.entries(root[kind] ?? {})
-              .map(([name, dep]): string | undefined => {
-                const version = dep.version ? stripPeerSuffix(dep.version) : '';
-                return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
-              })
-              .filter((value): value is string => value !== undefined),
-          ),
-        ),
-      ]
-    : undefined;
+  const directSourceKeys = new Set(
+    root
+      ? DEPENDENCY_FIELDS.flatMap((kind) =>
+          Object.entries(root[kind] ?? {})
+            .map(([name, dep]): string | undefined => {
+              const version = dep.version ? stripPeerSuffix(dep.version) : '';
+              return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
+            })
+            .filter((value): value is string => value !== undefined),
+        )
+      : [],
+  );
 
-  return { packages, directDependencyKeys };
+  const packages: NormalizedLockfile['packages'] = {};
+  for (const key of Object.keys(doc.packages ?? {})) {
+    const [name, version] = splitNameVersion(key);
+    packages[key] = { name, version, sourceKey: key, direct: directSourceKeys.has(key) };
+  }
+
+  return { packages, directDependencyInfoAvailable: Boolean(root) };
 }
 
 /** Adapter for `pnpm-lock.yaml` (pnpm 9/10/11). */

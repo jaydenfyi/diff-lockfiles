@@ -1,0 +1,19 @@
+package-lock.json
+  s_b29b475179a59b::t_146d01d0cb019d 2-2975
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "062599c151b0fbe2b10a4f9e260e0a540add3a85",
+  "prompts": {},
+  "sessions": {
+    "s_b29b475179a59b": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a1b-a6e0-7eaf-af52-14ea6aafeb21",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

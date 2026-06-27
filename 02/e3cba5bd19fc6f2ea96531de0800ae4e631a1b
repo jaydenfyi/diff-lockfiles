@@ -1,0 +1,19 @@
+package.json
+  s_296e11cb9998fe::t_1bf22a0f613827 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "02e3cba5bd19fc6f2ea96531de0800ae4e631a1b",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -19,7 +19,10 @@ export function displayRaw(version: Version | null): string {
  */
 export function highlightVersion(version: Version | null, bump: Bump | null, color: ColorFns): string {
   if (version === null || version.scheme !== 'semver' || bump === null) return displayRaw(version);
-  const suffix = `${version.prerelease ? `-${version.prerelease}` : ''}${version.build ? `+${version.build}` : ''}`;
+  // Optional semver suffix: prerelease (`-x`) then build metadata (`+x`), in spec order.
+  const prerelease = version.prerelease ? `-${version.prerelease}` : '';
+  const build = version.build ? `+${version.build}` : '';
+  const suffix = `${prerelease}${build}`;
   switch (bump) {
     case 'major':
       return color.bold(`${version.major}.${version.minor}.${version.patch}${suffix}`);

@@ -45,4 +45,24 @@ describe('textRenderer', () => {
     const out = textRenderer.render(lockfiles({ 'a.lock': { lodash: [null, '1.0.0'] } }), noColor);
     expect(out).not.toContain('\x1b');
   });
+
+  it('includes prerelease + build metadata in highlighted versions', () => {
+    // No colour: the suffix text (`-alpha+sha`) must appear verbatim.
+    const plain = textRenderer.render(
+      lockfiles({ 'a.lock': { pkg: ['1.2.3-alpha+sha', '1.3.0'] } }), // minor bump
+      noColor,
+    );
+    expect(plain).toContain('1.2.3-alpha+sha -> 1.3.0 minor · transitive');
+
+    // With colour, a major bump bolds the entire version incl. its prerelease
+    // + build suffix — pinning that the suffix rides along inside the bolded
+    // region rather than being dropped or stranded outside it.
+    const colored = textRenderer.render(
+      lockfiles({ 'a.lock': { pkg: ['1.0.0-beta+build', '2.0.0'] } }),
+      { color: true },
+    );
+    const color = createColor(true);
+    expect(colored).toContain(color.bold('1.0.0-beta+build'));
+    expect(colored).toContain(color.bold('2.0.0'));
+  });
 });

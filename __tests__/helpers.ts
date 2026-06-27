@@ -7,7 +7,7 @@ import type { NormalizedPackage } from '../src/formats/types.js';
 import type { LockfileDiffs } from '../src/renderers/types.js';
 
 /** Build a {@link NormalizedPackage} for inline lockfile fixtures in tests. */
-export function pkg(
+export function makePackage(
   name: string,
   version: string,
   sourceKey: string = `${name}@${version}`,

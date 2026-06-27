@@ -32,10 +32,10 @@ function parseEntries(content: string): YarnEntry[] {
 
     // Top-level key line. Strip the trailing colon, split on commas,
     // strip surrounding quotes from each descriptor.
-    const keyStr = stripped.slice(0, -1).trim();
-    const descriptors = keyStr
+    const keyString = stripped.slice(0, -1).trim();
+    const descriptors = keyString
       .split(/,\s*/)
-      .map((d) => d.replace(/^"|"$/g, '').trim())
+      .map((descriptor) => descriptor.replace(/^"|"$/g, '').trim())
       .filter(Boolean);
 
     // Scan forward for the version field, stopping at the next indent-0 line.
@@ -46,15 +46,15 @@ function parseEntries(content: string): YarnEntry[] {
     let version = '';
     i++;
     while (i < lines.length) {
-      const l = lines[i];
-      const s = l.trimStart();
-      if (s === '' || s.startsWith('#')) { i++; continue; }
-      if ((l.length - s.length) === 0) break; // next entry
+      const line = lines[i];
+      const stripped = line.trimStart();
+      if (stripped === '' || stripped.startsWith('#')) { i++; continue; }
+      if ((line.length - stripped.length) === 0) break; // next entry
       if (version === '') {
         // v1 field:   `  version "4.6.3"`    (space-separated, quoted value)
         // berry field: `  version: 4.6.3`     (colon-separated, may be bare)
-        const m = s.match(/^version(?::\s*|\s+)"?([^"\s]+?)"?\s*$/);
-        if (m) version = m[1];
+        const versionMatch = stripped.match(/^version(?::\s*|\s+)"?([^"\s]+?)"?\s*$/);
+        if (versionMatch) version = versionMatch[1];
       }
       i++;
     }

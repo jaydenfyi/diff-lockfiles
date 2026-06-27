@@ -2,7 +2,7 @@ import { markdownRenderer } from '../../src/renderers/markdown.js';
 import { changeEntry, lockfiles } from '../helpers.js';
 import type { LockfileDiffs, RenderOptions } from '../../src/renderers/types.js';
 
-const opts: RenderOptions = { color: false };
+const options: RenderOptions = { color: false };
 
 describe('markdownRenderer', () => {
   it('renders an H2 per lockfile, each followed by its table', () => {
@@ -11,7 +11,7 @@ describe('markdownRenderer', () => {
         'apps/api/bun.lock': { express: ['4.18.0', '4.19.0'] },
         'package-lock.json': { lodash: [null, '4.17.21'] },
       }),
-      opts,
+      options,
     );
     expect(out).toContain('## apps/api/bun.lock');
     expect(out).toContain('## package-lock.json');
@@ -21,13 +21,13 @@ describe('markdownRenderer', () => {
 
   it('renders only the header row for a lockfile with no changes', () => {
     // (Pipeline filters empties, so this is defensive; keep the behavior sane.)
-    const out = markdownRenderer.render(lockfiles({ 'a.lock': {} }), opts);
+    const out = markdownRenderer.render(lockfiles({ 'a.lock': {} }), options);
     expect(out).toContain('## a.lock');
     expect(out).toContain('| Package');
   });
 
   it('emits an empty string for an empty run', () => {
-    expect(markdownRenderer.render([], opts)).toBe('');
+    expect(markdownRenderer.render([], options)).toBe('');
   });
 
   it('adds source-key disambiguators to the Package cell for duplicate rows', () => {
@@ -40,7 +40,7 @@ describe('markdownRenderer', () => {
         ],
       },
     ];
-    const out = markdownRenderer.render(data, opts);
+    const out = markdownRenderer.render(data, options);
     expect(out).toContain('lodash (node_modules/foo/node_modules/lodash)');
     expect(out).toContain('lodash (node_modules/bar/node_modules/lodash)');
   });

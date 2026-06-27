@@ -20,17 +20,17 @@ function packagesFor(lock: NormalizedLockfile, shallow: boolean): NormalizedPack
 /** Group packages by bare name, preserving first-seen order within each name. */
 function groupByName(packages: NormalizedPackage[]): Map<string, NormalizedPackage[]> {
   const grouped = new Map<string, NormalizedPackage[]>();
-  for (const pkg of packages) {
-    const list = grouped.get(pkg.name);
-    if (list) list.push(pkg);
-    else grouped.set(pkg.name, [pkg]);
+  for (const entry of packages) {
+    const list = grouped.get(entry.name);
+    if (list) list.push(entry);
+    else grouped.set(entry.name, [entry]);
   }
   return grouped;
 }
 
 /** A package pre-parsed with its {@link Version}, so cancellation parses once each. */
 interface ParsedPackage {
-  pkg: NormalizedPackage;
+  package: NormalizedPackage;
   version: Version;
 }
 
@@ -44,48 +44,48 @@ interface ParsedPackage {
  * codebase and preserves the build-metadata-only-change contract end-to-end.
  */
 function cancelUnchanged(
-  oldPkgs: NormalizedPackage[],
-  newPkgs: NormalizedPackage[],
+  oldPackages: NormalizedPackage[],
+  newPackages: NormalizedPackage[],
 ): { oldRemaining: NormalizedPackage[]; newRemaining: NormalizedPackage[] } {
-  const oldLeft = oldPkgs.map((pkg) => ({ pkg, version: parseVersion(pkg.version) }));
-  const newLeft = newPkgs.map((pkg) => ({ pkg, version: parseVersion(pkg.version) }));
+  const oldLeft = oldPackages.map((entry) => ({ package: entry, version: parseVersion(entry.version) }));
+  const newLeft = newPackages.map((entry) => ({ package: entry, version: parseVersion(entry.version) }));
 
   for (let i = oldLeft.length - 1; i >= 0; i--) {
     const oldEntry: ParsedPackage = oldLeft[i];
-    const match = newLeft.findIndex((n) => isUnchanged(oldEntry.version, n.version));
+    const match = newLeft.findIndex((candidate) => isUnchanged(oldEntry.version, candidate.version));
     if (match !== -1) {
       oldLeft.splice(i, 1);
       newLeft.splice(match, 1);
     }
   }
   return {
-    oldRemaining: oldLeft.map((e) => e.pkg),
-    newRemaining: newLeft.map((e) => e.pkg),
+    oldRemaining: oldLeft.map((entry) => entry.package),
+    newRemaining: newLeft.map((entry) => entry.package),
   };
 }
 
 /** A paired change is `direct` if either side was a direct dependency. */
-function scopeOf(oldPkg: NormalizedPackage | null, newPkg: NormalizedPackage | null): Scope {
-  return oldPkg?.direct || newPkg?.direct ? 'direct' : 'transitive';
+function scopeOf(oldPackage: NormalizedPackage | null, newPackage: NormalizedPackage | null): Scope {
+  return oldPackage?.direct || newPackage?.direct ? 'direct' : 'transitive';
 }
 
 /** Build a Change from an old/new package pair (either may be null for add/remove). */
 function changeFromPair(
   name: string,
-  oldPkg: NormalizedPackage | null,
-  newPkg: NormalizedPackage | null,
+  oldPackage: NormalizedPackage | null,
+  newPackage: NormalizedPackage | null,
 ): Change {
-  const oldVersion = oldPkg ? parseVersion(oldPkg.version) : null;
-  const newVersion = newPkg ? parseVersion(newPkg.version) : null;
+  const oldVersion = oldPackage ? parseVersion(oldPackage.version) : null;
+  const newVersion = newPackage ? parseVersion(newPackage.version) : null;
   return {
     name,
-    oldSourceKey: oldPkg?.sourceKey ?? null,
-    newSourceKey: newPkg?.sourceKey ?? null,
+    oldSourceKey: oldPackage?.sourceKey ?? null,
+    newSourceKey: newPackage?.sourceKey ?? null,
     kind: classify(oldVersion, newVersion),
     oldVersion,
     newVersion,
     bump: bumpOf(oldVersion, newVersion),
-    scope: scopeOf(oldPkg, newPkg),
+    scope: scopeOf(oldPackage, newPackage),
   };
 }
 
@@ -127,8 +127,8 @@ export function diff(
       changes.push(changeFromPair(name, oldRemaining[0], newRemaining[0]));
       continue;
     }
-    for (const oldPkg of oldRemaining) changes.push(changeFromPair(name, oldPkg, null));
-    for (const newPkg of newRemaining) changes.push(changeFromPair(name, null, newPkg));
+    for (const oldPackage of oldRemaining) changes.push(changeFromPair(name, oldPackage, null));
+    for (const newPackage of newRemaining) changes.push(changeFromPair(name, null, newPackage));
   }
   return changes;
 }

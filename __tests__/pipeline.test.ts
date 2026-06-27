@@ -284,8 +284,8 @@ describe('multi-version resolution (real fixtures)', () => {
         )
       )[0];
 
-      const removed = out.split('\n').filter((l) => /left-pad .*removed/.test(l));
-      const added = out.split('\n').filter((l) => /left-pad .*added/.test(l));
+      const removed = out.split('\n').filter((line) => /left-pad .*removed/.test(line));
+      const added = out.split('\n').filter((line) => /left-pad .*added/.test(line));
       expect(removed).toHaveLength(2);
       expect(added).toHaveLength(2);
       // All rows use the bare name; versions differ so no provenance disambiguator.
@@ -313,7 +313,7 @@ describe('multi-version resolution (real fixtures)', () => {
       const parsed = JSON.parse(out);
       // Name-keyed (bare `left-pad`), array value, 4 entries, each carrying source keys.
       expect(parsed[filename]['left-pad']).toHaveLength(4);
-      expect(parsed[filename]['left-pad'].every((c: { oldSourceKey: string | null; newSourceKey: string | null }) => c.oldSourceKey !== null || c.newSourceKey !== null)).toBe(true);
+      expect(parsed[filename]['left-pad'].every((change: { oldSourceKey: string | null; newSourceKey: string | null }) => change.oldSourceKey !== null || change.newSourceKey !== null)).toBe(true);
     },
   );
 });

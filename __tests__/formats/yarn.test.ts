@@ -73,7 +73,7 @@ describe('parseYarnLockfile', () => {
 
     it('skips the __metadata block', () => {
       expect(lock.packages['__metadata@8']).toBeUndefined();
-      expect(Object.keys(lock.packages).some((k) => k.startsWith('__metadata'))).toBe(false);
+      expect(Object.keys(lock.packages).some((key) => key.startsWith('__metadata'))).toBe(false);
     });
 
     it('parses every entry in the fixture', () => {

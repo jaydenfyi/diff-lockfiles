@@ -22,7 +22,7 @@ const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };
 
 /** Find the adapter that handles `filename`, if any. */
 function adapterFor(filename: string): LockfileAdapter | undefined {
-  return adapters.find((a) => a.matches(filename));
+  return adapters.find((adapter) => adapter.matches(filename));
 }
 
 /** Options driving how changed lockfiles are diffed and rendered. */

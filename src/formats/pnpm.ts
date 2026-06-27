@@ -54,8 +54,8 @@ export function parsePnpmContent(content: string): NormalizedLockfile {
     root
       ? DEPENDENCY_FIELDS.flatMap((kind) =>
           Object.entries(root[kind] ?? {})
-            .map(([name, dep]): string | undefined => {
-              const version = dep.version ? stripPeerSuffix(dep.version) : '';
+            .map(([name, dependency]): string | undefined => {
+              const version = dependency.version ? stripPeerSuffix(dependency.version) : '';
               return version && !version.startsWith('link:') ? `${name}@${version}` : undefined;
             })
             .filter((value): value is string => value !== undefined),

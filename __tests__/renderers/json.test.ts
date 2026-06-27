@@ -2,7 +2,7 @@ import { jsonRenderer } from '../../src/renderers/json.js';
 import { changeEntry, lockfiles } from '../helpers.js';
 import type { LockfileDiffs, RenderOptions } from '../../src/renderers/types.js';
 
-const opts: RenderOptions = { color: false };
+const options: RenderOptions = { color: false };
 
 describe('jsonRenderer', () => {
   it('groups changes under each lockfile key, then by bare package name (array values)', () => {
@@ -11,7 +11,7 @@ describe('jsonRenderer', () => {
         'apps/api/bun.lock': { express: ['4.18.0', '4.18.2'] },
         'package-lock.json': { lodash: [null, '4.17.21'] },
       }),
-      opts,
+      options,
     );
     const parsed = JSON.parse(out); // MUST parse: one valid document, not glued objects
     expect(Object.keys(parsed)).toEqual(['apps/api/bun.lock', 'package-lock.json']);
@@ -22,7 +22,7 @@ describe('jsonRenderer', () => {
   it('keys packages by bare name (not node_modules path)', () => {
     const out = jsonRenderer.render(
       lockfiles({ 'package-lock.json': { lodash: [null, '4.17.21'] } }),
-      opts,
+      options,
     );
     const parsed = JSON.parse(out);
     expect(parsed['package-lock.json'].lodash).toBeDefined();
@@ -32,7 +32,7 @@ describe('jsonRenderer', () => {
   it('serializes each change as a full structured object with name + source keys', () => {
     const out = jsonRenderer.render(
       lockfiles({ 'package-lock.json': { express: ['4.18.0', '4.18.2'] } }),
-      opts,
+      options,
     );
     expect(JSON.parse(out)['package-lock.json'].express).toEqual([
       {
@@ -58,10 +58,10 @@ describe('jsonRenderer', () => {
         ],
       },
     ];
-    const parsed = JSON.parse(jsonRenderer.render(data, opts));
+    const parsed = JSON.parse(jsonRenderer.render(data, options));
     // Both changes group under the bare name `left-pad` as a 2-entry array.
     expect(parsed['pnpm-lock.yaml']['left-pad']).toHaveLength(2);
-    expect(parsed['pnpm-lock.yaml']['left-pad'].map((c: { kind: string }) => c.kind)).toEqual([
+    expect(parsed['pnpm-lock.yaml']['left-pad'].map((change: { kind: string }) => change.kind)).toEqual([
       'removed',
       'removed',
     ]);
@@ -70,13 +70,13 @@ describe('jsonRenderer', () => {
   it('pretty-prints with 2-space indentation', () => {
     const out = jsonRenderer.render(
       lockfiles({ 'package-lock.json': { express: ['4.18.0', '4.18.2'] } }),
-      opts,
+      options,
     );
     expect(out).toContain('\n        "kind": "upgrade"');
   });
 
   it('renders {} for an empty run', () => {
-    expect(jsonRenderer.render([], opts)).toBe('{}');
+    expect(jsonRenderer.render([], options)).toBe('{}');
   });
 
   it('preserves source keys on each duplicate entry (not folded away)', () => {
@@ -89,7 +89,7 @@ describe('jsonRenderer', () => {
         ],
       },
     ];
-    const parsed = JSON.parse(jsonRenderer.render(data, opts));
+    const parsed = JSON.parse(jsonRenderer.render(data, options));
     expect(parsed['package-lock.json'].lodash).toHaveLength(2);
     expect(parsed['package-lock.json'].lodash[0].oldSourceKey).toBe(
       'node_modules/foo/node_modules/lodash',

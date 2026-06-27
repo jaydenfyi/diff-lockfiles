@@ -36,8 +36,8 @@ function sourceHint(change: Change): string | null {
 export function packageLabels(changes: Change[]): string[] {
   const counts = new Map<string, number>();
   for (const change of changes) {
-    const sig = rowSignature(change);
-    counts.set(sig, (counts.get(sig) ?? 0) + 1);
+    const signature = rowSignature(change);
+    counts.set(signature, (counts.get(signature) ?? 0) + 1);
   }
 
   return changes.map((change) => {

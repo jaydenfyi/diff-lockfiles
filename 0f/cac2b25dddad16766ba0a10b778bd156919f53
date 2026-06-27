@@ -1,0 +1,19 @@
+.github/workflows/node.yml
+  s_626c1a029b9f8f::t_9f6fb20d4648e3 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "0fcac2b25dddad16766ba0a10b778bd156919f53",
+  "prompts": {},
+  "sessions": {
+    "s_626c1a029b9f8f": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0987-5f9d-7d6f-b59c-555f2e94fb5b",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

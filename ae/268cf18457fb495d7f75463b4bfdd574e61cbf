@@ -1,0 +1,21 @@
+__tests__/diff.test.ts
+  s_296e11cb9998fe::t_2f371a1605660d 198-207
+src/diff.ts
+  s_296e11cb9998fe::t_3e492eba02397d 2-3,31-36,38-44,50-51,54-55,61-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "ae268cf18457fb495d7f75463b4bfdd574e61cbf",
+  "prompts": {},
+  "sessions": {
+    "s_296e11cb9998fe": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f03cd-47e6-729a-93ac-c0011458c5bf",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

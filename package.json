@@ -1,7 +1,7 @@
 {
   "name": "diff-lockfiles",
   "version": "0.0.0",
-  "description": "a diff for package-lock.json files",
+  "description": "diff changed npm, bun, pnpm, yarn, and aube lockfiles between git refs",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/jaydenfyi/diff-lockfiles.git"

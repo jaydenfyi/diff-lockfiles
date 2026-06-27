@@ -55,7 +55,7 @@ describe('diffChangedLockfiles', () => {
 		);
 
 		expect(printed).toEqual([
-			'── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 patch · transitive',
+			'── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch · transitive',
 		]);
 	});
 
@@ -232,7 +232,7 @@ describe('pair-by-name bump fix', () => {
 			)[0];
 
 			expect(out).toContain('──');
-			expect(out).toContain('lodash 4.17.20 -> 4.17.21 patch');
+			expect(out).toContain('lodash 4.17.20 -> 4.17.21 ↑ patch');
 			// The bug: these must NOT appear.
 			expect(out).not.toContain('lodash@4.17.20 removed');
 			expect(out).not.toContain('lodash@4.17.21 added');
@@ -269,7 +269,7 @@ describe('multi-version resolution (real fixtures)', () => {
 			)[0];
 
 			// One clean upgrade; cancelled versions (1.1.3, 1.2.0) never appear.
-			expect(out).toContain('left-pad 1.0.2 -> 1.3.0 minor · transitive');
+			expect(out).toContain('left-pad 1.0.2 -> 1.3.0 ↑ minor · transitive');
 			expect(out).not.toMatch(/left-pad .*removed 1\.(1|2)\.0/);
 			expect(out).not.toMatch(/left-pad .*added 1\.(1|2)\.0/);
 			// No lockfile key leakage into the display name.

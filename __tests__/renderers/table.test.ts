@@ -24,8 +24,8 @@ describe('tableRenderer', () => {
 			lockfiles({ 'package-lock.json': { lodash: ['4.17.20', '4.17.21'] } }),
 			noColor,
 		);
-		expect(out).toContain('package');
-		expect(out).toContain('old');
+		expect(out).toContain('Package');
+		expect(out).toContain('Old');
 		expect(out).toContain('lodash');
 	});
 

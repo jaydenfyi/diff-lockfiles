@@ -1,4 +1,4 @@
-import { table } from 'table';
+import { renderBoxTable } from './box-table.js';
 import { createColor } from '../colors.js';
 import { changeLabel } from './change-label.js';
 import { highlightVersion } from './highlight.js';
@@ -30,11 +30,11 @@ function renderTable(
 
 	// Title row (the lockfile name) above the header, then header, then change rows.
 	// Headers are Title Case to match the markdown renderer.
-	const header: (string | null)[] = ['Package', 'Old', 'New', 'Change'];
-	const titleRow: (string | null)[] = [lockfile, '', '', ''];
+	const header: string[] = ['Package', 'Old', 'New', 'Change'];
+	const titleRow: string[] = [lockfile, '', '', ''];
 	// Bold the title row only (noop when colouring is disabled).
 	const data = [titleRow.map((cell) => color.bold(cell)), header, ...rows];
-	return table(data);
+	return renderBoxTable(data);
 }
 
 /** Render one boxed table per lockfile, blank-line separated. */

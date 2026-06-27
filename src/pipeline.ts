@@ -10,11 +10,11 @@ import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
 const adapters: LockfileAdapter[] = [
-  parseNpmLockfile,
-  parseBunLockfile,
   parsePnpmLockfile,
-  parseAubeLockfile,
+  parseNpmLockfile,
   parseYarnLockfile,
+  parseBunLockfile,
+  parseAubeLockfile,
 ];
 
 /** A lockfile with no packages — the shape used for a side that is absent. */

@@ -1,8 +1,9 @@
 # diff-lockfiles
 
 Note: this is a fork of <https://github.com/mxweaver/lock-diff>, but it
-operates on Git commit ranges rather than on files. It diffs both
-`package-lock.json` and `bun.lock` files.
+operates on Git commit ranges rather than on files. It diffs `package-lock.json`
+(npm), `bun.lock` (Bun), `pnpm-lock.yaml` (pnpm), `yarn.lock` (Yarn classic v1
+and Berry v2+), and `aube-lock.yaml` (aube) files.
 
 [![npm](https://img.shields.io/npm/v/diff-lockfiles)](https://www.npmjs.com/package/diff-lockfiles)
 
@@ -13,8 +14,18 @@ operates on Git commit ranges rather than on files. It diffs both
 - **`bun.lock`** (Bun 1.2.0+ text lockfile, JSONC). Keys are bare package
   names (e.g. `express`), which makes for more readable diffs than the
   `node_modules/...` form.
+- **`pnpm-lock.yaml`** (pnpm v9/10/11). Keys are `name@version` (the version
+  lives in the key). `importers["."]` supplies the direct-dependency set for
+  `--shallow`.
+- **`yarn.lock`** (Yarn classic v1 and Berry v2/v3/v4). Keys are
+  `name@version` reconstructed from each entry's descriptors and resolved
+  `version` field. ⚠️ yarn.lock carries no root-manifest info, so `--shallow`
+  has no effect on yarn diffs — every package is shown and classified as
+  `transitive` (see [Limitations](#limitations)).
+- **`aube-lock.yaml`** (aube). Byte-identical to the pnpm v9 format; branch
+  lockfiles (`aube-lock.<branch>.yaml`) are matched too.
 
-Both formats produce the same enriched output in all four renderers: every
+All formats produce the same enriched output in all four renderers: every
 change carries its **kind** (added/removed/upgrade/downgrade/changed), the
 **bump** level (major/minor/patch) when it's a semver move, and its **scope**
 (direct vs transitive dependency). The legacy binary `bun.lockb` and the old
@@ -42,7 +53,7 @@ diff-lockfiles --color HEAD~1 HEAD
 diff-lockfiles --help
 Usage:  diff-lockfiles [options] <from> <to>
 
-diff all changed package-lock.json and bun.lock files in repo
+diff all changed lockfiles (npm, bun, pnpm, yarn, aube) in the repo
 
 Options:
   -V, --version          output the version number
@@ -150,6 +161,17 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 | node_modules/dedent        | `1.3.0`  | `1.5.1`  | minor upgrade | transitive |
 | node_modules/resolve       | `1.22.2` | `1.22.4` | patch upgrade | transitive |
 | node_modules/pretty-format | `—`      | `29.6.3` | added         | transitive |
+
+## Limitations
+
+- **yarn.lock + `--shallow`:** yarn.lock contains only resolved entries — the
+  root manifest lives in `package.json`. Since `diff-lockfiles` reads only
+  lockfiles, `--shallow` cannot filter yarn output; all yarn packages are shown
+  and classified as `transitive`.
+- **pnpm peer variants:** pnpm's `snapshots:` map can carry peer-context
+  variants of the same version (`pkg@1.0.0(react@16)` vs `pkg@1.0.0(react@17)`).
+  This tool reads `packages:` only, so such variants collapse to a single
+  `name@version` key.
 
 ## Testing
 

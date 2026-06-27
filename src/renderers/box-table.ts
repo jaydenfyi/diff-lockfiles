@@ -21,10 +21,12 @@
  * contain newlines, and the table renderer always passes title + header + rows.
  */
 
-// Match ANSI SGR escape sequences (`\x1b[31m`, `\x1b[39m`, `\x1b[1m`, `\x1b[22m`). Built
-// from the escape char rather than a regex literal so eslint's `no-control-regex`
-// stays happy (the regex itself never appears in source with a control char).
-const ANSI = new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, 'g');
+// Match ANSI SGR escape sequences (`\x1b[31m`, `\x1b[39m`, `\x1b[1m`, `\x1b[22m`) —
+// the exact sequences colors.ts emits. Matching the ESC control char is deliberate
+// here, so `no-control-regex` (which guards against *accidental* control-char
+// matching in user input) is disabled for this one declaration.
+// eslint-disable-next-line no-control-regex
+const ANSI = /\x1b\[[0-9;]*m/g;
 
 /** Visible width of a cell: ANSI codes stripped, then code-point count. */
 function cellWidth(cell: string): number {
@@ -60,12 +62,10 @@ export function renderBoxTable(rows: string[][]): string {
 	const separator = borderLine(widths, '─', '┼', '╟', '╢');
 	const bottom = borderLine(widths, '═', '╧', '╚', '╝');
 
-	const lines: string[] = [top];
-	rows.forEach((row, index) => {
-		lines.push('║' + row.map((cell, c) => padCell(cell, widths[c])).join('│') + '║');
-		if (index < rows.length - 1) lines.push(separator);
-	});
-	lines.push(bottom);
-
-	return lines.map((line) => line + '\n').join('');
+	// Body rows joined by the separator line (join of a single row emits none),
+	// bracketed by the top and bottom borders. Every line terminated with `\n`.
+	const body = rows
+		.map((row) => '║' + row.map((cell, c) => padCell(cell, widths[c])).join('│') + '║')
+		.join(`\n${separator}\n`);
+	return `${top}\n${body}\n${bottom}\n`;
 }

@@ -31,3 +31,5 @@ export type {
 	LockfileDiff,
 	LockfileDiffs,
 } from './renderers/types.js';
+/** Git orchestration result types. */
+export type { LockfileDiffResult } from './sources/index.js';

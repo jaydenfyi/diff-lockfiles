@@ -19,6 +19,8 @@ export interface DiffLockfilesOptions {
  *  No `parse` method — call the parser directly (`npm().parse(content)`);
  *  detection-by-path lives inside `diffFile`. */
 export interface DiffLockfiles {
+	/** Whether any registered parser handles the given filename. */
+	matches(filename: string): boolean;
 	/** One-call diff of two content sides when you have a file path. Detects the
 	 *  parser (from the path), parses both sides, diffs. `null` for a side means
 	 *  "absent" (file added/removed) → diffed as an empty lockfile. Returns `[]`
@@ -42,6 +44,9 @@ export function createDiffLockfiles(options: DiffLockfilesOptions = {}): DiffLoc
 		parsers.find((parser) => parser.matches(filename));
 
 	return {
+		matches(filename) {
+			return parserFor(filename) !== undefined;
+		},
 		diffFile(filename, oldContent, newContent) {
 			const parser = parserFor(filename);
 			if (!parser) return [];

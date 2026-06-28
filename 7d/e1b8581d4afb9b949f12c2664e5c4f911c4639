@@ -1,0 +1,28 @@
+src/factory.ts
+  s_01b2ad8b88b56c::t_d06bb29bf4a816 22-23,47-49
+src/index.ts
+  s_01b2ad8b88b56c::t_e3ddde44fe353b 34-35
+__tests__/sources.test.ts
+  s_01b2ad8b88b56c::t_07f3ad7f4b91d4 42-44,52-53,71-73,85-87,112-113,116,121,147,151-153,160-161
+  s_01b2ad8b88b56c::t_2488267db871a8 56-63
+  s_01b2ad8b88b56c::t_b981a7fe067cc7 199-200,229-230,254-255,278-279
+  s_01b2ad8b88b56c::t_536feb219d8f4b 54-55
+src/sources/index.ts
+  s_01b2ad8b88b56c::t_d06c8339080a98 6-13,24-26,37,39-40,42-43,49,51,63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "7de1b8581d4afb9b949f12c2664e5c4f911c4639",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

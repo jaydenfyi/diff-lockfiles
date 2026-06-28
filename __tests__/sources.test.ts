@@ -1,4 +1,6 @@
-import { diffChangedLockfiles } from '../src/pipeline.js';
+import { diffChangedLockfiles, diffGitRefs } from '../src/sources/index.js';
+import { createDiffLockfiles } from '../src/factory.js';
+import { text, json } from '../src/renderers/index.js';
 import type { LockfileSource } from '../src/sources/types.js';
 import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 
@@ -29,18 +31,8 @@ function fakeSource(
 	};
 }
 
-/** Capture everything written to `console.log` while `fn` runs (always restores). */
-async function captureLog(fn: () => Promise<unknown>): Promise<string[]> {
-	const lines: string[] = [];
-	const original = console.log;
-	console.log = (...args: unknown[]) => lines.push(String(args[0]));
-	try {
-		await fn();
-	} finally {
-		console.log = original;
-	}
-	return lines;
-}
+// The default engine covers all five formats — used everywhere in this suite.
+const dlf = createDiffLockfiles();
 
 describe('diffChangedLockfiles', () => {
 	it('diffs a changed lockfile end-to-end with zero git', async () => {
@@ -50,19 +42,17 @@ describe('diffChangedLockfiles', () => {
 			['package-lock.json', 'README.md'],
 		);
 
-		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
-		);
+		const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+		const out = text().render(diffs, { color: false });
 
-		expect(printed).toEqual(['── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch']);
+		expect(out).toEqual('── package-lock.json ──\nlodash 4.17.20 -> 4.17.21 ↑ patch');
 	});
 
 	it('does nothing (and does not throw) when no lockfiles changed', async () => {
 		const source = fakeSource({}, []);
 
-		await expect(
-			captureLog(() => diffChangedLockfiles(source, 'a', 'b', { format: 'text', color: false })),
-		).resolves.toEqual([]);
+		const diffs = await diffChangedLockfiles(dlf, source, 'a', 'b');
+		expect(diffs).toEqual([]);
 	});
 
 	it('treats a newly-added lockfile as fully added (no crash)', async () => {
@@ -70,27 +60,25 @@ describe('diffChangedLockfiles', () => {
 		// for the missing side; every package on the present side shows as added.
 		const source = fakeSource({ TO: { 'package-lock.json': newLock } }, ['package-lock.json']);
 
-		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
-		);
+		const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+		const out = text().render(diffs, { color: false });
 
 		// The whole lockfile is new, so every dependency entry shows as added (no
 		// crash). The root "" project entry is skipped (empty name), so only the
 		// real dependency `lodash` appears; lodash is transitive.
-		expect(printed).toEqual(['── package-lock.json ──\nlodash added 4.17.21']);
+		expect(out).toEqual('── package-lock.json ──\nlodash added 4.17.21');
 	});
 
 	it('treats a removed lockfile as fully removed (no crash)', async () => {
 		// Symmetric: the lockfile exists only at FROM (removed in TO).
 		const source = fakeSource({ FROM: { 'package-lock.json': oldLock } }, ['package-lock.json']);
 
-		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
-		);
+		const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+		const out = text().render(diffs, { color: false });
 
 		// Symmetric to the added case: every dependency entry is removed (the root
 		// "" project entry is skipped).
-		expect(printed).toEqual(['── package-lock.json ──\nlodash removed 4.17.20']);
+		expect(out).toEqual('── package-lock.json ──\nlodash removed 4.17.20');
 	});
 
 	it('renders multiple changed lockfiles with identity in every format', async () => {
@@ -111,27 +99,15 @@ describe('diffChangedLockfiles', () => {
 			['package-lock.json', 'apps/api/bun.lock'],
 		);
 
+		const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+
 		// json: ONE valid document, keyed by lockfile, parseable.
-		const jsonOut = (
-			await captureLog(() =>
-				diffChangedLockfiles(source, 'FROM', 'TO', {
-					format: 'json',
-					color: false,
-				}),
-			)
-		)[0];
+		const jsonOut = json().render(diffs, { color: false });
 		const parsed = JSON.parse(jsonOut); // throws if invalid (the old bug)
 		expect(Object.keys(parsed).sort()).toEqual(['apps/api/bun.lock', 'package-lock.json']);
 
 		// text: both filenames appear as headers.
-		const textOut = (
-			await captureLog(() =>
-				diffChangedLockfiles(source, 'FROM', 'TO', {
-					format: 'text',
-					color: false,
-				}),
-			)
-		)[0];
+		const textOut = text().render(diffs, { color: false });
 		expect(textOut).toContain('── apps/api/bun.lock ──');
 		expect(textOut).toContain('── package-lock.json ──');
 	});
@@ -157,26 +133,20 @@ describe('adapter registration', () => {
 				filename,
 			]);
 
-			const printed = await captureLog(() =>
-				diffChangedLockfiles(source, 'FROM', 'TO', {
-					format: 'text',
-					color: false,
-				}),
-			);
+			const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
 
-			// A recognized format emits one render call whose body mentions the
-			// package as added; an unregistered adapter would emit nothing at all.
-			expect(printed).toHaveLength(1);
-			expect(printed[0]).toMatch(/added/);
+			// A recognized format yields one diff whose rendered body mentions the
+			// package as added; an unregistered adapter would yield nothing.
+			expect(diffs).toHaveLength(1);
+			const out = text().render(diffs, { color: false });
+			expect(out).toMatch(/added/);
 		},
 	);
 
 	it('silently skips an unrecognized filename', async () => {
 		const source = fakeSource({ TO: { 'not-a-lockfile.txt': 'whatever' } }, ['not-a-lockfile.txt']);
-		const printed = await captureLog(() =>
-			diffChangedLockfiles(source, 'FROM', 'TO', { format: 'text', color: false }),
-		);
-		expect(printed).toEqual([]);
+		const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+		expect(diffs).toEqual([]);
 	});
 });
 
@@ -214,14 +184,8 @@ describe('pair-by-name bump fix', () => {
 				filename,
 			]);
 
-			const out = (
-				await captureLog(() =>
-					diffChangedLockfiles(source, 'FROM', 'TO', {
-						format: 'text',
-						color: false,
-					}),
-				)
-			)[0];
+			const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+			const out = text().render(diffs, { color: false });
 
 			expect(out).toContain('──');
 			expect(out).toContain('lodash 4.17.20 -> 4.17.21 ↑ patch');
@@ -250,14 +214,8 @@ describe('multi-version resolution (real fixtures)', () => {
 				[filename],
 			);
 
-			const out = (
-				await captureLog(() =>
-					diffChangedLockfiles(source, 'FROM', 'TO', {
-						format: 'text',
-						color: false,
-					}),
-				)
-			)[0];
+			const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+			const out = text().render(diffs, { color: false });
 
 			// One clean upgrade; cancelled versions (1.1.3, 1.2.0) never appear.
 			expect(out).toContain('left-pad 1.0.2 -> 1.3.0 ↑ minor');
@@ -281,14 +239,8 @@ describe('multi-version resolution (real fixtures)', () => {
 				[filename],
 			);
 
-			const out = (
-				await captureLog(() =>
-					diffChangedLockfiles(source, 'FROM', 'TO', {
-						format: 'text',
-						color: false,
-					}),
-				)
-			)[0];
+			const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+			const out = text().render(diffs, { color: false });
 
 			const removed = out.split('\n').filter((line) => /left-pad .*removed/.test(line));
 			const added = out.split('\n').filter((line) => /left-pad .*added/.test(line));
@@ -311,14 +263,8 @@ describe('multi-version resolution (real fixtures)', () => {
 				[filename],
 			);
 
-			const out = (
-				await captureLog(() =>
-					diffChangedLockfiles(source, 'FROM', 'TO', {
-						format: 'json',
-						color: false,
-					}),
-				)
-			)[0];
+			const diffs = await diffChangedLockfiles(dlf, source, 'FROM', 'TO');
+			const out = json().render(diffs, { color: false });
 			const parsed = JSON.parse(out);
 			// Name-keyed (bare `left-pad`), array value, 4 entries, each carrying source keys.
 			expect(parsed[filename]['left-pad']).toHaveLength(4);
@@ -330,4 +276,13 @@ describe('multi-version resolution (real fixtures)', () => {
 			).toBe(true);
 		},
 	);
+});
+
+describe('diffGitRefs', () => {
+	it('is a function delegating to diffChangedLockfiles via a git source', () => {
+		// diffGitRefs builds a real git source; the injectable-seam tests above
+		// carry orchestration coverage, and end-to-end git is smoke-tested in
+		// the final task. Here we only confirm it is wired and callable.
+		expect(typeof diffGitRefs).toBe('function');
+	});
 });

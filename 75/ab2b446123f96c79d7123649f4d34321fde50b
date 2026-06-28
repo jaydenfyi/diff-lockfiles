@@ -1,0 +1,30 @@
+__tests__/sources.test.ts
+  s_aa9cfef9df3dc1::t_b43a07e2c9cb76 2,35
+src/factory.ts
+  s_aa9cfef9df3dc1::t_41a56740259a07 8-10,12-14,32-36,39
+__tests__/factory.test.ts
+  s_aa9cfef9df3dc1::t_fe641d5e8b90d6 3,8-9,12-16,18-28,35
+src/index.ts
+  s_aa9cfef9df3dc1::t_5aaa180fd5a768 1-15
+README.md
+  s_aa9cfef9df3dc1::t_f72e4b2e619d9e 233,237,267
+  s_aa9cfef9df3dc1::t_a987ec78710ecd 183-186,189,194,198-207
+  s_aa9cfef9df3dc1::t_1acbd1b9f3ad1e 282
+  s_aa9cfef9df3dc1::t_8f801a114bbc78 208-209,265-266,268-270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "75ab2b446123f96c79d7123649f4d34321fde50b",
+  "prompts": {},
+  "sessions": {
+    "s_aa9cfef9df3dc1": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a8e-e229-75b4-840d-c0c223fcc903",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

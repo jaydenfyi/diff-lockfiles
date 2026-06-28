@@ -1,23 +1,38 @@
 import { describe, it, expect } from 'vitest';
 import { createDiffLockfiles } from '../src/factory.js';
+import { diffLockfiles } from '../src/index.js';
 import { npm, defaultParsers } from '../src/parsers/index.js';
 import type { LockfileParser } from '../src/parsers/index.js';
 import { loadFixture, FIXTURE_FILENAME, makePackage } from './helpers.js';
 
-const dlf = createDiffLockfiles(); // defaults: all 5 parsers
+// Most tests below exercise the singleton (all 5 parsers registered).
+const dlf = diffLockfiles;
 
 describe('createDiffLockfiles instance', () => {
-	it('defaults to all built-in parsers when options omitted', () => {
-		// parse is not on the instance — prove both parsers are registered via diffFile.
+	it('createDiffLockfiles() is lightweight: no parsers by default', () => {
+		// The factory does NOT register built-ins — diffFile returns [] for any
+		// filename until parsers are passed. Use the `diffLockfiles` singleton for
+		// all built-ins, or spread `defaultParsers`.
+		const empty = createDiffLockfiles();
 		expect(
-			dlf.diffFile(
+			empty.diffFile(
+				FIXTURE_FILENAME.npm,
+				loadFixture('npm', 'pair-old'),
+				loadFixture('npm', 'pair-new'),
+			),
+		).toEqual([]);
+	});
+
+	it('diffLockfiles (the exported singleton) has all built-in parsers', () => {
+		expect(
+			diffLockfiles.diffFile(
 				FIXTURE_FILENAME.npm,
 				loadFixture('npm', 'pair-old'),
 				loadFixture('npm', 'pair-new'),
 			).length,
 		).toBeGreaterThan(0);
 		expect(
-			dlf.diffFile(
+			diffLockfiles.diffFile(
 				FIXTURE_FILENAME.bun,
 				loadFixture('bun', 'pair-old'),
 				loadFixture('bun', 'pair-new'),

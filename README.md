@@ -180,26 +180,33 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 
 ## Programmatic API
 
-`diff-lockfiles` is also a library. Configure a diff engine once with
-`createDiffLockfiles`, then parse, diff, and render. The engine is pure (no I/O);
-git orchestration lives at the `diff-lockfiles/git` subpath.
+`diff-lockfiles` is also a library. Import the pre-built `diffLockfiles` engine
+(all five built-in parsers registered) and call it directly, or use
+`createDiffLockfiles` to configure your own parser set. The engine is pure
+(no I/O); git orchestration lives at the `diff-lockfiles/git` subpath.
 
 ```ts
-import { createDiffLockfiles } from 'diff-lockfiles';
-import { npm, bun, pnpm, yarn, aube } from 'diff-lockfiles/parsers';
+import { diffLockfiles } from 'diff-lockfiles';
 import { markdown } from 'diff-lockfiles/renderers';
 import { diffGitRefs } from 'diff-lockfiles/git';
 
-const dlf = createDiffLockfiles({
-	parsers: [npm(), bun(), pnpm(), yarn(), aube()], // omit for all 5 defaults
-});
-
 // Diff every changed lockfile between two git refs (returns data, no printing):
-const diffs = await diffGitRefs(dlf, 'HEAD~1', 'HEAD', { cwd: '/repo' });
+const diffs = await diffGitRefs(diffLockfiles, 'HEAD~1', 'HEAD', { cwd: '/repo' });
 console.log(markdown().render(diffs, { color: false }));
 
 // Or diff file contents directly (no git); null = that side is absent:
-const changes = dlf.diffFile('package-lock.json', oldContent, newContent);
+const changes = diffLockfiles.diffFile('package-lock.json', oldContent, newContent);
+```
+
+For a custom parser set, use the factory — it starts empty (no defaults), so
+bring your own parsers or spread `defaultParsers`:
+
+```ts
+import { createDiffLockfiles } from 'diff-lockfiles';
+import { npm, bun, defaultParsers } from 'diff-lockfiles/parsers';
+
+const dlf = createDiffLockfiles({ parsers: [npm(), bun()] }); // just these two
+const all = createDiffLockfiles({ parsers: [...defaultParsers] }); // all five
 ```
 
 ### Instance methods
@@ -223,10 +230,11 @@ Built-in parsers live at `diff-lockfiles/parsers`; built-in renderers at
 same shape:
 
 ```ts
+import { createDiffLockfiles } from 'diff-lockfiles';
 import type { LockfileParser } from 'diff-lockfiles/parsers';
 import type { Renderer } from 'diff-lockfiles/renderers';
 
-// Custom lockfile parser — register it on the instance:
+// Custom lockfile parser — register it on a fresh engine:
 const mine = (): LockfileParser => ({
 	matches: (f) => f.endsWith('my.lock'),
 	parse: (content) => myParse(content),
@@ -254,12 +262,12 @@ renderer is just a function you import and call.
 
 ### Exports
 
-| Subpath                    | Exports                                                                                |
-| -------------------------- | -------------------------------------------------------------------------------------- |
-| `diff-lockfiles`           | `createDiffLockfiles`, `diff`, `parseVersion`, instance + core types                   |
-| `diff-lockfiles/parsers`   | `npm`/`bun`/`pnpm`/`yarn`/`aube` factories, `defaultParsers`, `LockfileParser` + types |
-| `diff-lockfiles/renderers` | `json`/`text`/`table`/`markdown` factories, `Renderer` + types                         |
-| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`             |
+| Subpath                    | Exports                                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `diff-lockfiles`           | `diffLockfiles` (pre-built, all parsers), `createDiffLockfiles` (factory), `diff`, `parseVersion`, instance + core types |
+| `diff-lockfiles/parsers`   | `npm`/`bun`/`pnpm`/`yarn`/`aube` factories, `defaultParsers`, `LockfileParser` + types                                   |
+| `diff-lockfiles/renderers` | `json`/`text`/`table`/`markdown` factories, `Renderer` + types                                                           |
+| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`                                               |
 
 > The git-driven orchestrator is intentionally not on the engine instance — the
 > engine stays pure. For programmatic repo diffs, use `diffGitRefs` from
@@ -271,6 +279,7 @@ renderer is just a function you import and call.
 - `parseNpmLockfile` / `parseBunLockfile` / … raw parser objects → use `npm().parse(content)` (the `npm()` factory from `diff-lockfiles/parsers`). `.parse` lost its unused `filename` arg; there is no `dlf.parse`.
 - `print(lockfiles, options)` → use `console.log(markdown().render(diffs, { color }))` (import the renderer from `diff-lockfiles/renderers`).
 - `diffChangedLockfiles` now returns `LockfileDiffs` instead of printing; pass a `DiffLockfiles` instance as the first arg.
+- `createDiffLockfiles()` no longer defaults to all built-in parsers (it's now a lightweight empty engine). Use the exported `diffLockfiles` singleton for all five built-ins, or pass `parsers: [...defaultParsers]`.
 
 ## Limitations
 

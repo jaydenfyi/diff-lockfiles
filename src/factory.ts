@@ -1,15 +1,17 @@
 import { diff } from './diff.js';
-import { defaultParsers } from './parsers/index.js';
 import type { LockfileParser, NormalizedLockfile } from './parsers/types.js';
 import type { Changes } from './changes.js';
 
 /** A side that is absent (file added/removed) is diffed as an empty lockfile. */
 const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };
 
-/** Options for {@link createDiffLockfiles}. `parsers` defaults to all built-ins. */
+/** Options for {@link createDiffLockfiles}. `parsers` defaults to none (lightweight).
+ *  For a pre-built engine with all built-in parsers, import the `diffLockfiles`
+ *  singleton from `diff-lockfiles` instead of calling the factory with no args. */
 export interface DiffLockfilesOptions {
-	/** Lockfile parsers. Default: all five built-ins (`defaultParsers`).
-	 *  Dispatch is first-match by insertion order; to override a built-in, omit it. */
+	/** Lockfile parsers to register. Default: none — the factory is a lightweight
+	 *  constructor; bring your own parsers, or spread `defaultParsers` from
+	 *  `diff-lockfiles/parsers`. Dispatch is first-match by insertion order. */
 	parsers?: readonly LockfileParser[];
 }
 
@@ -27,12 +29,14 @@ export interface DiffLockfiles {
 }
 
 /**
- * Build a configured diff engine. Pass `parsers` to restrict or extend the
- * built-in set; omit for all five defaults. The instance owns no I/O — for
- * git-driven repo diffs, use `diffGitRefs` from `diff-lockfiles/git`.
+ * Build a configured diff engine. Pass `parsers` to register lockfile parsers;
+ * omit for a lightweight empty engine (no parsers → `diffFile` returns `[]`).
+ * For a batteries-included engine with all five built-in parsers, import the
+ * `diffLockfiles` singleton from `diff-lockfiles` instead. The instance owns no
+ * I/O — for git-driven repo diffs, use `diffGitRefs` from `diff-lockfiles/git`.
  */
 export function createDiffLockfiles(options: DiffLockfilesOptions = {}): DiffLockfiles {
-	const parsers = options.parsers ?? defaultParsers;
+	const parsers = options.parsers ?? [];
 
 	const parserFor = (filename: string): LockfileParser | undefined =>
 		parsers.find((parser) => parser.matches(filename));

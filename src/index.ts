@@ -1,6 +1,18 @@
-/** Public API: the configured-instance factory (better-auth-style). */
-export { createDiffLockfiles } from './factory.js';
-/** Public API: the pure diff function (also available as `dlf.diff`). */
+import { createDiffLockfiles } from './factory.js';
+import { defaultParsers } from './parsers/index.js';
+
+/** Public API: the configured-instance factory (better-auth-style). Lightweight:
+ *  no parsers by default — bring your own, or spread `defaultParsers`. */
+export { createDiffLockfiles };
+
+/**
+ * A pre-configured engine with all five built-in parsers registered, ready to
+ * use. The convenience path: import and call. For a custom parser set (or an
+ * empty engine), use `createDiffLockfiles({ parsers: [...] })`.
+ */
+export const diffLockfiles = createDiffLockfiles({ parsers: [...defaultParsers] });
+
+/** Public API: the pure diff function (also available as `diffLockfiles.diff`). */
 export { diff } from './diff.js';
 /** Public API: the version parser. */
 export { parseVersion } from './changes.js';

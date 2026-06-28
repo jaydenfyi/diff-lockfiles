@@ -1,5 +1,5 @@
 import { diffChangedLockfiles, diffGitRefs } from '../src/sources/index.js';
-import { createDiffLockfiles } from '../src/factory.js';
+import { diffLockfiles } from '../src/index.js';
 import { text, json } from '../src/renderers/index.js';
 import type { LockfileSource } from '../src/sources/types.js';
 import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
@@ -32,7 +32,7 @@ function fakeSource(
 }
 
 // The default engine covers all five formats — used everywhere in this suite.
-const dlf = createDiffLockfiles();
+const dlf = diffLockfiles;
 
 describe('diffChangedLockfiles', () => {
 	it('diffs a changed lockfile end-to-end with zero git', async () => {

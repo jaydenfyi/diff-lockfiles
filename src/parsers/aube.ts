@@ -1,5 +1,5 @@
 import { parsePnpmContent } from './pnpm.js';
-import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import type { NormalizedLockfile, LockfileParser } from './types.js';
 
 /**
  * aube-lock.yaml uses the exact same on-disk format as pnpm-lock.yaml v9
@@ -8,7 +8,7 @@ import type { NormalizedLockfile, LockfileAdapter } from './types.js';
  * `aube-lock.yaml` plus the branch-lockfile variant `aube-lock.<branch>.yaml`
  * (pnpm-style `/` encoded as `!`).
  */
-export const parseAubeLockfile: LockfileAdapter = {
+export const parseAubeLockfile: LockfileParser = {
 	matches(filename: string): boolean {
 		const base = filename.includes('/') ? filename.slice(filename.lastIndexOf('/') + 1) : filename;
 		return base === 'aube-lock.yaml' || /^aube-lock\..+\.yaml$/.test(base);

@@ -17,9 +17,9 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
-		"./formats": {
-			"types": "./dist/formats/index.d.ts",
-			"import": "./dist/formats/index.js"
+		"./parsers": {
+			"types": "./dist/parsers/index.d.ts",
+			"import": "./dist/parsers/index.js"
 		},
 		"./renderers": {
 			"types": "./dist/renderers/index.d.ts",

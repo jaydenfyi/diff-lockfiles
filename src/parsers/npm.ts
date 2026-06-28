@@ -1,4 +1,4 @@
-import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import type { NormalizedLockfile, LockfileParser } from './types.js';
 import { packageNameFromNodeModulesPath } from './types.js';
 
 /**
@@ -6,7 +6,7 @@ import { packageNameFromNodeModulesPath } from './types.js';
  * path (root at ""). Each entry has a `version` field; the bare package name is
  * derived from the path itself.
  */
-export const parseNpmLockfile: LockfileAdapter = {
+export const parseNpmLockfile: LockfileParser = {
 	matches(filename: string): boolean {
 		return filename === 'package-lock.json' || filename.endsWith('/package-lock.json');
 	},

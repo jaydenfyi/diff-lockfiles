@@ -10,7 +10,7 @@ export type { DiffLockfiles, DiffLockfilesOptions } from './factory.js';
 /** Diff result types. */
 export type { Changes, Change, ChangeKind, Version, Bump } from './changes.js';
 /** Lockfile normalization types. */
-export type { LockfileAdapter, NormalizedLockfile, NormalizedPackage } from './formats/types.js';
+export type { LockfileParser, NormalizedLockfile, NormalizedPackage } from './parsers/types.js';
 /** Rendering types (renderers themselves live at `diff-lockfiles/renderers`). */
 export type {
 	Format,

@@ -1,11 +1,11 @@
 import { parseAllDocuments } from 'yaml';
-import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import type { NormalizedLockfile, LockfileParser } from './types.js';
 import { splitNameVersion } from './types.js';
 
 /**
  * Parse pnpm-lock.yaml / aube-lock.yaml v9 content into the normalized
- * shape. Exported standalone so the aube adapter can reuse it without a
- * factory — both adapters are plain `LockfileAdapter` objects (matching
+ * shape. Exported standalone so the aube parser can reuse it without a
+ * factory — both parsers are plain `LockfileParser` objects (matching
  * npm.ts / bun.ts), differing only in their `matches()`.
  *
  * pnpm v9 keys `packages:` by `name@version` (the version lives in the
@@ -29,7 +29,7 @@ export function parsePnpmContent(content: string): NormalizedLockfile {
 }
 
 /** Adapter for `pnpm-lock.yaml` (pnpm 9/10/11). */
-export const parsePnpmLockfile: LockfileAdapter = {
+export const parsePnpmLockfile: LockfileParser = {
 	matches(filename: string): boolean {
 		return filename === 'pnpm-lock.yaml' || filename.endsWith('/pnpm-lock.yaml');
 	},

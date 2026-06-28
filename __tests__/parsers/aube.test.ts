@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
-import { parseAubeLockfile } from '../../src/formats/aube.js';
+import { parseAubeLockfile } from '../../src/parsers/aube.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/aube-lock.yaml'), 'utf8');

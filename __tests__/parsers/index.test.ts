@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { npm, bun, pnpm, yarn, aube, defaultFormats } from '../../src/formats/index.js';
+import { npm, bun, pnpm, yarn, aube, defaultParsers } from '../../src/parsers/index.js';
 import { loadFixture, FIXTURE_FILENAME } from '../helpers.js';
 
 const factories = { npm, bun, pnpm, yarn, aube };
 
 describe('format factories', () => {
-	it.each(Object.keys(factories))('%s() returns an adapter with matches+parse', (key) => {
-		const adapter = factories[key as keyof typeof factories]();
-		expect(typeof adapter.matches).toBe('function');
-		expect(typeof adapter.parse).toBe('function');
+	it.each(Object.keys(factories))('%s() returns a parser with matches+parse', (key) => {
+		const parser = factories[key as keyof typeof factories]();
+		expect(typeof parser.matches).toBe('function');
+		expect(typeof parser.parse).toBe('function');
 	});
 
 	it('npm() matches package-lock.json (incl. nested workspace paths)', () => {
@@ -30,8 +30,8 @@ describe('format factories', () => {
 		expect(Object.keys(lock.packages).length).toBeGreaterThan(0);
 	});
 
-	it('defaultFormats is a frozen array of 5 distinct adapters', () => {
-		expect(Object.isFrozen(defaultFormats)).toBe(true);
-		expect(defaultFormats).toHaveLength(5);
+	it('defaultParsers is a frozen array of 5 distinct parsers', () => {
+		expect(Object.isFrozen(defaultParsers)).toBe(true);
+		expect(defaultParsers).toHaveLength(5);
 	});
 });

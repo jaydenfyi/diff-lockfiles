@@ -1,9 +1,9 @@
-import type { NormalizedLockfile, NormalizedPackage } from './formats/types.js';
+import type { NormalizedLockfile, NormalizedPackage } from './parsers/types.js';
 import { bumpOf, classify, isUnchanged, parseVersion } from './changes.js';
 import type { Change, Changes, Version } from './changes.js';
 
 /** Re-export the canonical lockfile type for library consumers. */
-export type { NormalizedLockfile } from './formats/types.js';
+export type { NormalizedLockfile } from './parsers/types.js';
 
 /**
  * The packages a diff should consider. The npm root `''` project entry (empty

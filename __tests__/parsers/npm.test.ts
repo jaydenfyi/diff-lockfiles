@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
-import { parseNpmLockfile } from '../../src/formats/npm.js';
-import { packageNameFromNodeModulesPath } from '../../src/formats/types.js';
+import { parseNpmLockfile } from '../../src/parsers/npm.js';
+import { packageNameFromNodeModulesPath } from '../../src/parsers/types.js';
 
 describe('packageNameFromNodeModulesPath', () => {
 	it('returns the last segment after node_modules/', () => {

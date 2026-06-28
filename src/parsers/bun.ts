@@ -1,5 +1,5 @@
 import { parse as jsoncParse } from 'jsonc-parser';
-import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import type { NormalizedLockfile, LockfileParser } from './types.js';
 import { splitNameVersion } from './types.js';
 
 interface BunLockfile {
@@ -7,7 +7,7 @@ interface BunLockfile {
 	packages?: Record<string, unknown[]>;
 }
 
-export const parseBunLockfile: LockfileAdapter = {
+export const parseBunLockfile: LockfileParser = {
 	matches(filename: string): boolean {
 		return filename === 'bun.lock' || filename.endsWith('/bun.lock');
 	},

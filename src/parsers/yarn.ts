@@ -1,4 +1,4 @@
-import type { NormalizedLockfile, LockfileAdapter } from './types.js';
+import type { NormalizedLockfile, LockfileParser } from './types.js';
 import { splitNameVersion } from './types.js';
 
 interface YarnEntry {
@@ -76,7 +76,7 @@ function parseEntries(content: string): YarnEntry[] {
  * yarn.lock (v1 classic and berry v2+) share a custom line-oriented format.
  * Entries have comma-merged descriptors sharing one resolved `version`.
  */
-export const parseYarnLockfile: LockfileAdapter = {
+export const parseYarnLockfile: LockfileParser = {
 	matches(filename: string): boolean {
 		return filename === 'yarn.lock' || filename.endsWith('/yarn.lock');
 	},

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
-import { parseBunLockfile } from '../../src/formats/bun.js';
+import { parseBunLockfile } from '../../src/parsers/bun.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/bun.lock.jsonc'), 'utf8');

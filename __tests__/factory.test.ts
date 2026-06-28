@@ -1,14 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { createDiffLockfiles } from '../src/factory.js';
-import { npm, defaultFormats } from '../src/formats/index.js';
-import type { LockfileAdapter } from '../src/formats/index.js';
+import { npm, defaultParsers } from '../src/parsers/index.js';
+import type { LockfileParser } from '../src/parsers/index.js';
 import { loadFixture, FIXTURE_FILENAME, makePackage } from './helpers.js';
 
-const dlf = createDiffLockfiles(); // defaults: all 5 formats
+const dlf = createDiffLockfiles(); // defaults: all 5 parsers
 
 describe('createDiffLockfiles instance', () => {
-	it('defaults to all built-in formats when options omitted', () => {
-		// parse is not on the instance — prove both formats are registered via diffFile.
+	it('defaults to all built-in parsers when options omitted', () => {
+		// parse is not on the instance — prove both parsers are registered via diffFile.
 		expect(
 			dlf.diffFile(
 				FIXTURE_FILENAME.npm,
@@ -57,8 +57,8 @@ describe('createDiffLockfiles instance', () => {
 		expect(changes[0].bump).toBe('minor');
 	});
 
-	it('custom formats: restricting to [npm()] drops the others', () => {
-		const npmOnly = createDiffLockfiles({ formats: [npm()] });
+	it('custom parsers: restricting to [npm()] drops the others', () => {
+		const npmOnly = createDiffLockfiles({ parsers: [npm()] });
 		// npm is registered → diffs; bun is not → [] (a non-lockfile for this instance).
 		expect(
 			npmOnly.diffFile(
@@ -76,14 +76,14 @@ describe('createDiffLockfiles instance', () => {
 		).toEqual([]);
 	});
 
-	it('first-match dispatch: the first adapter to match a filename wins (insertion order)', () => {
-		// A custom adapter that ALSO matches the npm filename, returning a fixed
-		// sentinel package regardless of content. Prepend it before defaultFormats.
-		// old=null → empty lockfile; new → the winning adapter parses 'whatever'
+	it('first-match dispatch: the first parser to match a filename wins (insertion order)', () => {
+		// A custom parser that ALSO matches the npm filename, returning a fixed
+		// sentinel package regardless of content. Prepend it before defaultParsers.
+		// old=null → empty lockfile; new → the winning parser parses 'whatever'
 		// into the sentinel. If first-match holds, custom wins → exactly one change
 		// (sentinel, added). If npm won instead, the real npm fixture → many packages.
 		const customSentinel = '__CUSTOM_WON__';
-		const customNpm = (): LockfileAdapter => ({
+		const customNpm = (): LockfileParser => ({
 			matches: (f) => f === FIXTURE_FILENAME.npm,
 			parse: () => ({
 				packages: {
@@ -91,7 +91,7 @@ describe('createDiffLockfiles instance', () => {
 				},
 			}),
 		});
-		const d = createDiffLockfiles({ formats: [customNpm(), ...defaultFormats] });
+		const d = createDiffLockfiles({ parsers: [customNpm(), ...defaultParsers] });
 		const changes = d.diffFile(FIXTURE_FILENAME.npm, null, loadFixture('npm', 'pair-new'));
 		expect(changes).toHaveLength(1);
 		expect(changes[0].name).toBe(customSentinel);

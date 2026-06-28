@@ -186,12 +186,12 @@ git orchestration lives at the `diff-lockfiles/git` subpath.
 
 ```ts
 import { createDiffLockfiles } from 'diff-lockfiles';
-import { npm, bun, pnpm, yarn, aube } from 'diff-lockfiles/formats';
+import { npm, bun, pnpm, yarn, aube } from 'diff-lockfiles/parsers';
 import { markdown } from 'diff-lockfiles/renderers';
 import { diffGitRefs } from 'diff-lockfiles/git';
 
 const dlf = createDiffLockfiles({
-	formats: [npm(), bun(), pnpm(), yarn(), aube()], // omit for all 5 defaults
+	parsers: [npm(), bun(), pnpm(), yarn(), aube()], // omit for all 5 defaults
 });
 
 // Diff every changed lockfile between two git refs (returns data, no printing):
@@ -204,34 +204,34 @@ const changes = dlf.diffFile('package-lock.json', oldContent, newContent);
 
 ### Instance methods
 
-| Method                                           | Notes                                                                                                                                                                            |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dlf.diffFile(filename, oldContent, newContent)` | One-call diff when you have a file path. Detects the format, parses both sides, diffs. `null` for a side = absent (added/removed). `[]` if the filename is not a known lockfile. |
-| `dlf.diff(oldLock, newLock)`                     | Pure escape hatch over two already-parsed `NormalizedLockfile`s.                                                                                                                 |
+| Method                                           | Notes                                                                                                                                                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `dlf.diffFile(filename, oldContent, newContent)` | One-call diff when you have a file path. Detects the parser (from the path), parses both sides, diffs. `null` for a side = absent (added/removed). `[]` if the filename is not a known lockfile. |
+| `dlf.diff(oldLock, newLock)`                     | Pure escape hatch over two already-parsed `NormalizedLockfile`s.                                                                                                                                 |
 
-There is no `dlf.parse` — to parse a known format, call the adapter directly:
+There is no `dlf.parse` — to parse a known format, call its parser directly:
 
 ```ts
-import { npm } from 'diff-lockfiles/formats';
+import { npm } from 'diff-lockfiles/parsers';
 const lock = npm().parse(content); // content only — the filename was never used
 ```
 
 ### Plugins
 
-Built-in formats live at `diff-lockfiles/formats`; built-in renderers at
+Built-in parsers live at `diff-lockfiles/parsers`; built-in renderers at
 `diff-lockfiles/renderers`. Each is a factory function. Custom ones have the
 same shape:
 
 ```ts
-import type { LockfileAdapter } from 'diff-lockfiles/formats';
+import type { LockfileParser } from 'diff-lockfiles/parsers';
 import type { Renderer } from 'diff-lockfiles/renderers';
 
-// Custom lockfile format — register it on the instance:
-const mine = (): LockfileAdapter => ({
+// Custom lockfile parser — register it on the instance:
+const mine = (): LockfileParser => ({
 	matches: (f) => f.endsWith('my.lock'),
 	parse: (content) => myParse(content),
 });
-const dlf = createDiffLockfiles({ formats: [mine()] });
+const dlf = createDiffLockfiles({ parsers: [mine()] });
 
 // Custom renderer — just import and call it (no registration):
 const csv = (): Renderer => ({
@@ -242,11 +242,11 @@ const csv = (): Renderer => ({
 console.log(csv().render(diffs, { color: false }));
 ```
 
-To get all built-in formats plus a custom one, spread the sentinel:
+To get all built-in parsers plus a custom one, spread the sentinel:
 
 ```ts
-import { defaultFormats } from 'diff-lockfiles/formats';
-const dlf = createDiffLockfiles({ formats: [...defaultFormats, mine()] });
+import { defaultParsers } from 'diff-lockfiles/parsers';
+const dlf = createDiffLockfiles({ parsers: [...defaultParsers, mine()] });
 ```
 
 Renderers are called directly — there is no central render registry, so a custom
@@ -254,12 +254,12 @@ renderer is just a function you import and call.
 
 ### Exports
 
-| Subpath                    | Exports                                                                                 |
-| -------------------------- | --------------------------------------------------------------------------------------- |
-| `diff-lockfiles`           | `createDiffLockfiles`, `diff`, `parseVersion`, instance + core types                    |
-| `diff-lockfiles/formats`   | `npm`/`bun`/`pnpm`/`yarn`/`aube` factories, `defaultFormats`, `LockfileAdapter` + types |
-| `diff-lockfiles/renderers` | `json`/`text`/`table`/`markdown` factories, `Renderer` + types                          |
-| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`              |
+| Subpath                    | Exports                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `diff-lockfiles`           | `createDiffLockfiles`, `diff`, `parseVersion`, instance + core types                   |
+| `diff-lockfiles/parsers`   | `npm`/`bun`/`pnpm`/`yarn`/`aube` factories, `defaultParsers`, `LockfileParser` + types |
+| `diff-lockfiles/renderers` | `json`/`text`/`table`/`markdown` factories, `Renderer` + types                         |
+| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`             |
 
 > The git-driven orchestrator is intentionally not on the engine instance — the
 > engine stays pure. For programmatic repo diffs, use `diffGitRefs` from
@@ -268,7 +268,7 @@ renderer is just a function you import and call.
 
 ### Breaking changes (vs the prior 0.0.0 API)
 
-- `parseNpmLockfile` / `parseBunLockfile` / … raw adapter objects → use `npm().parse(content)` (the `npm()` factory from `diff-lockfiles/formats`). `.parse` lost its unused `filename` arg; there is no `dlf.parse`.
+- `parseNpmLockfile` / `parseBunLockfile` / … raw parser objects → use `npm().parse(content)` (the `npm()` factory from `diff-lockfiles/parsers`). `.parse` lost its unused `filename` arg; there is no `dlf.parse`.
 - `print(lockfiles, options)` → use `console.log(markdown().render(diffs, { color }))` (import the renderer from `diff-lockfiles/renderers`).
 - `diffChangedLockfiles` now returns `LockfileDiffs` instead of printing; pass a `DiffLockfiles` instance as the first arg.
 

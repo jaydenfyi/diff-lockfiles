@@ -1,11 +1,11 @@
 import { diff } from '../src/diff.js';
 import { json, text, table, markdown } from '../src/renderers/index.js';
-import { parseAubeLockfile } from '../src/formats/aube.js';
-import { parseBunLockfile } from '../src/formats/bun.js';
-import { parseNpmLockfile } from '../src/formats/npm.js';
-import { parsePnpmLockfile } from '../src/formats/pnpm.js';
-import { parseYarnLockfile } from '../src/formats/yarn.js';
-import type { LockfileAdapter } from '../src/formats/types.js';
+import { parseAubeLockfile } from '../src/parsers/aube.js';
+import { parseBunLockfile } from '../src/parsers/bun.js';
+import { parseNpmLockfile } from '../src/parsers/npm.js';
+import { parsePnpmLockfile } from '../src/parsers/pnpm.js';
+import { parseYarnLockfile } from '../src/parsers/yarn.js';
+import type { LockfileParser } from '../src/parsers/types.js';
 import type { Format, LockfileDiffs, Renderer } from '../src/renderers/types.js';
 import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 
@@ -27,7 +27,7 @@ import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 
 // Each manager paired with its parser. Filenames come from the shared fixture
 // map so there is a single source of truth for the committed fixture layout.
-const PARSERS: Record<string, LockfileAdapter> = {
+const PARSERS: Record<string, LockfileParser> = {
 	npm: parseNpmLockfile,
 	bun: parseBunLockfile,
 	pnpm: parsePnpmLockfile,

@@ -21,9 +21,9 @@ export interface NormalizedLockfile {
 	packages: Record<string, NormalizedPackage>;
 }
 
-/** Each format implements this. `matches` detects the format by filename (CLI dispatch); `parse` takes content only. */
-export interface LockfileAdapter {
-	/** true if this adapter handles the given filename */
+/** Each lockfile format implements this. `matches` detects the format by filename (CLI dispatch); `parse` takes content only. */
+export interface LockfileParser {
+	/** true if this parser handles the given filename */
 	matches(filename: string): boolean;
 	/** parse raw file content into the normalized shape (content only — filename is irrelevant to parsing) */
 	parse(content: string): NormalizedLockfile;

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
-import { parsePnpmLockfile } from '../../src/formats/pnpm.js';
+import { parsePnpmLockfile } from '../../src/parsers/pnpm.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/pnpm-lock.v9.yaml'), 'utf8');

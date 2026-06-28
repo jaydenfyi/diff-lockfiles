@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { bumpOf, classify, parseVersion } from '../src/changes.js';
 import type { Change, Version } from '../src/changes.js';
-import type { NormalizedPackage } from '../src/formats/types.js';
+import type { NormalizedPackage } from '../src/parsers/types.js';
 import type { LockfileDiffs } from '../src/renderers/types.js';
 
 /** Build a {@link NormalizedPackage} for inline lockfile fixtures in tests. */

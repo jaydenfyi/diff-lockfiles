@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
-import { parseYarnLockfile } from '../../src/formats/yarn.js';
+import { parseYarnLockfile } from '../../src/parsers/yarn.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const v1 = readFileSync(join(here, 'fixtures/yarn.v1.lock'), 'utf8');

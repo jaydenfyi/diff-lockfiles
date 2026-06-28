@@ -1,0 +1,22 @@
+__tests__/renderers/index.test.ts
+  s_aa9cfef9df3dc1::t_6dbf0868099afa 1-29
+src/renderers/index.ts
+  s_aa9cfef9df3dc1::t_0df7d20878b835 1-14
+  s_aa9cfef9df3dc1::t_1505620afac945 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "1b8bd9b0dd48a2a1ee0e6f1e3e3391f1a6847d98",
+  "prompts": {},
+  "sessions": {
+    "s_aa9cfef9df3dc1": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a8e-e229-75b4-840d-c0c223fcc903",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

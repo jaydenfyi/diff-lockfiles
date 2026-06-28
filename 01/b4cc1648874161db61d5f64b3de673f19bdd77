@@ -1,0 +1,20 @@
+src/cli.ts
+  s_01b2ad8b88b56c::t_eb2f3a0fe722a5 49-50
+  s_01b2ad8b88b56c::t_84698a66c962c5 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "01b4cc1648874161db61d5f64b3de673f19bdd77",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

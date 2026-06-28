@@ -2,7 +2,7 @@
 
 import { createRequire } from 'node:module';
 import { Command } from 'commander';
-import { createDiffLockfiles } from './index.js';
+import { diffLockfiles } from './index.js';
 import { diffGitRefs } from './sources/index.js';
 import { DEFAULT_MAX_BUFFER } from './sources/git.js';
 import { json, text, table, markdown } from './renderers/index.js';
@@ -46,7 +46,8 @@ cli
 				(options.format in builtinRenderers
 					? builtinRenderers[options.format as Format]
 					: undefined) ?? builtinRenderers.text;
-			const diffLockfiles = createDiffLockfiles();
+			// The pre-built singleton has all five parsers registered; the CLI is
+			// the batteries-included path, so it uses it as-is.
 			const diffs = await diffGitRefs(diffLockfiles, from, to, { maxBuffer: options.maxBuffer });
 			if (diffs.length === 0) return;
 			const output = renderer.render(diffs, { color: options.color });

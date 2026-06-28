@@ -65,8 +65,14 @@ Options:
   -f, --format <format>    changes the output format (table|json|markdown|text) (default: "table")
   -m, --max-buffer <size>  maximum read buffer size (bytes) (default: 10240000)
   -c, --color              colorizes certain output formats (default: false)
+  --check                  exit 0 when a supported lockfile changed, 1 otherwise
   -h, --help               display help for command
 ```
+
+By default, `diff-lockfiles` exits `0` when the command runs successfully, even
+when the range contains no supported lockfile changes. Add `--check` in CI to
+make the exit code reflect whether a supported lockfile path changed: `0` when
+one did, `1` when none did, and `>1` for command errors.
 
 ### `--format=table` (default)
 
@@ -214,15 +220,13 @@ jobs:
         run: |
           base_sha="$(git rev-parse "$HEAD_SHA^")"
 
-          if ! git diff --name-only "$base_sha" "$HEAD_SHA" | grep -Eq '(^|/)(package-lock\.json|bun\.lock|pnpm-lock\.yaml|yarn\.lock|aube-lock(\..+)?\.yaml)$'; then
-            echo 'has_lockfile_changes=false' >> "$GITHUB_OUTPUT"
+          if ! diff_output="$(npx --yes diff-lockfiles --check --format markdown "$base_sha" "$HEAD_SHA")"; then
+            echo 'should_comment=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          diff_output="$(npx --yes diff-lockfiles --format markdown "$base_sha" "$HEAD_SHA")"
-
           {
-            echo 'has_lockfile_changes=true'
+            echo 'should_comment=true'
             echo 'body<<LOCKFILE_DIFF_COMMENT'
             echo '## Lockfile changes'
             echo
@@ -235,7 +239,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       - name: Create or update PR comment
-        if: steps.lockfile-diff.outputs.has_lockfile_changes == 'true'
+        if: steps.lockfile-diff.outputs.should_comment == 'true'
         uses: actions/github-script@v7
         env:
           BODY: ${{ steps.lockfile-diff.outputs.body }}
@@ -273,11 +277,11 @@ jobs:
             }
 ```
 
-The workflow compares the latest PR commit (`HEAD^..HEAD`) and skips the comment
-step unless that commit changes a supported lockfile. The marker keeps one
-comment updated instead of adding a new comment on every matching push. For
-forked pull requests, make sure your repository's token permissions allow PR
-comments before enabling this workflow.
+The workflow compares the latest PR commit (`HEAD^..HEAD`). `--check` makes the
+CLI exit code gate the comment, while `--format markdown` makes the same command
+produce the comment body. The marker keeps one comment updated instead of adding
+a new comment on every matching push. For forked pull requests, make sure your
+repository's token permissions allow PR comments before enabling this workflow.
 
 ## Programmatic API
 
@@ -292,11 +296,19 @@ import { markdown } from 'diff-lockfiles/renderers';
 import { diffGitRefs } from 'diff-lockfiles/git';
 
 // Diff every changed lockfile between two git refs (returns data, no printing):
-const diffs = await diffGitRefs(diffLockfiles, 'HEAD~1', 'HEAD', { cwd: '/repo' });
-console.log(markdown().render(diffs, { color: false }));
+const result = await diffGitRefs(diffLockfiles, 'HEAD~1', 'HEAD', { cwd: '/repo' });
+console.log(markdown().render(result.lockfiles, { color: false }));
 
 // Or diff file contents directly (no git); null = that side is absent:
 const changes = diffLockfiles.diffFile('package-lock.json', oldContent, newContent);
+```
+
+`diffGitRefs` returns both the lockfile paths touched by the git range and the
+package-level diffs ready for rendering:
+
+```ts
+result.changedLockfiles; // recognized lockfile paths in the git diff
+result.lockfiles; // lockfiles with package-level changes
 ```
 
 For a custom parser set, pass the exact parsers you want, or spread
@@ -314,6 +326,7 @@ const all = createDiffLockfiles({ parsers: [...defaultParsers] }); // all five
 
 | Method                                              | Notes                                                                                                                                                                                            |
 | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `engine.matches(filename)`                          | Whether any registered parser handles the path.                                                                                                                                                   |
 | `engine.diffFile(filename, oldContent, newContent)` | One-call diff when you have a file path. Detects the parser (from the path), parses both sides, diffs. `null` for a side = absent (added/removed). Recognized lockfiles return their changes; other paths return `[]`. |
 | `engine.diff(oldLock, newLock)`                     | Pure escape hatch over two already-parsed `NormalizedLockfile`s.                                                                                                                                 |
 
@@ -348,7 +361,7 @@ const csv = (): Renderer => ({
 		/* return a string */
 	},
 });
-console.log(csv().render(diffs, { color: false }));
+console.log(csv().render(result.lockfiles, { color: false }));
 ```
 
 To get all built-in parsers plus a custom one, spread the sentinel:
@@ -369,7 +382,7 @@ Renderers are just functions — import and call them directly.
 | `diff-lockfiles`           | `diffLockfiles` (pre-built, all parsers), `createDiffLockfiles` (factory), `diff`, `parseVersion`, instance + core types |
 | `diff-lockfiles/parsers`   | `npm`/`bun`/`pnpm`/`yarn`/`aube` factories, `defaultParsers`, `LockfileParser` + types                                   |
 | `diff-lockfiles/renderers` | `json`/`text`/`table`/`markdown` factories, `Renderer` + types                                                           |
-| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`                                               |
+| `diff-lockfiles/git`       | `diffGitRefs`, `diffChangedLockfiles`, `createGitSource`, `LockfileSource`, `LockfileDiffResult`                         |
 
 > For programmatic repo diffs, use `diffGitRefs`. To diff between arbitrary
 > sources, pass a custom `LockfileSource` to `diffChangedLockfiles`.

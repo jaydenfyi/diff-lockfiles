@@ -1,0 +1,43 @@
+src/formats/types.ts
+  s_aa9cfef9df3dc1::t_d9eb2d1766f4ce 24,28-29
+src/formats/aube.ts
+  s_aa9cfef9df3dc1::t_45d932dc957151 16
+src/formats/yarn.ts
+  s_aa9cfef9df3dc1::t_e85abb63a8ac35 84
+src/formats/npm.ts
+  s_aa9cfef9df3dc1::t_0d14591cc95af6 14
+__tests__/formats/aube.test.ts
+  s_aa9cfef9df3dc1::t_b6e72417701e3d 10
+__tests__/formats/bun.test.ts
+  s_aa9cfef9df3dc1::t_b6e72417701e3d 11,48
+__tests__/formats/npm.test.ts
+  s_aa9cfef9df3dc1::t_b6e72417701e3d 33,79
+src/formats/pnpm.ts
+  s_aa9cfef9df3dc1::t_27d6c05960e8a2 36
+__tests__/formats/yarn.test.ts
+  s_aa9cfef9df3dc1::t_b6e72417701e3d 19,53
+src/pipeline.ts
+  s_aa9cfef9df3dc1::t_cd3aa4ccf3a09b 61-62
+__tests__/formats/pnpm.test.ts
+  s_aa9cfef9df3dc1::t_b6e72417701e3d 10,50-51
+__tests__/snapshots.test.ts
+  s_aa9cfef9df3dc1::t_b34712b8d2dfb1 49-50
+src/formats/bun.ts
+  s_aa9cfef9df3dc1::t_9abab758721312 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "600926d1a991e0102a59c6aab99800a6d48cbcda",
+  "prompts": {},
+  "sessions": {
+    "s_aa9cfef9df3dc1": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a8e-e229-75b4-840d-c0c223fcc903",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

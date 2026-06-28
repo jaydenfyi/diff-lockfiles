@@ -21,7 +21,7 @@ export interface GitOptions {
  * with zero git on disk.
  */
 export async function diffChangedLockfiles(
-	dlf: DiffLockfiles,
+	diffLockfiles: DiffLockfiles,
 	source: LockfileSource,
 	from: string,
 	to: string,
@@ -35,7 +35,7 @@ export async function diffChangedLockfiles(
 		]);
 		// diffFile returns [] for non-lockfile paths (no adapter matched) and for
 		// lockfiles with no net changes — both are skipped.
-		const changes = dlf.diffFile(filename, oldContent, newContent);
+		const changes = diffLockfiles.diffFile(filename, oldContent, newContent);
 		if (changes.length > 0) diffs.push({ lockfile: filename, changes });
 	}
 	return diffs;
@@ -46,7 +46,7 @@ export async function diffChangedLockfiles(
  * refs. One-call repo diff for programmatic CI use. Returns the diffs (no print).
  */
 export async function diffGitRefs(
-	dlf: DiffLockfiles,
+	diffLockfiles: DiffLockfiles,
 	from: string,
 	to: string,
 	options: GitOptions = {},
@@ -55,7 +55,7 @@ export async function diffGitRefs(
 		...(options.cwd ? { cwd: options.cwd } : {}),
 		maxBuffer: options.maxBuffer ?? DEFAULT_MAX_BUFFER,
 	});
-	return diffChangedLockfiles(dlf, source, from, to);
+	return diffChangedLockfiles(diffLockfiles, source, from, to);
 }
 
 export { createGitSource } from './git.js';

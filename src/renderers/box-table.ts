@@ -46,16 +46,16 @@ function borderLine(
 	left: string,
 	right: string,
 ): string {
-	return left + widths.map((w) => body.repeat(w + 2)).join(join) + right;
+	return left + widths.map((width) => body.repeat(width + 2)).join(join) + right;
 }
 
 /**
  * Render `rows` as a boxed table. See module doc for the full contract.
  */
 export function renderBoxTable(rows: string[][]): string {
-	const cols = rows[0]?.length ?? 0;
-	const widths = Array.from({ length: cols }, (_, c) =>
-		Math.max(...rows.map((row) => cellWidth(row[c] ?? ''))),
+	const columnCount = rows[0]?.length ?? 0;
+	const widths = Array.from({ length: columnCount }, (_, column) =>
+		Math.max(...rows.map((row) => cellWidth(row[column] ?? ''))),
 	);
 
 	const top = borderLine(widths, '═', '╤', '╔', '╗');
@@ -65,7 +65,7 @@ export function renderBoxTable(rows: string[][]): string {
 	// Body rows joined by the separator line (join of a single row emits none),
 	// bracketed by the top and bottom borders. Every line terminated with `\n`.
 	const body = rows
-		.map((row) => '║' + row.map((cell, c) => padCell(cell, widths[c])).join('│') + '║')
+		.map((row) => '║' + row.map((cell, column) => padCell(cell, widths[column])).join('│') + '║')
 		.join(`\n${separator}\n`);
 	return `${top}\n${body}\n${bottom}\n`;
 }

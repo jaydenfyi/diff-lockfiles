@@ -46,8 +46,8 @@ cli
 				(options.format in builtinRenderers
 					? builtinRenderers[options.format as Format]
 					: undefined) ?? builtinRenderers.text;
-			const dlf = createDiffLockfiles();
-			const diffs = await diffGitRefs(dlf, from, to, { maxBuffer: options.maxBuffer });
+			const diffLockfiles = createDiffLockfiles();
+			const diffs = await diffGitRefs(diffLockfiles, from, to, { maxBuffer: options.maxBuffer });
 			if (diffs.length === 0) return;
 			const output = renderer.render(diffs, { color: options.color });
 			if (output !== '') console.log(output);

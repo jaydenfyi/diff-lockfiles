@@ -5,9 +5,6 @@ import { npm, defaultParsers } from '../src/parsers/index.js';
 import type { LockfileParser } from '../src/parsers/index.js';
 import { loadFixture, FIXTURE_FILENAME, makePackage } from './helpers.js';
 
-// Most tests below exercise the singleton (all 5 parsers registered).
-const dlf = diffLockfiles;
-
 describe('createDiffLockfiles instance', () => {
 	it('createDiffLockfiles() is lightweight: no parsers by default', () => {
 		// The factory does NOT register built-ins — diffFile returns [] for any
@@ -41,7 +38,7 @@ describe('createDiffLockfiles instance', () => {
 	});
 
 	it('diffFile diffs a real npm fixture pair end-to-end', () => {
-		const changes = dlf.diffFile(
+		const changes = diffLockfiles.diffFile(
 			FIXTURE_FILENAME.npm,
 			loadFixture('npm', 'pair-old'),
 			loadFixture('npm', 'pair-new'),
@@ -51,23 +48,23 @@ describe('createDiffLockfiles instance', () => {
 	});
 
 	it('diffFile treats null old content as fully-added', () => {
-		const changes = dlf.diffFile(FIXTURE_FILENAME.npm, null, loadFixture('npm', 'pair-new'));
+		const changes = diffLockfiles.diffFile(FIXTURE_FILENAME.npm, null, loadFixture('npm', 'pair-new'));
 		expect(changes.every((c) => c.kind === 'added')).toBe(true);
 	});
 
 	it('diffFile treats null new content as fully-removed', () => {
-		const changes = dlf.diffFile(FIXTURE_FILENAME.npm, loadFixture('npm', 'pair-old'), null);
+		const changes = diffLockfiles.diffFile(FIXTURE_FILENAME.npm, loadFixture('npm', 'pair-old'), null);
 		expect(changes.every((c) => c.kind === 'removed')).toBe(true);
 	});
 
 	it('diffFile returns [] for a non-lockfile filename', () => {
-		expect(dlf.diffFile('README.md', 'a', 'b')).toEqual([]);
+		expect(diffLockfiles.diffFile('README.md', 'a', 'b')).toEqual([]);
 	});
 
 	it('diff (escape hatch) works on hand-built normalized lockfiles', () => {
 		const oldLock = { packages: { a: makePackage('a', '1.0.0') } };
 		const newLock = { packages: { a: makePackage('a', '1.1.0') } };
-		const changes = dlf.diff(oldLock, newLock);
+		const changes = diffLockfiles.diff(oldLock, newLock);
 		expect(changes).toHaveLength(1);
 		expect(changes[0].bump).toBe('minor');
 	});

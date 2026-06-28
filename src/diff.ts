@@ -10,7 +10,7 @@ export type { NormalizedLockfile } from './parsers/types.js';
  * name) is skipped — it is the project manifest, not a dependency.
  */
 function packagesFor(lock: NormalizedLockfile): NormalizedPackage[] {
-	return Object.values(lock.packages).filter((pkg) => pkg.name !== '');
+	return Object.values(lock.packages).filter((entry) => entry.name !== '');
 }
 
 /** Group packages by bare name, preserving first-seen order within each name. */

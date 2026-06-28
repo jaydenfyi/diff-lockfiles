@@ -1,0 +1,31 @@
+src/renderers/box-table.ts
+  s_01b2ad8b88b56c::t_c56bffc922e68a 56-58
+  s_01b2ad8b88b56c::t_64bb48e335b514 49
+  s_01b2ad8b88b56c::t_3a71d6d9b06e9d 68
+src/diff.ts
+  s_01b2ad8b88b56c::t_05166c81b2aa00 13
+__tests__/factory.test.ts
+  s_01b2ad8b88b56c::t_4115106995f2b9 41,51,56,61,67
+__tests__/sources.test.ts
+  s_01b2ad8b88b56c::t_8040f19a2a23fb 42,51,60,73,99,133,145,184,214,239,263
+src/cli.ts
+  s_01b2ad8b88b56c::t_f1defd3757db06 49-50
+src/sources/index.ts
+  s_01b2ad8b88b56c::t_2c98b855ae8764 24,38,49,58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "4fb214e4ca6815756edb43e5fd2ed90c091c57ee",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

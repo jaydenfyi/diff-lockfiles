@@ -1,0 +1,31 @@
+README.md
+  s_01b2ad8b88b56c::t_bcf7c1bc2ec6bf 340
+  s_01b2ad8b88b56c::t_edba469055e0cf 14,16
+  s_01b2ad8b88b56c::t_e9e2c03f20b537 17-18,26-27,86-89
+  s_01b2ad8b88b56c::t_efb00b28ca0e0f 339
+  s_01b2ad8b88b56c::t_76b575b5bc5e98 186-187,215,217-223,225,232,238,276-280
+  s_01b2ad8b88b56c::t_36a0c0ccf03959 11-13,15,19-20
+  s_01b2ad8b88b56c::t_49cef88c338627 343
+  s_01b2ad8b88b56c::t_cc9e1d2316d826 184-185,188-214,216,224,226-231,233-237,239-275,281
+  s_01b2ad8b88b56c::t_359737fb4ead7d 9,396-402
+  s_01b2ad8b88b56c::t_8979aa916d3eea 5-7,36-37
+  s_01b2ad8b88b56c::t_61df0cb0fa89ac 302-303,309,315-318,324,358-360
+  s_01b2ad8b88b56c::t_74af8e0f2de9c5 8
+  s_01b2ad8b88b56c::t_4475caf4ac9575 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "8ef8b315ccc9bf9903fccb1baecae0378616f7c6",
+  "prompts": {},
+  "sessions": {
+    "s_01b2ad8b88b56c": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f7f61b2effeeEOpHB6O0aETNe",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

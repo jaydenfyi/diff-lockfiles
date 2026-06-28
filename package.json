@@ -25,6 +25,10 @@
 			"types": "./dist/renderers/index.d.ts",
 			"import": "./dist/renderers/index.js"
 		},
+		"./git": {
+			"types": "./dist/sources/index.d.ts",
+			"import": "./dist/sources/index.js"
+		},
 		"./package.json": "./package.json"
 	},
 	"author": "jaydenfyi",

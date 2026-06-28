@@ -1,10 +1,37 @@
 # diff-lockfiles
 
-Note: this is a fork of <https://github.com/oalders/diff-lockfiles>. It diffs `package-lock.json`
-(npm), `bun.lock` (Bun), `pnpm-lock.yaml` (pnpm), `yarn.lock` (Yarn classic v1
-and Berry v2+), and `aube-lock.yaml` (aube) files.
-
 [![npm](https://img.shields.io/npm/v/diff-lockfiles)](https://www.npmjs.com/package/diff-lockfiles)
+
+Diff every changed lockfile between two git refs and see — at a glance — what
+moved and by how much. A reworked fork of
+[oalders/diff-lockfiles](https://github.com/oalders/diff-lockfiles), with richer
+output, broader format support, and a full programmatic API.
+
+**Highlights over the original fork:**
+
+- **Five lockfile formats** — npm (`package-lock.json`), Bun (`bun.lock`), pnpm
+  (`pnpm-lock.yaml`), Yarn (classic v1 and Berry v2+), and aube
+  (`aube-lock.yaml`). The original only read `package-lock.json`.
+- **Semver-aware changes** — every change is classified
+  `added` / `removed` / `upgrade` / `downgrade` / `changed`, with the bump
+  magnitude (`major` / `minor` / `patch`) when it's a clean semver move. The
+  original only printed raw old → new version strings.
+- **Bare package names** — rows read `lodash`, not `node_modules/lodash`; the
+  verbose lockfile path is surfaced only to disambiguate duplicate same-name
+  changes.
+- **Structured JSON** — each change carries `kind`, `bump`, and parsed
+  `oldVersion` / `newVersion` (semver components plus optional `prerelease` /
+  `build`), instead of bare `[old, new]` string pairs.
+- **Colour that means something** — the bumped version segment is bolded and
+  old/new cells are tinted by direction (red/green), across the table and text
+  renderers.
+- **A full programmatic API** — import the pre-built `diffLockfiles` engine, or
+  assemble your own with `createDiffLockfiles` and custom parsers/renderers. The
+  core engine is pure (no I/O); git orchestration lives behind the
+  `diff-lockfiles/git` subpath.
+- **Lightweight** — the boxed-table renderer and ANSI colour helpers are
+  hand-rolled (~85 lines), dropping the `table` → `ajv` → `fast-uri` dependency
+  subtree and `chalk`.
 
 ## Supported lockfiles
 

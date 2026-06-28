@@ -1,0 +1,21 @@
+README.md
+  s_aa9cfef9df3dc1::t_b7af02c8abde6f 207-208,210,257-262
+  s_aa9cfef9df3dc1::t_758680a38fd9bf 181-182,186-187,204,206,211,213,217-218,220,224,244,246-247,250,254-256,274
+  s_aa9cfef9df3dc1::t_93b60526e41431 183-185,188-203,205,209,212,214-216,219,221-223,225-243,245,248-249,251-253,263-273
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "620d3a8dc0ac6486b582dfbe39bf2ba1cccd9e85",
+  "prompts": {},
+  "sessions": {
+    "s_aa9cfef9df3dc1": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a8e-e229-75b4-840d-c0c223fcc903",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

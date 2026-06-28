@@ -35,7 +35,7 @@
 	"license": "MIT",
 	"scripts": {
 		"start": "node dist/cli.js",
-		"build": "tsc -p tsconfig.build.json",
+		"build": "rm -rf dist && tsc -p tsconfig.build.json",
 		"prepublishOnly": "npm run build",
 		"typecheck": "tsc -p tsconfig.json",
 		"lint": "eslint .",

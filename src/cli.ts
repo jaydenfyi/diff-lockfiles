@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
+import { realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import { diffLockfiles } from './index.js';
 import { diffGitRefs } from './sources/index.js';
@@ -65,6 +66,20 @@ export function createCli(): Command {
 	return cli;
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+// When npm/npx runs a bin, `process.argv[1]` points at the `.bin/<name>`
+// symlink rather than this file, so a naive `import.meta.url` comparison would
+// skip `parse()`. Resolve the symlink to the real path before comparing.
+// `realpathSync` can throw for a non-existent or inaccessible argv entry
+// (e.g. `--eval`), so guard it rather than crashing on import.
+function isMainEntry(): boolean {
+	if (!process.argv[1]) return false;
+	try {
+		return realpathSync(process.argv[1]) === fileURLToPath(import.meta.url);
+	} catch {
+		return false;
+	}
+}
+
+if (isMainEntry()) {
 	createCli().parse();
 }

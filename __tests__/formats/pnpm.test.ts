@@ -7,7 +7,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/pnpm-lock.v9.yaml'), 'utf8');
 
 describe('parsePnpmLockfile', () => {
-	const lock = parsePnpmLockfile.parse('pnpm-lock.yaml', fixture);
+	const lock = parsePnpmLockfile.parse(fixture);
 
 	it('matches "pnpm-lock.yaml" at any depth, rejects other formats', () => {
 		expect(parsePnpmLockfile.matches('pnpm-lock.yaml')).toBe(true);
@@ -47,8 +47,8 @@ describe('parsePnpmLockfile', () => {
 	});
 
 	it('returns an empty packages map for unparseable input', () => {
-		expect(parsePnpmLockfile.parse('pnpm-lock.yaml', '')).toEqual({ packages: {} });
-		expect(parsePnpmLockfile.parse('pnpm-lock.yaml', 'not: valid: yaml: :')).toEqual({
+		expect(parsePnpmLockfile.parse('')).toEqual({ packages: {} });
+		expect(parsePnpmLockfile.parse('not: valid: yaml: :')).toEqual({
 			packages: {},
 		});
 	});

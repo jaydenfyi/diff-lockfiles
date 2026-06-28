@@ -81,7 +81,7 @@ export const parseYarnLockfile: LockfileAdapter = {
 		return filename === 'yarn.lock' || filename.endsWith('/yarn.lock');
 	},
 
-	parse(_filename: string, content: string): NormalizedLockfile {
+	parse(content: string): NormalizedLockfile {
 		const packages: NormalizedLockfile['packages'] = {};
 		for (const { descriptors, version } of parseEntries(content)) {
 			if (descriptors.length === 0 || !version) continue;

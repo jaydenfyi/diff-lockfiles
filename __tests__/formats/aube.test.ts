@@ -7,7 +7,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const fixture = readFileSync(join(here, 'fixtures/aube-lock.yaml'), 'utf8');
 
 describe('parseAubeLockfile', () => {
-	const lock = parseAubeLockfile.parse('aube-lock.yaml', fixture);
+	const lock = parseAubeLockfile.parse(fixture);
 
 	it('matches "aube-lock.yaml" and branch variants, rejects other formats', () => {
 		expect(parseAubeLockfile.matches('aube-lock.yaml')).toBe(true);

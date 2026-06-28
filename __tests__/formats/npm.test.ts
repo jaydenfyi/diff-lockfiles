@@ -30,7 +30,7 @@ const fixture = readFileSync(join(here, 'fixtures/package-lock.v3.json'), 'utf8'
 const wsFixture = readFileSync(join(here, 'fixtures/package-lock.workspaces.v3.json'), 'utf8');
 
 describe('parseNpmLockfile', () => {
-	const lock = parseNpmLockfile.parse('package-lock.json', fixture);
+	const lock = parseNpmLockfile.parse(fixture);
 
 	it('matches "package-lock.json"', () => {
 		expect(parseNpmLockfile.matches('package-lock.json')).toBe(true);
@@ -57,7 +57,6 @@ describe('parseNpmLockfile', () => {
 
 	it('derives bare names from nested node_modules paths', () => {
 		const nested = parseNpmLockfile.parse(
-			'package-lock.json',
 			JSON.stringify({
 				packages: {
 					'': { dependencies: { foo: '^1.0.0' } },
@@ -77,7 +76,7 @@ describe('parseNpmLockfile', () => {
 describe('parseNpmLockfile (multi-workspace)', () => {
 	// Real package-lock.json v3 from a 3-workspace monorepo (see
 	// `fixtures/package-lock.workspaces.v3.json`).
-	const lock = parseNpmLockfile.parse('package-lock.json', wsFixture);
+	const lock = parseNpmLockfile.parse(wsFixture);
 
 	it('drops workspace manifest entries (no bogus package named after the dir)', () => {
 		// `packages/util` and `packages/rtl-validation` are the project's own
@@ -100,7 +99,6 @@ describe('parseNpmLockfile (multi-workspace)', () => {
 		// diff. This pins that policy so it is intentional rather than incidental
 		// (and so a future change to workspace handling can't silently regress it).
 		const fileDepLock = parseNpmLockfile.parse(
-			'package-lock.json',
 			JSON.stringify({
 				packages: {
 					'': { dependencies: { 'my-local-pkg': 'file:./local' } },

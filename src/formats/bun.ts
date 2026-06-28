@@ -12,7 +12,7 @@ export const parseBunLockfile: LockfileAdapter = {
 		return filename === 'bun.lock' || filename.endsWith('/bun.lock');
 	},
 
-	parse(_filename: string, content: string): NormalizedLockfile {
+	parse(content: string): NormalizedLockfile {
 		// jsonc-parser is string-aware: `//` inside string values (registry URLs,
 		// integrity hashes) is not mistaken for a comment. Trailing commas tolerated.
 		const raw = jsoncParse(content) as BunLockfile;

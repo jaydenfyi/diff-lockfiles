@@ -11,7 +11,7 @@ export const parseNpmLockfile: LockfileAdapter = {
 		return filename === 'package-lock.json' || filename.endsWith('/package-lock.json');
 	},
 
-	parse(_filename: string, content: string): NormalizedLockfile {
+	parse(content: string): NormalizedLockfile {
 		const raw = JSON.parse(content) as {
 			packages: Record<string, { version: string } & Record<string, unknown>>;
 		};

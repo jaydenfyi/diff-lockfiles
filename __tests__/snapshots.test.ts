@@ -46,8 +46,8 @@ const FORMATS: readonly Format[] = ['text', 'table', 'markdown', 'json'];
 function fixtureDiffs(manager: string, scenario: string): LockfileDiffs {
 	const filename = FIXTURE_FILENAME[manager];
 	const parse = PARSERS[manager].parse;
-	const oldLock = parse(filename, loadFixture(manager, `${scenario}-old`));
-	const newLock = parse(filename, loadFixture(manager, `${scenario}-new`));
+	const oldLock = parse(loadFixture(manager, `${scenario}-old`));
+	const newLock = parse(loadFixture(manager, `${scenario}-new`));
 	return [{ lockfile: filename, changes: diff(oldLock, newLock) }];
 }
 

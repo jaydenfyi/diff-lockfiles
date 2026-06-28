@@ -13,7 +13,7 @@ export const parseAubeLockfile: LockfileAdapter = {
 		const base = filename.includes('/') ? filename.slice(filename.lastIndexOf('/') + 1) : filename;
 		return base === 'aube-lock.yaml' || /^aube-lock\..+\.yaml$/.test(base);
 	},
-	parse(_filename: string, content: string): NormalizedLockfile {
+	parse(content: string): NormalizedLockfile {
 		return parsePnpmContent(content);
 	},
 };

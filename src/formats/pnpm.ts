@@ -33,7 +33,7 @@ export const parsePnpmLockfile: LockfileAdapter = {
 	matches(filename: string): boolean {
 		return filename === 'pnpm-lock.yaml' || filename.endsWith('/pnpm-lock.yaml');
 	},
-	parse(_filename: string, content: string): NormalizedLockfile {
+	parse(content: string): NormalizedLockfile {
 		return parsePnpmContent(content);
 	},
 };

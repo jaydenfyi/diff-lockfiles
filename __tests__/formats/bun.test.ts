@@ -8,7 +8,7 @@ const fixture = readFileSync(join(here, 'fixtures/bun.lock.jsonc'), 'utf8');
 const wsFixture = readFileSync(join(here, 'fixtures/bun.workspaces.lock.jsonc'), 'utf8');
 
 describe('parseBunLockfile', () => {
-	const lock = parseBunLockfile.parse('bun.lock', fixture);
+	const lock = parseBunLockfile.parse(fixture);
 
 	it('matches "bun.lock"', () => {
 		expect(parseBunLockfile.matches('bun.lock')).toBe(true);
@@ -45,7 +45,7 @@ describe('parseBunLockfile', () => {
 describe('parseBunLockfile (multi-workspace)', () => {
 	// Real bun.lock from a 3-workspace monorepo (see
 	// `fixtures/bun.workspaces.lock.jsonc`).
-	const lock = parseBunLockfile.parse('bun.lock', wsFixture);
+	const lock = parseBunLockfile.parse(wsFixture);
 
 	it('drops workspace self/cross-references (workspace: versions)', () => {
 		// These resolve to `name@workspace:<path>`: repo-local packages, not

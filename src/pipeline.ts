@@ -58,8 +58,8 @@ export async function diffChangedLockfiles(
 		// A side that is `null` (the file was added or removed between refs) is
 		// diffed as an empty lockfile, so every package shows as added or removed.
 		const changes = diff(
-			oldContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, oldContent),
-			newContent === null ? EMPTY_LOCKFILE : adapter.parse(filename, newContent),
+			oldContent === null ? EMPTY_LOCKFILE : adapter.parse(oldContent),
+			newContent === null ? EMPTY_LOCKFILE : adapter.parse(newContent),
 		);
 		// Skip lockfiles with no net changes so they contribute no output section.
 		if (changes.length > 0) {

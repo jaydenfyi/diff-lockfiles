@@ -16,7 +16,7 @@ describe('parseYarnLockfile', () => {
 	});
 
 	describe('v1 (classic)', () => {
-		const lock = parseYarnLockfile.parse('yarn.lock', v1);
+		const lock = parseYarnLockfile.parse(v1);
 
 		it('normalizes each package with bare name, version, and source key', () => {
 			expect(lock.packages['is-odd@3.0.1']).toEqual({
@@ -50,7 +50,7 @@ describe('parseYarnLockfile', () => {
 	});
 
 	describe('berry (v2+)', () => {
-		const lock = parseYarnLockfile.parse('yarn.lock', berry);
+		const lock = parseYarnLockfile.parse(berry);
 
 		it('normalizes each package with bare name, version, and source key', () => {
 			expect(lock.packages['is-odd@3.0.1']).toEqual({

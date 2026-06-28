@@ -21,6 +21,10 @@
 			"types": "./dist/formats/index.d.ts",
 			"import": "./dist/formats/index.js"
 		},
+		"./renderers": {
+			"types": "./dist/renderers/index.d.ts",
+			"import": "./dist/renderers/index.js"
+		},
 		"./package.json": "./package.json"
 	},
 	"author": "jaydenfyi",

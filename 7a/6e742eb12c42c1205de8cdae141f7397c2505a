@@ -1,0 +1,22 @@
+README.md
+  s_51b27a8e506525::t_cfeb82c026ff6e 258
+  s_51b27a8e506525::t_85933ae9c9430b 32
+  s_51b27a8e506525::t_182488ff92f0cc 217
+  s_51b27a8e506525::t_d60a7f1033fc60 269-270
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "7a6e742eb12c42c1205de8cdae141f7397c2505a",
+  "prompts": {},
+  "sessions": {
+    "s_51b27a8e506525": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0f29b8ba2ffeXtby51tQlcYIBn",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

@@ -2,44 +2,29 @@
 
 [![npm](https://img.shields.io/npm/v/diff-lockfiles)](https://www.npmjs.com/package/diff-lockfiles)
 
-Diff every changed lockfile between two git refs and see — at a glance — what
-moved and by how much. A reworked fork of
-[oalders/diff-lockfiles](https://github.com/oalders/diff-lockfiles), with richer
-output, broader format support, and a full programmatic API.
+Diff package-manager lockfiles across git refs. Built for PR review and CI
+output, it highlights package additions, removals, upgrades, downgrades, and
+semver bump size.
 
-**Highlights over the original fork:**
+## Why use it?
 
-- **Five lockfile formats** — npm (`package-lock.json`), Bun (`bun.lock`), pnpm
-  (`pnpm-lock.yaml`), Yarn (classic v1 and Berry v2+), and aube
-  (`aube-lock.yaml`). The original only read `package-lock.json`.
-- **Semver-aware changes** — every change is classified
-  `added` / `removed` / `upgrade` / `downgrade` / `changed`, with the bump
-  magnitude (`major` / `minor` / `patch`) when it's a clean semver move. The
-  original only printed raw old → new version strings.
-- **Bare package names** — rows read `lodash`, not `node_modules/lodash`; the
-  verbose lockfile path is surfaced only to disambiguate duplicate same-name
-  changes.
-- **Structured JSON** — each change carries `kind`, `bump`, and parsed
-  `oldVersion` / `newVersion` (semver components plus optional `prerelease` /
-  `build`), instead of bare `[old, new]` string pairs.
-- **Colour that means something** — the bumped version segment is bolded and
-  old/new cells are tinted by direction (red/green), across the table and text
-  renderers.
-- **A full programmatic API** — import the pre-built `diffLockfiles` engine, or
-  assemble your own with `createDiffLockfiles` and custom parsers/renderers. The
-  core engine is pure (no I/O); git orchestration lives behind the
-  `diff-lockfiles/git` subpath.
-- **Lightweight** — the boxed-table renderer and ANSI colour helpers are
-  hand-rolled (~85 lines), dropping the `table` → `ajv` → `fast-uri` dependency
-  subtree and `chalk`.
+- supports npm, Bun, pnpm, Yarn classic/Berry, and aube lockfiles
+- finds changed lockfiles anywhere in the repo, including nested workspaces
+- classifies each change as `added`, `removed`, `upgrade`, `downgrade`, or
+  `changed`
+- detects semver bump size for upgrades and downgrades: `major`, `minor`, or
+  `patch`
+- displays readable package names, with source keys kept only when needed for
+  disambiguation
+- renders table, Markdown, text, or structured JSON output
+- exposes a library API for custom parsers, renderers, and git sources
 
 ## Supported lockfiles
 
 - **`package-lock.json`** (npm lockfile v2/v3). Keys are `node_modules/...`
   paths.
-- **`bun.lock`** (Bun 1.2.0+ text lockfile, JSONC). Keys are bare package
-  names (e.g. `express`), which makes for more readable diffs than the
-  `node_modules/...` form.
+- **`bun.lock`** (Bun 1.2.0+ text lockfile, JSONC). Package names are read from
+  each resolved package entry.
 - **`pnpm-lock.yaml`** (pnpm v9/10/11). Keys are `name@version` (the version
   lives in the key).
 - **`yarn.lock`** (Yarn classic v1 and Berry v2/v3/v4). Keys are
@@ -48,15 +33,8 @@ output, broader format support, and a full programmatic API.
 - **`aube-lock.yaml`** (aube). Byte-identical to the pnpm v9 format; branch
   lockfiles (`aube-lock.<branch>.yaml`) are matched too.
 
-Changed lockfiles are discovered anywhere in the repo (nested workspace paths
-included); any file in the diff that isn't a recognized lockfile is ignored.
-When more than one lockfile changes in a run, each is reported as its own
-labeled section (table title row, JSON key, `── file ──` divider, or markdown
-`##` heading) — see the format examples below.
-
-All formats produce the same enriched output in all four renderers: every
-change carries its **kind** (added/removed/upgrade/downgrade/changed) and the
-**bump** level (major/minor/patch) when it's a semver move.
+Recognized lockfile paths are processed directly from the git diff. If multiple
+lockfiles change, each renderer labels them separately.
 
 ## Example
 
@@ -105,10 +83,10 @@ $ diff-lockfiles HEAD~1 HEAD
 ╚═════════════════════╧═════════╧═════════╧═════════╝
 ```
 
-The first row labels the lockfile. Package names are the bare name (`lodash`,
-not the lockfile's internal `node_modules/lodash` key), consistent across all
-formats. When more than one lockfile changes in a run, each gets its own boxed
-table (and the other formats label each section similarly — see below). With
+The first row labels the lockfile. Package names use the same readable label
+across every supported format. When more than one lockfile changes in a run,
+each gets its own boxed table (and the other formats label each section
+similarly — see below). With
 `--color`, the bumped version segment is bolded and old/new cells are coloured
 by direction (red old / green new for upgrades, the reverse for downgrades).
 
@@ -203,6 +181,104 @@ $ diff-lockfiles --format markdown HEAD~1 HEAD
 | dedent  | `—`       | `1.5.1`   | added         |
 ```
 
+## GitHub Actions PR comment
+
+Use the Markdown renderer to post a sticky lockfile summary when the latest PR
+commit changes a supported lockfile:
+
+```yaml
+name: Lockfile diff
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Render lockfile diff
+        id: lockfile-diff
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          base_sha="$(git rev-parse "$HEAD_SHA^")"
+
+          if ! git diff --name-only "$base_sha" "$HEAD_SHA" | grep -Eq '(^|/)(package-lock\.json|bun\.lock|pnpm-lock\.yaml|yarn\.lock|aube-lock(\..+)?\.yaml)$'; then
+            echo 'has_lockfile_changes=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          diff_output="$(npx --yes diff-lockfiles --format markdown "$base_sha" "$HEAD_SHA")"
+
+          {
+            echo 'has_lockfile_changes=true'
+            echo 'body<<LOCKFILE_DIFF_COMMENT'
+            echo '## Lockfile changes'
+            echo
+            if [ -n "$diff_output" ]; then
+              echo "$diff_output"
+            else
+              echo 'A lockfile changed, but no package version changes were detected.'
+            fi
+            echo 'LOCKFILE_DIFF_COMMENT'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create or update PR comment
+        if: steps.lockfile-diff.outputs.has_lockfile_changes == 'true'
+        uses: actions/github-script@v7
+        env:
+          BODY: ${{ steps.lockfile-diff.outputs.body }}
+        with:
+          script: |
+            const marker = '<!-- diff-lockfiles -->';
+            const body = `${marker}\n${process.env.BODY}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number,
+            });
+
+            const existing = comments.find((comment) =>
+              comment.user.type === 'Bot' && comment.body?.includes(marker),
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }
+```
+
+The workflow compares the latest PR commit (`HEAD^..HEAD`) and skips the comment
+step unless that commit changes a supported lockfile. The marker keeps one
+comment updated instead of adding a new comment on every matching push. For
+forked pull requests, make sure your repository's token permissions allow PR
+comments before enabling this workflow.
+
 ## Programmatic API
 
 `diff-lockfiles` is also a library. Import the pre-built `diffLockfiles` engine
@@ -223,29 +299,29 @@ console.log(markdown().render(diffs, { color: false }));
 const changes = diffLockfiles.diffFile('package-lock.json', oldContent, newContent);
 ```
 
-For a custom parser set, use the factory — it starts empty (no defaults), so
-bring your own parsers or spread `defaultParsers`:
+For a custom parser set, pass the exact parsers you want, or spread
+`defaultParsers` to include the built-ins:
 
 ```ts
 import { createDiffLockfiles } from 'diff-lockfiles';
 import { npm, bun, defaultParsers } from 'diff-lockfiles/parsers';
 
-const dlf = createDiffLockfiles({ parsers: [npm(), bun()] }); // just these two
+const npmAndBun = createDiffLockfiles({ parsers: [npm(), bun()] });
 const all = createDiffLockfiles({ parsers: [...defaultParsers] }); // all five
 ```
 
 ### Instance methods
 
-| Method                                           | Notes                                                                                                                                                                                            |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `dlf.diffFile(filename, oldContent, newContent)` | One-call diff when you have a file path. Detects the parser (from the path), parses both sides, diffs. `null` for a side = absent (added/removed). `[]` if the filename is not a known lockfile. |
-| `dlf.diff(oldLock, newLock)`                     | Pure escape hatch over two already-parsed `NormalizedLockfile`s.                                                                                                                                 |
+| Method                                              | Notes                                                                                                                                                                                            |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `engine.diffFile(filename, oldContent, newContent)` | One-call diff when you have a file path. Detects the parser (from the path), parses both sides, diffs. `null` for a side = absent (added/removed). Recognized lockfiles return their changes; other paths return `[]`. |
+| `engine.diff(oldLock, newLock)`                     | Pure escape hatch over two already-parsed `NormalizedLockfile`s.                                                                                                                                 |
 
 To parse a known format, call its parser directly:
 
 ```ts
 import { npm } from 'diff-lockfiles/parsers';
-const lock = npm().parse(content); // content only — the filename was never used
+const lock = npm().parse(content);
 ```
 
 ### Plugins
@@ -260,11 +336,11 @@ import type { LockfileParser } from 'diff-lockfiles/parsers';
 import type { Renderer } from 'diff-lockfiles/renderers';
 
 // Custom lockfile parser — register it on a fresh engine:
-const mine = (): LockfileParser => ({
-	matches: (f) => f.endsWith('my.lock'),
+const customLockfileParser = (): LockfileParser => ({
+	matches: (filename) => filename.endsWith('my.lock'),
 	parse: (content) => myParse(content),
 });
-const dlf = createDiffLockfiles({ parsers: [mine()] });
+const customDiffLockfiles = createDiffLockfiles({ parsers: [customLockfileParser()] });
 
 // Custom renderer — just import and call it (no registration):
 const csv = (): Renderer => ({
@@ -279,7 +355,9 @@ To get all built-in parsers plus a custom one, spread the sentinel:
 
 ```ts
 import { defaultParsers } from 'diff-lockfiles/parsers';
-const dlf = createDiffLockfiles({ parsers: [...defaultParsers, mine()] });
+const diffLockfiles = createDiffLockfiles({
+	parsers: [...defaultParsers, customLockfileParser()],
+});
 ```
 
 Renderers are just functions — import and call them directly.
@@ -315,3 +393,10 @@ Renderers are just functions — import and call them directly.
 ```bash
 npm test
 ```
+
+## Credits
+
+This package is a reworked fork of
+[oalders/diff-lockfiles](https://github.com/oalders/diff-lockfiles). The fork
+keeps the git-range workflow and expands it with more lockfile formats,
+semver-aware output, structured renderers, and a programmatic API.

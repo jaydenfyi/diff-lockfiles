@@ -1,12 +1,12 @@
 import { diff } from '../src/diff.js';
-import { renderers } from '../src/renderers/registry.js';
+import { json, text, table, markdown } from '../src/renderers/index.js';
 import { parseAubeLockfile } from '../src/formats/aube.js';
 import { parseBunLockfile } from '../src/formats/bun.js';
 import { parseNpmLockfile } from '../src/formats/npm.js';
 import { parsePnpmLockfile } from '../src/formats/pnpm.js';
 import { parseYarnLockfile } from '../src/formats/yarn.js';
 import type { LockfileAdapter } from '../src/formats/types.js';
-import type { Format, LockfileDiffs } from '../src/renderers/types.js';
+import type { Format, LockfileDiffs, Renderer } from '../src/renderers/types.js';
 import { FIXTURE_FILENAME, FIXTURE_MANAGERS, loadFixture } from './helpers.js';
 
 /**
@@ -37,6 +37,14 @@ const PARSERS: Record<string, LockfileAdapter> = {
 
 const SCENARIOS = ['pair', 'fallback'] as const;
 const FORMATS: readonly Format[] = ['text', 'table', 'markdown', 'json'];
+
+// The four built-in renderers, sourced from the barrel (no global registry).
+const renderers: Record<Format, Renderer> = {
+	text: text(),
+	table: table(),
+	markdown: markdown(),
+	json: json(),
+};
 
 /**
  * Build the {@link LockfileDiffs} for one fixture scenario, mirroring exactly

@@ -1,5 +1,5 @@
 {
-	"name": "diff-lockfiles",
+	"name": "@jaydenfyi/diff-lockfiles",
 	"version": "0.0.0",
 	"description": "diff changed npm, bun, pnpm, yarn, and aube lockfiles between git refs",
 	"repository": {

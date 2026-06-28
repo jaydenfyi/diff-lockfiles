@@ -1,0 +1,20 @@
+__tests__/snapshots.test.ts
+  s_aa9cfef9df3dc1::t_9e02682e476eb6 2,9,41-47
+  s_aa9cfef9df3dc1::t_2189b135ed8c48 48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "8a5139d0ae7bb52fd61af5b43ac4460d81b16dc2",
+  "prompts": {},
+  "sessions": {
+    "s_aa9cfef9df3dc1": {
+      "agent_id": {
+        "tool": "pi",
+        "id": "019f0a8e-e229-75b4-840d-c0c223fcc903",
+        "model": "glm-5.2"
+      },
+      "human_author": "jaydenfyi <213395523+jaydenfyi@users.noreply.github.com>"
+    }
+  }
+}

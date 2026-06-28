@@ -1,11 +1,12 @@
-import { diff, print } from './index.js';
+import { diff } from './index.js';
 import { parseNpmLockfile } from './formats/npm.js';
 import { parseBunLockfile } from './formats/bun.js';
 import { parsePnpmLockfile } from './formats/pnpm.js';
 import { parseAubeLockfile } from './formats/aube.js';
 import { parseYarnLockfile } from './formats/yarn.js';
+import { json, text, table, markdown } from './renderers/index.js';
 import type { LockfileAdapter, NormalizedLockfile } from './formats/types.js';
-import type { Format, LockfileDiff } from './renderers/types.js';
+import type { Format, LockfileDiff, Renderer } from './renderers/types.js';
 import type { LockfileSource } from './sources/types.js';
 
 /** Every lockfile format the pipeline knows how to parse. */
@@ -16,6 +17,14 @@ const adapters: LockfileAdapter[] = [
 	parseBunLockfile,
 	parseAubeLockfile,
 ];
+
+/** The four built-in renderers, keyed by id (sources from the barrel). */
+const renderers: Record<Format, Renderer> = {
+	json: json(),
+	text: text(),
+	table: table(),
+	markdown: markdown(),
+};
 
 /** A lockfile with no packages — the shape used for a side that is absent. */
 const EMPTY_LOCKFILE: NormalizedLockfile = { packages: {} };
@@ -69,5 +78,8 @@ export async function diffChangedLockfiles(
 
 	// Render the whole run once into a single document (one log line), so every
 	// format can label each lockfile and JSON stays one valid object.
-	print(diffs, { color: options.color, format: options.format });
+	if (diffs.length > 0) {
+		const output = renderers[options.format].render(diffs, { color: options.color });
+		if (output !== '') console.log(output);
+	}
 }

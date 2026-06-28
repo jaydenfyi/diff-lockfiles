@@ -44,17 +44,17 @@ describe('createDiffLockfiles instance', () => {
 			loadFixture('npm', 'pair-new'),
 		);
 		expect(changes.length).toBeGreaterThan(0);
-		expect(changes.every((c) => c.name)).toBe(true);
+		expect(changes.every((change) => change.name)).toBe(true);
 	});
 
 	it('diffFile treats null old content as fully-added', () => {
 		const changes = diffLockfiles.diffFile(FIXTURE_FILENAME.npm, null, loadFixture('npm', 'pair-new'));
-		expect(changes.every((c) => c.kind === 'added')).toBe(true);
+		expect(changes.every((change) => change.kind === 'added')).toBe(true);
 	});
 
 	it('diffFile treats null new content as fully-removed', () => {
 		const changes = diffLockfiles.diffFile(FIXTURE_FILENAME.npm, loadFixture('npm', 'pair-old'), null);
-		expect(changes.every((c) => c.kind === 'removed')).toBe(true);
+		expect(changes.every((change) => change.kind === 'removed')).toBe(true);
 	});
 
 	it('diffFile returns [] for a non-lockfile filename', () => {
